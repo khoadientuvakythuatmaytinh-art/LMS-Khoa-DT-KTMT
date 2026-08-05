@@ -2438,7 +2438,7 @@ body.sidebar-collapsed .nav-item::before {
 .tn-option-input:focus {
   outline: none;
   border-color: var(--primary);
-  background: var(--surface) !important;
+  background: var(--surface);
   box-shadow: var(--focus-ring);
 }
 
@@ -2448,6 +2448,26 @@ body.sidebar-collapsed .nav-item::before {
   min-height: 0;
   padding: 0;
   accent-color: var(--primary);
+}
+
+/* Chrome / Edge autofill fix */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px var(--surface, #ffffff) inset !important;
+  -webkit-text-fill-color: var(--text, #152744) !important;
+  caret-color: var(--text, #152744) !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+html[data-theme="dark"] input:-webkit-autofill,
+html[data-theme="dark"] input:-webkit-autofill:hover,
+html[data-theme="dark"] input:-webkit-autofill:focus,
+html[data-theme="dark"] input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px var(--surface-2, #1c2434) inset !important;
+  -webkit-text-fill-color: var(--text, #edf2fb) !important;
+  caret-color: var(--text, #edf2fb) !important;
 }
 
 .field-help,
@@ -3231,18 +3251,18 @@ html[data-theme="dark"] body.sidebar-collapsed .sidebar-toggle {
 
 /* ── Dark mode: Legacy hardcoded light backgrounds ─────────── */
 /* Form inputs (text, email, password, number, datetime-local) */
-html[data-theme="dark"] .field input[type=text],
-html[data-theme="dark"] .field input[type=email],
-html[data-theme="dark"] .field input[type=password],
-html[data-theme="dark"] .field input[type=number],
-html[data-theme="dark"] .field input[type=datetime-local],
+html[data-theme="dark"] .field:not(#screen-auth *) input[type=text],
+html[data-theme="dark"] .field:not(#screen-auth *) input[type=email],
+html[data-theme="dark"] .field:not(#screen-auth *) input[type=password],
+html[data-theme="dark"] .field:not(#screen-auth *) input[type=number],
+html[data-theme="dark"] .field:not(#screen-auth *) input[type=datetime-local],
 html[data-theme="dark"] input[type=datetime-local] {
   background: var(--surface-2);
   color: var(--text);
   border-color: var(--border-strong);
 }
-html[data-theme="dark"] .field input:focus,
-html[data-theme="dark"] .field input[type=datetime-local]:focus,
+html[data-theme="dark"] .field:not(#screen-auth *) input:focus,
+html[data-theme="dark"] .field:not(#screen-auth *) input[type=datetime-local]:focus,
 html[data-theme="dark"] input[type=datetime-local]:focus {
   background: var(--surface-3);
   border-color: var(--primary);
@@ -10063,21 +10083,36 @@ html[data-theme="dark"] .admin-command-actions .nexus-primary-action { color: #0
 
 #screen-auth .auth-panel input[type="text"],
 #screen-auth .auth-panel input[type="email"],
-#screen-auth .auth-panel input[type="password"] {
-  border-color: rgba(31, 80, 151, .18);
-  color: #152744;
-  background: rgba(248, 251, 255, .92);
+#screen-auth .auth-panel input[type="password"],
+#screen-auth .auth-panel input {
+  border-color: rgba(31, 80, 151, .25) !important;
+  color: #152744 !important;
+  background: rgba(248, 251, 255, .95) !important;
 }
 
 #screen-auth .auth-panel input::placeholder {
-  color: #9aa7ba;
+  color: #9aa7ba !important;
 }
 
-#screen-auth .auth-panel input:focus {
-  outline: 0;
-  border-color: #2d7bd0;
-  background: #fff;
-  box-shadow: 0 0 0 4px rgba(45, 123, 208, .12);
+#screen-auth .auth-panel input:focus,
+#screen-auth .auth-panel input:active,
+#screen-auth .auth-panel input:hover {
+  outline: 0 !important;
+  border-color: #2d7bd0 !important;
+  background: #ffffff !important;
+  color: #152744 !important;
+  box-shadow: 0 0 0 4px rgba(45, 123, 208, .16) !important;
+}
+
+/* Sửa triệt để lỗi phông nền bị tối đen khi nhấp chọn hoặc tự động điền (autofill) trong Chrome/Edge */
+#screen-auth .auth-panel input:-webkit-autofill,
+#screen-auth .auth-panel input:-webkit-autofill:hover,
+#screen-auth .auth-panel input:-webkit-autofill:focus,
+#screen-auth .auth-panel input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #152744 !important;
+  caret-color: #152744 !important;
+  transition: background-color 5000s ease-in-out 0s !important;
 }
 
 #screen-auth .input-with-icon > span {
