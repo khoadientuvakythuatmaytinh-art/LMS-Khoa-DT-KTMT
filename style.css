@@ -1138,8 +1138,9 @@ tr:hover td { background: #f5f8ff; }
   filter: brightness(.92);
 }
 .meeting-room-page {
-  padding: 20px 22px;
-  overflow: hidden;
+  padding: 20px 22px 40px;
+  overflow-y: auto !important;
+  overflow-x: hidden;
 }
 .meeting-room-header {
   display: flex;
@@ -1186,8 +1187,8 @@ tr:hover td { background: #f5f8ff; }
 }
 .jitsi-container {
   width: 100%;
-  height: calc(100vh - 175px);
-  min-height: 520px;
+  height: clamp(480px, calc(100vh - 220px), 760px);
+  min-height: 480px;
   overflow: hidden;
   border: 1px solid #273147;
   border-radius: 13px;
@@ -2972,7 +2973,8 @@ tbody tr:hover:not(.empty-row) {
 }
 
 .meeting-room-page {
-  padding: 0;
+  padding: 0 0 40px;
+  overflow-y: auto !important;
 }
 
 .meeting-room-header {
@@ -8313,7 +8315,8 @@ html.reduced-motion *::after {
   }
 
   .meeting-room-page {
-    padding: 14px;
+    padding: 14px 14px 32px;
+    overflow-y: auto !important;
   }
 
   .jitsi-container {
