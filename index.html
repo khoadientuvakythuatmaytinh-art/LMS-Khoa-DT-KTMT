@@ -1,0 +1,1937 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Khoa Điện Tử và Kĩ Thuật Máy Tính</title>
+  <meta name="theme-color" content="#635bff"/>
+  <meta name="description" content="Khoa Điện Tử và Kĩ Thuật Máy Tính — hệ thống học tập với thi trực tuyến, phân tích, bảng tin, lịch thông minh và cộng tác lớp học."/>
+  <link rel="icon" href="logo-khoa.png" type="image/png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css?v=20260805-dashboard-admin-editable"/>
+</head>
+<body>
+<a class="skip-link" href="#screen-app">Bỏ qua đến nội dung chính</a>
+
+<!-- ── Thanh điều hướng ─────────────────────────────────── -->
+<aside id="sidebar" class="sidebar hidden" aria-label="Điều hướng chính">
+  <div class="sidebar-brand">
+    <div class="brand-mark" aria-hidden="true" style="overflow: hidden;"><img src="logo-khoa.png" alt="Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;"/></div>
+    <div class="brand-copy">
+      <strong class="brand-text">Khoa Điện Tử & KTMT</strong>
+      <span class="brand-subtitle">Hệ Thống Học Tập & Thi</span>
+    </div>
+    <button type="button" id="btn-sidebar-toggle" class="sidebar-toggle" title="Thu gọn thanh menu" aria-label="Thu gọn thanh menu">‹</button>
+  </div>
+
+  <div class="sidebar-user">
+    <div class="avatar" id="sb-avatar">?</div>
+    <div class="sidebar-user-info">
+      <div id="sb-name" class="sb-name">—</div>
+      <div class="sidebar-user-meta">
+        <span class="online-dot" aria-hidden="true"></span>
+        <span id="sb-role" class="sb-role">—</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav" id="sidebar-nav">
+    <!-- Nội dung được tạo theo vai trò bằng JavaScript -->
+  </nav>
+
+  <div class="sidebar-footer">
+    <button type="button" class="sidebar-action" id="btn-theme-toggle" title="Đổi giao diện sáng/tối">
+      <span class="nav-icon" id="sidebar-theme-icon">🌙</span>
+      <span class="nav-label" id="sidebar-theme-label">Chế độ tối</span>
+    </button>
+    <button class="btn-logout" id="btn-logout">
+      <span class="nav-icon">↪</span>
+      <span class="nav-label">Đăng xuất</span>
+    </button>
+  </div>
+</aside>
+<div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
+<!-- ── Main content ─────────────────────────────────────── -->
+<div id="main-area">
+
+  <!-- MÀN HÌNH ĐĂNG NHẬP -->
+  <div id="screen-auth" class="screen active">
+    <div class="auth-shell">
+      <section class="auth-showcase" aria-label="Giới thiệu hệ thống">
+        <div class="auth-showcase-inner">
+          <div class="auth-product-brand">
+            <div class="auth-product-mark" style="overflow: hidden;"><img src="logo-khoa.png" alt="Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;"/></div>
+            <div>
+              <strong>Khoa Điện Tử & KTMT</strong>
+              <span>Nền tảng thi & học trực tuyến thế hệ mới</span>
+            </div>
+          </div>
+
+          <div class="auth-hero-copy">
+            <span class="auth-eyebrow"><i></i> NỀN TẢNG GIÁO DỤC SỐ TOÀN DIỆN</span>
+            <h1>Biến mọi kỳ thi thành một trải nghiệm <em>liền mạch.</em></h1>
+            <p>Một không gian duy nhất để tổ chức lớp học, phân phối đề thi, nhận bài, chấm điểm và theo dõi tiến độ — đẹp, nhanh và trực quan.</p>
+            <div class="auth-proof-row">
+              <div><strong>99.9%</strong><span>Trạng thái hệ thống</span></div>
+              <div><strong>24/7</strong><span>Đồng bộ Internet</span></div>
+              <div><strong>1 app</strong><span>Toàn bộ quy trình</span></div>
+            </div>
+          </div>
+
+          <div class="auth-feature-grid">
+            <article class="auth-feature-card">
+              <span>📄</span>
+              <div><strong>Thu và gửi bài</strong><small>Quản lý đề thi, hạn nộp và file bài làm rõ ràng.</small></div>
+            </article>
+            <article class="auth-feature-card">
+              <span>🧩</span>
+              <div><strong>Trắc nghiệm</strong><small>Tạo câu hỏi nhanh, tự chấm và theo dõi vi phạm.</small></div>
+            </article>
+            <article class="auth-feature-card">
+              <span>🎥</span>
+              <div><strong>Lớp trực tuyến</strong><small>Lên lịch và tham gia phòng học ngay trong ứng dụng.</small></div>
+            </article>
+            <article class="auth-feature-card">
+              <span>📊</span>
+              <div><strong>Kết quả tập trung</strong><small>Điểm số, nhận xét và trạng thái nộp được lưu đồng bộ.</small></div>
+            </article>
+          </div>
+
+          <div class="auth-showcase-footer">
+            <span class="auth-status-dot"></span>
+            <span>Hệ thống đang hoạt động ổn định</span>
+            <span class="auth-footer-separator">•</span>
+            <span>Dữ liệu đồng bộ thời gian thực</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="auth-panel">
+        <div class="auth-panel-inner">
+          <div class="auth-school-brand" aria-label="Trường Đại học Kinh tế - Kỹ thuật Công nghiệp">
+            <div class="auth-school-logo">
+              <img src="logo-khoa.png" alt="Logo Trường Đại học Kinh tế - Kỹ thuật Công nghiệp"/>
+            </div>
+            <div class="auth-school-copy">
+              <span>UNETI</span>
+              <strong>TRƯỜNG ĐẠI HỌC KINH TẾ - KỸ THUẬT CÔNG NGHIỆP</strong>
+              <small>KHOA ĐIỆN TỬ VÀ KỸ THUẬT MÁY TÍNH</small>
+            </div>
+          </div>
+
+          <div class="auth-heading-block">
+            <span class="auth-welcome">CHÀO MỪNG TRỞ LẠI</span>
+            <h2>Đăng nhập hệ thống</h2>
+            <p>Sử dụng tài khoản giáo viên hoặc học sinh để tiếp tục.</p>
+          </div>
+
+          <div class="tab-row" role="tablist" aria-label="Chọn đăng nhập hoặc đăng ký">
+            <button class="tab active" id="tab-btn-login" type="button" onclick="
+              document.getElementById('tab-btn-login').classList.add('active');
+              document.getElementById('tab-btn-register').classList.remove('active');
+              document.getElementById('tab-login').classList.remove('hidden');
+              document.getElementById('tab-register').classList.add('hidden');
+              document.querySelector('.auth-heading-block h2').textContent='Đăng nhập hệ thống';
+              document.querySelector('.auth-heading-block p').textContent='Sử dụng tài khoản giáo viên hoặc học sinh để tiếp tục.';
+            ">Đăng nhập</button>
+            <button class="tab" id="tab-btn-register" type="button" onclick="
+              document.getElementById('tab-btn-register').classList.add('active');
+              document.getElementById('tab-btn-login').classList.remove('active');
+              document.getElementById('tab-register').classList.remove('hidden');
+              document.getElementById('tab-login').classList.add('hidden');
+              document.querySelector('.auth-heading-block h2').textContent='Tạo tài khoản mới';
+              document.querySelector('.auth-heading-block p').textContent='Điền thông tin bên dưới để bắt đầu sử dụng hệ thống.';
+            ">Đăng ký</button>
+          </div>
+
+          <!-- Đăng nhập -->
+          <div id="tab-login" class="tab-panel active auth-form-card">
+            <div class="field">
+              <label for="login-email">Email</label>
+              <div class="input-with-icon"><span>✉</span><input type="email" id="login-email" placeholder="email@truong.edu.vn" autocomplete="email"/></div>
+            </div>
+            <div class="field">
+              <label for="login-pw">Mật khẩu</label>
+              <div class="input-with-icon"><span>🔒</span><input type="password" id="login-pw" placeholder="Nhập mật khẩu" autocomplete="current-password"/></div>
+            </div>
+            <button class="btn-primary full auth-submit" id="btn-login">Đăng nhập <span>→</span></button>
+          </div>
+
+          <!-- Đăng ký -->
+          <div id="tab-register" class="tab-panel auth-form-card hidden">
+            <div class="field-row">
+              <div class="field">
+                <label for="reg-hoten">Họ và tên *</label>
+                <input type="text" id="reg-hoten" placeholder="Nguyễn Văn A" autocomplete="name"/>
+              </div>
+              <div class="field">
+                <label for="reg-maso">Mã số</label>
+                <input type="text" id="reg-maso" placeholder="HS001 / GV001"/>
+              </div>
+            </div>
+            <div class="field">
+              <label for="reg-email">Email *</label>
+              <input type="email" id="reg-email" placeholder="email@truong.edu.vn" autocomplete="email"/>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="reg-pw">Mật khẩu * (từ 6 ký tự)</label>
+                <input type="password" id="reg-pw" placeholder="Nhập mật khẩu" autocomplete="new-password"/>
+              </div>
+              <div class="field">
+                <label for="reg-pw2">Xác nhận mật khẩu *</label>
+                <input type="password" id="reg-pw2" placeholder="Nhập lại mật khẩu" autocomplete="new-password"/>
+              </div>
+            </div>
+            <div class="field">
+              <label>Đăng ký với tư cách *</label>
+              <div class="role-grid">
+                <label class="role-card">
+                  <input type="radio" name="role" value="hocsinh" checked/>
+                  <span class="role-icon">🎓</span>
+                  <span class="role-name">Học sinh</span>
+                  <small>Làm bài và xem kết quả</small>
+                </label>
+                <label class="role-card">
+                  <input type="radio" name="role" value="giaovien"/>
+                  <span class="role-icon">🧑‍🏫</span>
+                  <span class="role-name">Giáo viên</span>
+                  <small>Tạo đề và quản lý lớp</small>
+                </label>
+              </div>
+            </div>
+            <button class="btn-primary full auth-submit" id="btn-register">Tạo tài khoản <span>→</span></button>
+          </div>
+
+          <p class="auth-privacy">🔐 Dữ liệu tài khoản được xác thực và đồng bộ qua Firebase.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- DASHBOARD SCREENS (injected content) -->
+  <div id="screen-app" class="screen hidden">
+    <header class="app-topbar">
+      <div class="topbar-left">
+        <button type="button" id="btn-mobile-menu" class="topbar-icon-button" aria-label="Mở menu">☰</button>
+        <div class="topbar-context">
+          <span id="topbar-role-label" class="topbar-role-label">Không gian học tập</span>
+          <div class="topbar-current-row">
+            <strong id="topbar-page-label">Tổng quan</strong>
+            <span class="topbar-separator">/</span>
+            <span id="topbar-page-hint">Quản lý công việc của bạn</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" id="btn-command-center" class="command-trigger" aria-label="Mở trung tâm lệnh">
+        <span class="command-trigger-icon">⌕</span>
+        <span class="command-trigger-label">Tìm trang, chức năng...</span>
+        <kbd>Ctrl K</kbd>
+      </button>
+      <div class="topbar-actions">
+        <div id="network-pill" class="network-pill online" title="Trạng thái kết nối">
+          <span></span><strong>Online</strong>
+        </div>
+        <div class="topbar-date-card">
+          <span aria-hidden="true">◷</span>
+          <div><small>Hôm nay</small><strong id="topbar-date">—</strong></div>
+        </div>
+        <button type="button" id="btn-notifications" class="topbar-icon-button notification-button" title="Thông báo" aria-label="Mở thông báo">
+          <span>◉</span><i id="notification-badge">3</i>
+        </button>
+        <button type="button" id="btn-top-theme" class="topbar-icon-button" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện sáng/tối">🌙</button>
+        <button type="button" id="topbar-profile" class="topbar-profile" aria-label="Tài khoản hiện tại">
+          <span id="topbar-avatar">?</span>
+          <span class="topbar-profile-copy"><strong id="topbar-user-name">Người dùng</strong><small id="topbar-user-role">Tài khoản</small></span>
+          <b>⌄</b>
+        </button>
+      </div>
+    </header>
+
+    <main class="page-stage">
+
+    <!-- Giáo viên: Học phần -->
+    <div id="page-hoc-phan" class="page hidden">
+      <div class="page-header">
+        <h2>🏫 Học phần của tôi</h2>
+        <div class="header-actions">
+          <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-hp" placeholder="Tìm theo mã hoặc tên học phần…" class="search-box"/>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="field-row">
+          <div class="field">
+            <label>Tên học phần (đồng thời là mã học phần) *</label>
+            <input type="text" id="hp-ten" placeholder="VD: Toán 10 – Lớp 10A1"/>
+            <small class="field-help">Học sinh sẽ dùng chính tên này để ghi danh.</small>
+          </div>
+          <div class="field">
+            <label>Mật khẩu ghi danh *</label>
+            <input type="text" id="hp-matkhau" placeholder="VD: toan10a1"/>
+          </div>
+        </div>
+        <button class="btn-primary" id="btn-tao-hp">➕ Tạo học phần</button>
+      </div>
+      <div class="card table-wrap">
+        <table>
+          <thead><tr><th>Tên/Mã học phần</th><th>Số học sinh</th><th>Ngày tạo</th><th>Thao tác</th></tr></thead>
+          <tbody id="tb-hp">
+            <tr class="empty-row"><td colspan="4">Đang tải…</td></tr>
+          </tbody>
+        </table>
+        <div id="hp-noresult" class="empty-row hidden"><p>Không tìm thấy học phần phù hợp.</p></div>
+      </div>
+    </div>
+
+    <!-- Giáo viên: Đăng đề -->
+    <div id="page-dang-de" class="page hidden">
+      <div class="page-header"><h2>📤 Đăng đề thi mới</h2></div>
+      <div class="card">
+        <div class="field">
+          <label>Học phần *</label>
+          <select id="dangde-hocphan" class="select-box full"></select>
+          <div id="dangde-hp-hint" class="field-hint hidden">Bạn chưa có học phần nào — hãy tạo học phần trước khi đăng đề.</div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Mô tả / tên đề thi *</label>
+            <input type="text" id="mota-de" placeholder="VD: Kiểm tra Toán – Chương 3 – Lớp 10A"/>
+          </div>
+          <div class="field">
+            <label>Hạn nộp bài *</label>
+            <input type="datetime-local" id="deadline-de"/>
+            <small class="field-help">Học sinh vẫn có thể nộp sau hạn, nhưng sẽ bị đánh dấu nộp muộn.</small>
+          </div>
+        </div>
+        <div class="field">
+          <label>Chọn file đề thi *</label>
+          <div class="file-drop" id="drop-de">
+            <span class="drop-icon">📁</span>
+            <span id="drop-de-label">Kéo file vào đây hoặc bấm để chọn</span>
+            <span class="drop-hint">Hỗ trợ PDF, Word, ảnh, ZIP · tối đa 25MB</span>
+            <input type="file" id="file-de" accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png" style="display:none"/>
+          </div>
+          <div id="file-de-info" class="file-info hidden">
+            <span class="file-info-icon">📄</span>
+            <span id="file-de-name" class="file-info-name"></span>
+            <span id="file-de-size" class="file-info-size"></span>
+            <button type="button" id="file-de-remove" class="file-info-remove" title="Bỏ chọn file">✕</button>
+          </div>
+        </div>
+        <div id="prog-de-wrap" class="hidden">
+          <progress id="prog-de" value="0" max="100"></progress>
+          <span id="prog-de-pct">0%</span>
+        </div>
+        <button class="btn-primary" id="btn-upload-de">📤 Đăng đề thi</button>
+      </div>
+    </div>
+
+    <!-- Giáo viên: Danh sách đề -->
+    <div id="page-ds-de" class="page hidden">
+      <div class="page-header">
+        <h2>📋 Đề thi đã đăng</h2>
+        <div class="header-actions">
+          <select id="dsde-hocphan-filter" class="select-box"></select>
+          <button class="btn-outline" id="btn-refresh-de">↻ Làm mới</button>
+        </div>
+      </div>
+      <div class="card table-wrap">
+        <table>
+          <thead><tr><th>Học phần</th><th>Đề thi/File</th><th>Mô tả</th><th>Thời gian đăng</th><th>Hạn nộp</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+          <tbody id="tb-de"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Giáo viên: Bài nộp -->
+    <div id="page-bai-nop" class="page hidden">
+      <div class="page-header">
+        <h2>📥 Bài nộp của học sinh</h2>
+        <div class="header-actions">
+          <select id="bn-hocphan-filter" class="select-box"></select>
+          <input type="text" id="search-bainop" placeholder="Tìm theo tên, lớp…" class="search-box"/>
+          <button class="btn-outline" id="btn-refresh-bn">↻ Làm mới</button>
+        </div>
+      </div>
+      <div class="card table-wrap">
+        <table>
+          <thead><tr><th>Học phần</th><th>Đề thi</th><th>Họ tên</th><th>Mã số</th><th>Lớp</th><th>File</th><th>Thời gian nộp</th><th>Đúng/Muộn</th><th>Điểm</th><th>Thao tác</th></tr></thead>
+          <tbody id="tb-bn"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Học sinh: Ghi danh học phần -->
+    <div id="page-ghi-danh" class="page page-student hidden">
+      <div class="page-header"><h2>🔑 Ghi danh học phần</h2></div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-icon">🏫</span>
+          <div>
+            <div id="stat-so-hp" class="stat-value">0</div>
+            <div class="stat-label">Học phần đã ghi danh</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">👋</span>
+          <div>
+            <div id="stat-hello" class="stat-value">—</div>
+            <div class="stat-label">Xin chào</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="field-row">
+          <div class="field">
+            <label>Tên/Mã học phần *</label>
+            <input type="text" id="gd-mahp" placeholder="VD: Toán 10 – Lớp 10A1"/>
+            <small class="field-help">Nhập đúng tên học phần giáo viên đã tạo.</small>
+          </div>
+          <div class="field">
+            <label>Mật khẩu ghi danh *</label>
+            <input type="password" id="gd-matkhau" placeholder="Mật khẩu do giáo viên cung cấp"/>
+          </div>
+        </div>
+        <button class="btn-primary student" id="btn-ghi-danh">✅ Ghi danh</button>
+      </div>
+
+      <div class="card table-wrap">
+        <div class="table-toolbar">
+          <span class="table-toolbar-title">Học phần của tôi</span>
+          <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-hp-hs" placeholder="Tìm học phần đã ghi danh…" class="search-box"/>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Tên/Mã học phần</th><th>Ngày ghi danh</th><th>Thao tác</th></tr></thead>
+          <tbody id="tb-hp-hs">
+            <tr class="empty-row"><td colspan="3">Bạn chưa ghi danh học phần nào.</td></tr>
+          </tbody>
+        </table>
+        <div id="hp-hs-noresult" class="empty-row hidden"><p>Không tìm thấy học phần phù hợp.</p></div>
+      </div>
+    </div>
+
+    <!-- Học sinh: Tải đề -->
+    <div id="page-tai-de" class="page page-student hidden">
+      <div class="page-header">
+        <h2>📄 Đề thi hiện có</h2>
+        <div class="header-actions">
+          <select id="taide-hocphan" class="select-box"></select>
+          <button class="btn-outline student" id="btn-refresh-hs-de">↻ Làm mới</button>
+        </div>
+      </div>
+      <div id="taide-hp-empty" class="info-banner muted hidden">
+        <span class="info-banner-icon">🔑</span>
+        <span>Bạn chưa ghi danh học phần nào. Vào mục <strong>Ghi danh học phần</strong> để bắt đầu.</span>
+      </div>
+      <div class="card table-wrap">
+        <table>
+          <thead><tr><th>Đề thi/File</th><th>Mô tả</th><th>Hạn nộp</th><th>Trạng thái</th><th>Tải đề</th><th>Nộp bài</th></tr></thead>
+          <tbody id="tb-de-hs"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Học sinh: Nộp bài -->
+    <div id="page-nop-bai" class="page page-student hidden">
+      <div class="page-header"><h2>📤 Nộp bài làm</h2></div>
+      <div class="card">
+        <div class="field-row">
+          <div class="field">
+            <label>Học phần *</label>
+            <select id="nopbai-hocphan" class="select-box full"></select>
+          </div>
+          <div class="field">
+            <label>Đề thi *</label>
+            <select id="nopbai-dethi" class="select-box full">
+              <option value="">— Chọn học phần trước —</option>
+            </select>
+          </div>
+        </div>
+        <div id="nopbai-deadline-info" class="info-banner muted">
+          <span class="info-banner-icon">ℹ️</span>
+          <span>Chọn đề thi để xem hạn nộp.</span>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Họ và tên *</label>
+            <input type="text" id="hs-hoten" placeholder="Nguyễn Văn A"/>
+          </div>
+          <div class="field">
+            <label>Mã số học sinh</label>
+            <input type="text" id="hs-maso" placeholder="HS001"/>
+          </div>
+          <div class="field">
+            <label>Lớp</label>
+            <input type="text" id="hs-lop" placeholder="10A1"/>
+          </div>
+        </div>
+        <div class="field">
+          <label>File bài làm *</label>
+          <div class="file-drop" id="drop-bai">
+            <span class="drop-icon">📁</span>
+            <span id="drop-bai-label">Kéo file vào đây hoặc bấm để chọn</span>
+            <span class="drop-hint">Hỗ trợ PDF, Word, ảnh, ZIP · tối đa 25MB</span>
+            <input type="file" id="file-bai" accept=".pdf,.doc,.docx,.zip,.rar,.jpg,.jpeg,.png" style="display:none"/>
+          </div>
+          <div id="file-bai-info" class="file-info hidden">
+            <span class="file-info-icon">📄</span>
+            <span id="file-bai-name" class="file-info-name"></span>
+            <span id="file-bai-size" class="file-info-size"></span>
+            <button type="button" id="file-bai-remove" class="file-info-remove" title="Bỏ chọn file">✕</button>
+          </div>
+        </div>
+        <div id="prog-bai-wrap" class="hidden">
+          <progress id="prog-bai" value="0" max="100"></progress>
+          <span id="prog-bai-pct">0%</span>
+        </div>
+        <button class="btn-primary student" id="btn-nop-bai">📤 Nộp bài</button>
+      </div>
+    </div>
+
+    <!-- Học sinh: Điểm, phân tích và biểu đồ -->
+    <div id="page-ket-qua" class="page page-student hidden">
+      <div class="page-header score-page-header">
+        <div>
+          <h2>📊 Trung tâm điểm số</h2>
+          <p class="page-subtitle">Theo dõi kết quả tự luận và trắc nghiệm, xem xu hướng và phân tích tiến độ học tập.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-outline student" id="btn-export-score">⇩ Xuất CSV</button>
+          <button class="btn-outline student" id="btn-refresh-ket-qua">↻ Làm mới</button>
+        </div>
+      </div>
+
+      <section class="score-summary-grid" aria-label="Tổng quan điểm số">
+        <article class="score-summary-card score-summary-primary">
+          <span class="score-summary-icon">◎</span>
+          <div>
+            <small>Điểm trung bình</small>
+            <strong id="score-average">—</strong>
+            <span id="score-average-note">Chưa có bài được chấm</span>
+          </div>
+        </article>
+        <article class="score-summary-card">
+          <span class="score-summary-icon">↗</span>
+          <div>
+            <small>Điểm cao nhất</small>
+            <strong id="score-highest">—</strong>
+            <span id="score-highest-note">Đang chờ dữ liệu</span>
+          </div>
+        </article>
+        <article class="score-summary-card">
+          <span class="score-summary-icon">✓</span>
+          <div>
+            <small>Đã có điểm</small>
+            <strong id="score-graded-count">0/0</strong>
+            <span id="score-graded-note">0 bài đang chờ chấm</span>
+          </div>
+        </article>
+        <article class="score-summary-card">
+          <span class="score-summary-icon">◷</span>
+          <div>
+            <small>Tỷ lệ đúng hạn</small>
+            <strong id="score-ontime-rate">—</strong>
+            <span id="score-ontime-note">Chỉ tính bài tự luận</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="score-analytics-grid">
+        <article class="card score-chart-card">
+          <div class="score-card-heading">
+            <div>
+              <span class="score-section-kicker">PHÂN TÍCH TRỰC QUAN</span>
+              <h3 id="score-chart-title">Phân bố điểm</h3>
+              <p id="score-chart-description">Số bài theo từng khoảng điểm trên thang 10.</p>
+            </div>
+            <div class="score-chart-tabs" role="tablist" aria-label="Chọn loại biểu đồ">
+              <button type="button" class="score-chart-tab active" data-score-chart="distribution">Phân bố</button>
+              <button type="button" class="score-chart-tab" data-score-chart="course">Học phần</button>
+              <button type="button" class="score-chart-tab" data-score-chart="trend">Xu hướng</button>
+            </div>
+          </div>
+          <div class="score-chart-shell">
+            <canvas id="score-chart" role="img" aria-label="Biểu đồ thống kê điểm số"></canvas>
+            <div id="score-chart-empty" class="score-chart-empty hidden">
+              <span>◌</span>
+              <strong>Chưa đủ dữ liệu để vẽ biểu đồ</strong>
+              <small>Kết quả sẽ xuất hiện khi có ít nhất một bài được chấm.</small>
+            </div>
+          </div>
+          <div id="score-chart-legend" class="score-chart-legend"></div>
+        </article>
+
+        <aside class="card score-insight-card">
+          <div class="score-card-heading compact">
+            <div>
+              <span class="score-section-kicker">HIỆU SUẤT HỌC TẬP</span>
+              <h3>Đánh giá hiện tại</h3>
+            </div>
+          </div>
+          <div class="score-ring" id="score-ring" style="--score-progress:0%">
+            <div>
+              <strong id="score-ring-value">—</strong>
+              <span>/10</span>
+            </div>
+          </div>
+          <div class="score-insight-copy">
+            <strong id="score-performance-label">Chưa có đánh giá</strong>
+            <p id="score-performance-note">Khi có điểm, hệ thống sẽ tự động phân tích kết quả của bạn.</p>
+          </div>
+          <div class="score-mini-stats">
+            <div><span>Điểm tốt (≥ 8)</span><strong id="score-good-count">0</strong></div>
+            <div><span>Đạt (≥ 5)</span><strong id="score-pass-count">0</strong></div>
+            <div><span>Chờ chấm/công bố</span><strong id="score-pending-count">0</strong></div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="card score-filter-card">
+        <div class="score-filter-heading">
+          <div>
+            <span class="score-section-kicker">LỊCH SỬ KẾT QUẢ</span>
+            <h3>Chi tiết từng bài đánh giá</h3>
+          </div>
+          <span id="score-filter-count" class="score-filter-count">0 kết quả</span>
+        </div>
+        <div class="score-filter-grid">
+          <label>
+            <span>Học phần</span>
+            <select id="score-filter-course" class="select-box">
+              <option value="">Tất cả học phần</option>
+            </select>
+          </label>
+          <label>
+            <span>Loại bài</span>
+            <select id="score-filter-source" class="select-box">
+              <option value="">Tất cả loại bài</option>
+              <option value="assignment">Tự luận / nộp file</option>
+              <option value="quiz">Trắc nghiệm</option>
+            </select>
+          </label>
+          <label>
+            <span>Trạng thái điểm</span>
+            <select id="score-filter-status" class="select-box">
+              <option value="">Tất cả trạng thái</option>
+              <option value="graded">Đã có điểm</option>
+              <option value="pending">Chờ chấm / công bố</option>
+            </select>
+          </label>
+          <label class="score-search-field">
+            <span>Tìm kiếm</span>
+            <div class="search-wrap">
+              <span class="search-icon">⌕</span>
+              <input id="score-search" class="search-box" type="search" placeholder="Tên bài hoặc học phần…"/>
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <div class="card table-wrap score-results-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Học phần</th>
+              <th>Bài đánh giá</th>
+              <th>Loại</th>
+              <th>Ngày nộp</th>
+              <th>Điểm</th>
+              <th>Xếp loại</th>
+              <th>Trạng thái</th>
+              <th>Chi tiết</th>
+            </tr>
+          </thead>
+          <tbody id="tb-ket-qua">
+            <tr class="empty-row"><td colspan="8">Chọn “Làm mới” để tải kết quả.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <!-- Giáo viên / Học sinh: Lớp học trực tuyến -->
+    <div id="page-lop-truc-tuyen" class="page hidden">
+      <div class="page-header meeting-page-header">
+        <div>
+          <h2>🎥 Lớp học trực tuyến</h2>
+          <p id="meeting-page-subtitle" class="page-subtitle">
+            Xem lịch và tham gia lớp học trực tuyến.
+          </p>
+        </div>
+        <div class="header-actions">
+          <select id="meeting-status-filter" class="select-box">
+            <option value="all">Tất cả lịch học</option>
+            <option value="live">Đang mở</option>
+            <option value="upcoming">Sắp diễn ra</option>
+            <option value="ended">Đã kết thúc</option>
+            <option value="cancelled">Đã hủy</option>
+          </select>
+          <button class="btn-outline" id="btn-refresh-meetings">↻ Làm mới</button>
+        </div>
+      </div>
+
+      <!-- Chỉ hiện cho giáo viên -->
+      <section id="meeting-teacher-panel" class="card meeting-schedule-card hidden">
+        <div class="meeting-panel-title">
+          <div>
+            <h3>📅 Lên lịch lớp học</h3>
+            <p>Tạo lịch theo học phần. Học sinh đã ghi danh sẽ nhìn thấy lịch này.</p>
+          </div>
+          <span class="meeting-role-badge">Giáo viên</span>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Học phần *</label>
+            <select id="meeting-course" class="select-box full"></select>
+          </div>
+          <div class="field">
+            <label>Tên buổi học *</label>
+            <input type="text" id="meeting-title"
+                   placeholder="VD: Ôn tập chương 3"
+                   maxlength="120"/>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Thời gian bắt đầu *</label>
+            <input type="datetime-local" id="meeting-start"/>
+          </div>
+          <div class="field">
+            <label>Thời gian kết thúc *</label>
+            <input type="datetime-local" id="meeting-end"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Ghi chú cho học sinh</label>
+          <textarea id="meeting-note" rows="3" maxlength="600"
+                    placeholder="VD: Chuẩn bị tài liệu chương 1 đến chương 3…"></textarea>
+        </div>
+
+        <div class="meeting-create-actions">
+          <button class="btn-primary" id="btn-create-meeting">
+            ➕ Tạo lịch học
+          </button>
+          <span class="meeting-help">
+            Học sinh được tham gia từ 15 phút trước giờ bắt đầu.
+          </span>
+        </div>
+      </section>
+
+      <section id="meeting-student-banner" class="meeting-student-banner hidden">
+        <div class="meeting-student-banner-icon">🎓</div>
+        <div>
+          <strong>Lịch học của bạn</strong>
+          <p>Chỉ hiển thị các lớp thuộc học phần bạn đã ghi danh.</p>
+        </div>
+      </section>
+
+      <div class="meeting-list-heading">
+        <div>
+          <h3 id="meeting-list-title">Lịch lớp học</h3>
+          <p id="meeting-list-description">Đang tải lịch học…</p>
+        </div>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="search" id="search-meetings"
+                 class="search-box"
+                 placeholder="Tìm tên lớp hoặc học phần…"/>
+        </div>
+      </div>
+
+      <div id="meeting-list" class="meeting-grid">
+        <div class="student-empty">Đang tải lịch học…</div>
+      </div>
+    </div>
+
+    <!-- Phòng họp đang diễn ra -->
+    <div id="page-phong-hop" class="page meeting-room-page hidden">
+      <div class="meeting-room-header">
+        <div>
+          <span id="live-meeting-course" class="meeting-room-course">—</span>
+          <h2 id="live-meeting-title">Lớp học trực tuyến</h2>
+          <p id="live-meeting-time">—</p>
+        </div>
+        <button class="btn-danger-solid" id="btn-leave-live-class">
+          ✕ Rời lớp học
+        </button>
+      </div>
+
+      <div id="live-meeting-status" class="info-banner muted">
+        <span class="info-banner-icon">⏳</span>
+        <span>Đang kết nối đến phòng học…</span>
+      </div>
+
+      <div id="jitsi-container" class="jitsi-container">
+        <div class="jitsi-loading">
+          <span>🎥</span>
+          <strong>Đang chuẩn bị phòng học</strong>
+          <small>Vui lòng chờ trong giây lát…</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Giáo viên: Trắc nghiệm -->
+    <div id="page-trac-nghiem-gv" class="page hidden">
+      <div class="page-header">
+        <h2>🧩 Trắc nghiệm</h2>
+        <div class="header-actions">
+          <select id="tn-hocphan-filter" class="select-box"></select>
+          <button class="btn-outline" id="btn-refresh-tn-gv">↻ Làm mới</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="tn-form-title">➕ Tạo đề trắc nghiệm mới</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Học phần *</label>
+            <select id="tn-hocphan" class="select-box full"></select>
+            <div id="tn-hp-hint" class="field-hint hidden">Bạn chưa có học phần nào — hãy tạo học phần trước.</div>
+          </div>
+          <div class="field">
+            <label>Tiêu đề đề trắc nghiệm *</label>
+            <input type="text" id="tn-tieude" placeholder="VD: Kiểm tra 15 phút – Chương 2"/>
+          </div>
+        </div>
+        <div class="field">
+          <label>Mô tả / ghi chú</label>
+          <textarea id="tn-mota" rows="2" maxlength="500" placeholder="Ghi chú cho học sinh (không bắt buộc)"></textarea>
+        </div>
+        <div class="field-row tn-settings-row">
+          <div class="field">
+            <label>Thời gian làm bài (phút) *</label>
+            <input type="number" id="tn-thoigian" min="1" max="300" value="15"/>
+          </div>
+          <div class="field">
+            <label>Số lần làm tối đa</label>
+            <input type="number" id="tn-solan" min="1" max="10" value="1"/>
+          </div>
+          <div class="field">
+            <label>Số lần vi phạm tối đa trước khi tự nộp</label>
+            <input type="number" id="tn-gioihanvipham" min="1" max="20" value="3"/>
+          </div>
+        </div>
+        <div class="tn-checks-row">
+          <label class="tn-check"><input type="checkbox" id="tn-xaotroncauhoi" checked/> Xáo trộn thứ tự câu hỏi</label>
+          <label class="tn-check"><input type="checkbox" id="tn-xaotrondapan" checked/> Xáo trộn thứ tự đáp án</label>
+          <label class="tn-check"><input type="checkbox" id="tn-hiendiemngay" checked/> Hiện điểm ngay sau khi nộp</label>
+        </div>
+
+        <div class="tn-builder-header">
+          <span>Danh sách câu hỏi</span>
+          <button type="button" class="btn-outline" id="btn-them-cauhoi">➕ Thêm câu hỏi</button>
+        </div>
+        <div id="tn-builder-list" class="tn-builder-list"></div>
+
+        <button class="btn-primary" id="btn-luu-tracnghiem">💾 Lưu đề trắc nghiệm</button>
+      </div>
+
+      <div class="card table-wrap">
+        <table>
+          <thead><tr><th>Học phần</th><th>Tiêu đề</th><th>Số câu</th><th>Thời gian</th><th>Trạng thái</th><th>Lượt nộp</th><th>Thao tác</th></tr></thead>
+          <tbody id="tb-tn-gv"><tr class="empty-row"><td colspan="7">Đang tải…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Học sinh: Trắc nghiệm -->
+    <div id="page-trac-nghiem-hs" class="page page-student hidden">
+      <div class="page-header">
+        <h2>🧩 Trắc nghiệm</h2>
+        <div class="header-actions">
+          <button class="btn-outline student" id="btn-refresh-tn-hs">↻ Làm mới</button>
+        </div>
+      </div>
+      <div id="tn-hs-empty" class="info-banner muted hidden">
+        <span class="info-banner-icon">🔑</span>
+        <span>Bạn chưa ghi danh học phần nào. Vào mục <strong>Ghi danh học phần</strong> để bắt đầu.</span>
+      </div>
+      <div class="card table-wrap">
+        <table>
+          <thead><tr><th>Học phần</th><th>Tiêu đề</th><th>Số câu</th><th>Thời gian</th><th>Số lần đã làm</th><th>Thao tác</th></tr></thead>
+          <tbody id="tb-tn-hs"><tr class="empty-row"><td colspan="6">Đang tải…</td></tr></tbody>
+        </table>
+      </div>
+
+      <div class="page-header"><h2>📊 Kết quả trắc nghiệm</h2></div>
+      <div class="card table-wrap">
+        <table>
+          <thead><tr><th>Học phần</th><th>Tiêu đề</th><th>Điểm</th><th>Đúng/Tổng</th><th>Vi phạm</th><th>Thời gian nộp</th><th>Trạng thái</th></tr></thead>
+          <tbody id="tb-tn-ketqua-hs"><tr class="empty-row"><td colspan="7">Chưa có bài làm nào.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+
+
+    <!-- Giáo viên / Học sinh: Bạn bè và nhắn tin -->
+    <div id="page-ban-be" class="page social-page hidden">
+      <div class="page-header social-page-toolbar">
+        <div>
+          <h2>💬 Tin nhắn &amp; Nhóm lớp</h2>
+          <p class="page-subtitle">Nhắn tin riêng tư, tìm bạn mới và trao đổi theo nhóm của từng học phần.</p>
+        </div>
+        <div class="social-security-pill"><span>🔒</span> Tin riêng chỉ bạn bè · Nhóm lớp chỉ thành viên</div>
+      </div>
+
+      <div class="social-mode-tabs" role="tablist" aria-label="Chọn loại trò chuyện">
+        <button type="button" class="active" data-social-mode="private"><span>💬</span><strong>Tin nhắn riêng</strong><small>Bạn bè đã chấp nhận</small></button>
+        <button type="button" data-social-mode="class"><span>🏫</span><strong>Nhóm lớp</strong><small>Tự động theo học phần</small></button>
+      </div>
+
+      <div id="social-private-workspace" class="social-workspace">
+        <!-- Khám phá và lời mời -->
+        <aside class="social-column social-discovery-column">
+          <div class="social-column-head">
+            <div>
+              <span class="social-kicker">KHÁM PHÁ</span>
+              <h3>Tìm bạn mới</h3>
+            </div>
+            <span class="social-head-icon">⌕</span>
+          </div>
+
+          <div class="social-search-box">
+            <span>🔍</span>
+            <input id="social-user-search" type="search" autocomplete="off" placeholder="Nhập họ tên cần tìm…"/>
+            <button type="button" id="btn-clear-social-search" class="social-clear-button hidden" aria-label="Xóa tìm kiếm">✕</button>
+          </div>
+          <select id="social-role-filter" class="social-role-filter" aria-label="Lọc theo vai trò">
+            <option value="all">Tất cả người dùng</option>
+            <option value="hocsinh">Chỉ học sinh</option>
+            <option value="giaovien">Chỉ giáo viên</option>
+          </select>
+
+          <div id="social-search-status" class="social-inline-note">Nhập ít nhất 2 ký tự để bắt đầu tìm kiếm.</div>
+          <div id="social-search-results" class="social-people-list"></div>
+
+          <div class="social-section-divider"><span>LỜI MỜI KẾT BẠN</span></div>
+          <div class="social-request-tabs" role="tablist">
+            <button type="button" id="social-tab-incoming" class="active" data-social-tab="incoming">
+              Lời mời đến <span id="social-incoming-count">0</span>
+            </button>
+            <button type="button" id="social-tab-outgoing" data-social-tab="outgoing">
+              Đã gửi <span id="social-outgoing-count">0</span>
+            </button>
+          </div>
+          <div id="social-incoming-list" class="social-request-list"></div>
+          <div id="social-outgoing-list" class="social-request-list hidden"></div>
+        </aside>
+
+        <!-- Danh sách bạn bè -->
+        <section class="social-column social-friends-column">
+          <div class="social-column-head">
+            <div>
+              <span class="social-kicker">DANH BẠ</span>
+              <h3>Bạn bè <span id="social-friend-count" class="social-count-badge">0</span></h3>
+            </div>
+            <button type="button" id="btn-refresh-social" class="social-icon-button" title="Làm mới">↻</button>
+          </div>
+          <div class="social-search-box compact">
+            <span>⌕</span>
+            <input id="social-friend-filter" type="search" autocomplete="off" placeholder="Tìm trong danh sách bạn bè…"/>
+          </div>
+          <div id="social-friend-list" class="social-friend-list">
+            <div class="social-empty-state compact">
+              <span>👥</span><strong>Chưa có bạn bè</strong><small>Tìm một người và gửi lời mời kết bạn.</small>
+            </div>
+          </div>
+        </section>
+
+        <!-- Khu vực trò chuyện -->
+        <section class="social-chat-column">
+          <div id="social-chat-empty" class="social-chat-empty">
+            <div class="social-chat-empty-art"><span>✦</span><i></i><b></b></div>
+            <span class="social-kicker">TIN NHẮN RIÊNG TƯ</span>
+            <h3>Bắt đầu một cuộc trò chuyện</h3>
+            <p>Chọn một người trong danh sách bạn bè. Tin nhắn sẽ được đồng bộ tức thì qua Firebase.</p>
+            <div class="social-chat-benefits">
+              <span>✓ Chỉ bạn bè được nhắn tin</span>
+              <span>✓ Cập nhật theo thời gian thực</span>
+              <span>✓ Hỗ trợ Enter để gửi</span>
+            </div>
+          </div>
+
+          <div id="social-chat-active" class="social-chat-active hidden">
+            <header class="social-chat-header">
+              <button type="button" id="social-chat-back" class="social-chat-back" aria-label="Quay lại danh sách">‹</button>
+              <div id="social-chat-avatar" class="social-avatar large">?</div>
+              <div class="social-chat-person">
+                <strong id="social-chat-name">—</strong>
+                <span><i class="social-presence-dot"></i><span id="social-chat-role">Bạn bè</span></span>
+              </div>
+              <div class="social-chat-header-actions">
+                <button type="button" id="btn-social-chat-info" class="social-icon-button" title="Thông tin bạn bè">ⓘ</button>
+              </div>
+            </header>
+
+            <div id="social-message-list" class="social-message-list" aria-live="polite">
+              <div class="social-message-loading"><span></span><span></span><span></span></div>
+            </div>
+
+            <div id="social-chat-connection" class="social-chat-connection hidden">Đang kết nối lại…</div>
+            <footer class="social-composer">
+              <textarea id="social-message-input" rows="1" maxlength="2000" placeholder="Nhập tin nhắn…"></textarea>
+              <div class="social-composer-foot">
+                <span><kbd>Enter</kbd> gửi · <kbd>Shift</kbd> + <kbd>Enter</kbd> xuống dòng</span>
+                <span id="social-message-counter">0/2000</span>
+              </div>
+              <button type="button" id="btn-send-social-message" class="social-send-button" aria-label="Gửi tin nhắn">
+                <span>Gửi</span><b>➤</b>
+              </button>
+            </footer>
+          </div>
+        </section>
+      </div>
+
+      <div id="class-chat-workspace" class="class-chat-workspace hidden">
+        <aside class="class-group-sidebar">
+          <div class="social-column-head">
+            <div>
+              <span class="social-kicker">NHÓM THEO HỌC PHẦN</span>
+              <h3>Nhóm lớp <span id="class-group-count" class="social-count-badge">0</span></h3>
+            </div>
+            <button type="button" id="btn-refresh-class-groups" class="social-icon-button" title="Đồng bộ nhóm lớp">↻</button>
+          </div>
+          <div class="social-search-box compact">
+            <span>⌕</span>
+            <input id="class-group-search" type="search" autocomplete="off" placeholder="Tìm tên học phần hoặc giáo viên…"/>
+          </div>
+          <div class="class-group-info-banner">
+            <span>✨</span>
+            <p>Nhóm được tạo tự động khi giáo viên tạo học phần hoặc học sinh ghi danh.</p>
+          </div>
+          <div id="class-group-list" class="class-group-list">
+            <div class="social-list-loading"><span></span><span></span><span></span></div>
+          </div>
+        </aside>
+
+        <section class="class-group-chat-column">
+          <div id="class-chat-empty" class="social-chat-empty">
+            <div class="social-chat-empty-art class-art"><span>🏫</span><i></i><b></b></div>
+            <span class="social-kicker">KHÔNG GIAN CỦA CẢ LỚP</span>
+            <h3>Chọn một nhóm học phần</h3>
+            <p>Mọi học sinh đã ghi danh và giáo viên phụ trách đều có thể trao đổi trong nhóm.</p>
+            <div class="social-chat-benefits">
+              <span>✓ Tự thêm thành viên</span>
+              <span>✓ Giáo viên có dấu đỏ</span>
+              <span>✓ Đồng bộ thời gian thực</span>
+            </div>
+          </div>
+
+          <div id="class-chat-active" class="social-chat-active hidden">
+            <header class="social-chat-header class-chat-header">
+              <button type="button" id="class-chat-back" class="social-chat-back" aria-label="Quay lại danh sách nhóm">‹</button>
+              <div id="class-chat-avatar" class="class-group-avatar large">HP</div>
+              <div class="social-chat-person">
+                <strong id="class-chat-name">—</strong>
+                <span><i class="social-presence-dot"></i><span id="class-chat-meta">0 thành viên</span></span>
+              </div>
+              <div class="class-chat-teacher-chip"><span class="teacher-red-badge">GIÁO VIÊN</span><strong id="class-chat-teacher">—</strong></div>
+            </header>
+
+            <div id="class-message-list" class="social-message-list" aria-live="polite">
+              <div class="social-message-loading"><span></span><span></span><span></span></div>
+            </div>
+
+            <footer class="social-composer">
+              <textarea id="class-message-input" rows="1" maxlength="2000" placeholder="Nhắn cho cả lớp…"></textarea>
+              <div class="social-composer-foot">
+                <span><kbd>Enter</kbd> gửi · <kbd>Shift</kbd> + <kbd>Enter</kbd> xuống dòng</span>
+                <span id="class-message-counter">0/2000</span>
+              </div>
+              <button type="button" id="btn-send-class-message" class="social-send-button" aria-label="Gửi tin nhắn cho lớp">
+                <span>Gửi lớp</span><b>➤</b>
+              </button>
+            </footer>
+          </div>
+        </section>
+      </div>
+    </div>
+
+
+
+    <!-- ExamFlow Nexus: Trung tâm điều hành -->
+    <div id="page-dashboard" class="page nexus-page hidden">
+      <section class="nexus-command-hero">
+        <div class="nexus-command-copy">
+          <span class="nexus-kicker"><i></i> KHOA ĐIỆN TỬ VÀ KĨ THUẬT MÁY TÍNH</span>
+          <h1 id="nexus-welcome-title">Chào mừng trở lại</h1>
+          <p id="nexus-welcome-subtitle">Mọi dữ liệu quan trọng của bạn được tổng hợp tại một nơi.</p>
+          <div class="nexus-hero-actions">
+            <button type="button" class="nexus-primary-action" id="nexus-primary-action"><span>Tiếp tục công việc</span><b>→</b></button>
+            <button type="button" class="nexus-ghost-action" data-nexus-route="page-planner">Mở lịch công việc</button>
+          </div>
+        </div>
+        <div class="nexus-command-status">
+          <div class="nexus-pulse-orb"><span></span><b id="nexus-readiness-value">--</b><small>Chỉ số sẵn sàng</small></div>
+          <div class="nexus-sync-status"><i></i><span id="nexus-sync-label">Đang đồng bộ dữ liệu</span></div>
+        </div>
+      </section>
+
+      <section id="nexus-metric-grid" class="nexus-metric-grid" aria-label="Chỉ số tổng quan">
+        <article class="nexus-metric-card skeleton"><span></span><strong>—</strong><small>Đang tải dữ liệu</small></article>
+        <article class="nexus-metric-card skeleton"><span></span><strong>—</strong><small>Đang tải dữ liệu</small></article>
+        <article class="nexus-metric-card skeleton"><span></span><strong>—</strong><small>Đang tải dữ liệu</small></article>
+        <article class="nexus-metric-card skeleton"><span></span><strong>—</strong><small>Đang tải dữ liệu</small></article>
+      </section>
+
+      <div class="nexus-dashboard-layout">
+        <section class="card nexus-panel nexus-timeline-panel">
+          <header class="nexus-panel-head">
+            <div><span>ƯU TIÊN TIẾP THEO</span><h2>Lịch trình thông minh</h2></div>
+            <button type="button" class="nexus-text-button" data-nexus-route="page-planner">Xem tất cả →</button>
+          </header>
+          <div id="nexus-timeline" class="nexus-timeline">
+            <div class="nexus-empty-state"><span>◷</span><strong>Đang tổng hợp lịch</strong><small>Hạn nộp, lịch học và nhiệm vụ sẽ xuất hiện tại đây.</small></div>
+          </div>
+        </section>
+
+        <section class="card nexus-panel nexus-chart-panel">
+          <header class="nexus-panel-head">
+            <div><span>PHÂN TÍCH HIỆU SUẤT</span><h2 id="nexus-chart-title">Xu hướng kết quả</h2></div>
+            <select id="nexus-chart-range" aria-label="Khoảng dữ liệu biểu đồ">
+              <option value="8">8 kết quả</option>
+              <option value="14" selected>14 kết quả</option>
+              <option value="30">30 kết quả</option>
+            </select>
+          </header>
+          <div class="nexus-chart-wrap">
+            <canvas id="nexus-performance-chart" width="760" height="320" aria-label="Biểu đồ hiệu suất"></canvas>
+            <div id="nexus-chart-empty" class="nexus-chart-empty hidden">Chưa đủ dữ liệu để vẽ biểu đồ.</div>
+          </div>
+          <div id="nexus-chart-legend" class="nexus-chart-legend"></div>
+        </section>
+      </div>
+
+      <div class="nexus-dashboard-layout secondary">
+        <section class="card nexus-panel">
+          <header class="nexus-panel-head">
+            <div><span>HOẠT ĐỘNG GẦN ĐÂY</span><h2>Dòng sự kiện</h2></div>
+            <button type="button" id="btn-refresh-nexus-dashboard" class="nexus-icon-button" title="Làm mới">↻</button>
+          </header>
+          <div id="nexus-activity-feed" class="nexus-activity-feed"></div>
+        </section>
+
+        <section class="card nexus-panel">
+          <header class="nexus-panel-head">
+            <div><span>TRUY CẬP NHANH</span><h2>Không gian làm việc</h2></div>
+          </header>
+          <div id="nexus-quick-actions" class="nexus-quick-actions"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ExamFlow Nexus: Bảng tin học phần -->
+    <div id="page-announcements" class="page nexus-page hidden">
+      <section class="nexus-page-heading">
+        <div><span class="nexus-kicker"><i></i> COURSE BROADCAST</span><h1>Bảng tin học phần</h1><p>Thông báo quan trọng, nhắc lịch và cập nhật từ giáo viên được tập trung theo thời gian.</p></div>
+        <button type="button" id="btn-refresh-announcements" class="nexus-secondary-action">↻ Làm mới</button>
+      </section>
+
+      <section id="announcement-composer" class="card nexus-announcement-composer hidden">
+        <header class="nexus-panel-head">
+          <div><span>PHÁT THÔNG BÁO</span><h2 id="announcement-composer-title">Tạo thông báo mới</h2></div>
+          <button type="button" id="btn-cancel-announcement-edit" class="nexus-text-button hidden">Hủy chỉnh sửa</button>
+        </header>
+        <div class="nexus-form-grid two">
+          <label><span>Học phần *</span><select id="announcement-course"></select></label>
+          <label><span>Mức ưu tiên</span><select id="announcement-priority"><option value="normal">Bình thường</option><option value="important">Quan trọng</option><option value="urgent">Khẩn cấp</option></select></label>
+        </div>
+        <label class="nexus-field"><span>Tiêu đề *</span><input id="announcement-title" type="text" maxlength="160" placeholder="VD: Thay đổi lịch kiểm tra giữa kỳ"/></label>
+        <label class="nexus-field"><span>Nội dung *</span><textarea id="announcement-content" maxlength="4000" rows="6" placeholder="Nhập nội dung thông báo rõ ràng, đầy đủ..."></textarea><small id="announcement-counter">0/4000</small></label>
+        <div class="nexus-composer-footer">
+          <label class="form-check form-switch"><input id="announcement-pinned" class="form-check-input" type="checkbox"/><span class="form-check-label">Ghim lên đầu bảng tin</span></label>
+          <button type="button" id="btn-save-announcement" class="nexus-primary-action"><span>Đăng thông báo</span><b>→</b></button>
+        </div>
+      </section>
+
+      <section class="card nexus-filter-bar">
+        <div class="nexus-search-field"><span>⌕</span><input id="announcement-search" type="search" placeholder="Tìm theo tiêu đề hoặc nội dung..."/></div>
+        <select id="announcement-course-filter"><option value="">Tất cả học phần</option></select>
+        <select id="announcement-priority-filter"><option value="">Mọi mức ưu tiên</option><option value="urgent">Khẩn cấp</option><option value="important">Quan trọng</option><option value="normal">Bình thường</option></select>
+      </section>
+      <section id="announcement-list" class="nexus-announcement-list" aria-live="polite"></section>
+    </div>
+
+    <!-- ExamFlow Nexus: Lịch và công việc -->
+    <div id="page-planner" class="page nexus-page hidden">
+      <section class="nexus-page-heading">
+        <div><span class="nexus-kicker"><i></i> SMART PLANNER</span><h1>Lịch & công việc</h1><p>Kết hợp hạn nộp, lịch trực tuyến và nhiệm vụ cá nhân thành một kế hoạch duy nhất.</p></div>
+        <button type="button" id="btn-planner-today" class="nexus-secondary-action">Hôm nay</button>
+      </section>
+
+      <div class="nexus-planner-layout">
+        <section class="card nexus-calendar-panel">
+          <header class="nexus-calendar-head">
+            <button type="button" id="btn-planner-prev" aria-label="Tháng trước">‹</button>
+            <div><span>LỊCH THÁNG</span><h2 id="planner-month-label">—</h2></div>
+            <button type="button" id="btn-planner-next" aria-label="Tháng sau">›</button>
+          </header>
+          <div class="nexus-weekdays"><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span></div>
+          <div id="planner-calendar-grid" class="nexus-calendar-grid"></div>
+          <div class="nexus-calendar-legend"><span><i class="exam"></i>Hạn nộp</span><span><i class="meeting"></i>Lịch học</span><span><i class="task"></i>Nhiệm vụ</span></div>
+        </section>
+
+        <aside class="nexus-planner-sidebar">
+          <section class="card nexus-task-composer">
+            <header class="nexus-panel-head"><div><span>NHIỆM VỤ CÁ NHÂN</span><h2>Thêm công việc</h2></div></header>
+            <label class="nexus-field"><span>Tiêu đề *</span><input id="planner-task-title" maxlength="180" placeholder="VD: Ôn chương CRC"/></label>
+            <label class="nexus-field"><span>Ghi chú</span><textarea id="planner-task-description" maxlength="1000" rows="3" placeholder="Mô tả ngắn..."></textarea></label>
+            <div class="nexus-form-grid two">
+              <label><span>Hạn hoàn thành *</span><input id="planner-task-due" type="datetime-local"/></label>
+              <label><span>Ưu tiên</span><select id="planner-task-priority"><option value="normal">Bình thường</option><option value="high">Cao</option><option value="critical">Rất cao</option></select></label>
+            </div>
+            <button type="button" id="btn-add-planner-task" class="nexus-primary-action wide"><span>Thêm vào kế hoạch</span><b>＋</b></button>
+          </section>
+
+          <section class="card nexus-day-agenda">
+            <header class="nexus-panel-head"><div><span>CHƯƠNG TRÌNH TRONG NGÀY</span><h2 id="planner-selected-date">Hôm nay</h2></div></header>
+            <div id="planner-day-events" class="nexus-day-events"></div>
+          </section>
+        </aside>
+      </div>
+
+      <section class="card nexus-task-board">
+        <header class="nexus-panel-head">
+          <div><span>QUẢN LÝ TIẾN ĐỘ</span><h2>Danh sách nhiệm vụ</h2></div>
+          <div class="nexus-inline-controls"><select id="planner-status-filter"><option value="active">Đang thực hiện</option><option value="done">Đã hoàn thành</option><option value="all">Tất cả</option></select><button type="button" id="btn-refresh-planner" class="nexus-icon-button">↻</button></div>
+        </header>
+        <div id="planner-task-list" class="nexus-task-list"></div>
+      </section>
+    </div>
+
+    <!-- Quản trị viên: Trung tâm điều hành toàn hệ thống -->
+    <div id="page-admin" class="page admin-page hidden">
+      <section class="admin-command-hero">
+        <div class="admin-command-copy">
+          <span class="admin-kicker"><i></i> EXAMFLOW CONTROL CENTER</span>
+          <h1>Trung tâm quản trị</h1>
+          <p>Theo dõi người dùng, học phần, đề đã gửi, bài đã nộp và kết quả học tập trong một không gian thống nhất.</p>
+        </div>
+        <div class="admin-command-actions">
+          <div id="admin-sync-status" class="admin-sync-status"><i></i><span>Chưa đồng bộ</span></div>
+          <button type="button" id="btn-admin-export" class="nexus-secondary-action">⇩ Xuất dữ liệu</button>
+          <button type="button" id="btn-admin-refresh" class="nexus-primary-action"><span>Đồng bộ lại</span><b>↻</b></button>
+        </div>
+      </section>
+
+      <nav class="admin-view-tabs" aria-label="Khu vực quản trị">
+        <button type="button" class="active" data-admin-view="overview"><span>◫</span>Tổng quan</button>
+        <button type="button" data-admin-view="users"><span>👥</span>Người dùng</button>
+        <button type="button" data-admin-view="courses"><span>▦</span>Học phần</button>
+        <button type="button" data-admin-view="files"><span>⇅</span>File & bài nộp</button>
+        <button type="button" data-admin-view="scores"><span>◉</span>Điểm số</button>
+        <button type="button" data-admin-view="theme"><span>◐</span>Giao diện</button>
+      </nav>
+
+      <section class="admin-metric-grid admin-metric-grid-wide" aria-label="Thống kê toàn hệ thống">
+        <article class="admin-metric-card"><span>👥</span><div><strong id="admin-count-total">0</strong><small>Tổng người dùng</small></div></article>
+        <article class="admin-metric-card student"><span>🎓</span><div><strong id="admin-count-students">0</strong><small>Sinh viên</small></div></article>
+        <article class="admin-metric-card teacher"><span>🧑‍🏫</span><div><strong id="admin-count-teachers">0</strong><small>Giáo viên</small></div></article>
+        <article class="admin-metric-card course"><span>▦</span><div><strong id="admin-count-courses">0</strong><small>Học phần</small></div></article>
+        <article class="admin-metric-card exam"><span>⇧</span><div><strong id="admin-count-exams">0</strong><small>File đề đã gửi</small></div></article>
+        <article class="admin-metric-card submission"><span>⇩</span><div><strong id="admin-count-submissions">0</strong><small>Bài đã nộp</small></div></article>
+        <article class="admin-metric-card graded"><span>✓</span><div><strong id="admin-count-graded">0</strong><small>Bài đã chấm</small></div></article>
+        <article class="admin-metric-card score"><span>◉</span><div><strong id="admin-average-score">—</strong><small>Điểm trung bình</small></div></article>
+      </section>
+
+      <!-- TỔNG QUAN -->
+      <section id="admin-view-overview" class="admin-view-panel">
+        <div class="admin-overview-grid">
+          <section class="card admin-health-panel">
+            <header class="admin-panel-head"><div><span>SYSTEM HEALTH</span><h2>Chỉ số vận hành</h2><p>Tổng hợp nhanh tình trạng học tập và xử lý dữ liệu.</p></div><div class="admin-live-badge"><i></i>Live</div></header>
+            <div class="admin-health-list">
+              <article><div><span>Tỷ lệ bài đã chấm</span><strong id="admin-health-grade-rate">0%</strong></div><div class="admin-progress-track"><i id="admin-health-grade-bar"></i></div><small id="admin-health-grade-note">0/0 bài đã có điểm</small></article>
+              <article><div><span>Tỷ lệ nộp đúng hạn</span><strong id="admin-health-ontime-rate">0%</strong></div><div class="admin-progress-track teal"><i id="admin-health-ontime-bar"></i></div><small id="admin-health-ontime-note">Chưa có bài nộp</small></article>
+              <article><div><span>Mức phủ học phần</span><strong id="admin-health-enrollment-rate">0%</strong></div><div class="admin-progress-track violet"><i id="admin-health-enrollment-bar"></i></div><small id="admin-health-enrollment-note">Chưa có ghi danh</small></article>
+              <article><div><span>Điểm trung bình hệ thống</span><strong id="admin-health-average">—</strong></div><div class="admin-progress-track gold"><i id="admin-health-average-bar"></i></div><small id="admin-health-average-note">Bao gồm bài tự luận và trắc nghiệm</small></article>
+            </div>
+          </section>
+
+          <section class="card admin-activity-panel">
+            <header class="admin-panel-head"><div><span>RECENT ACTIVITY</span><h2>Hoạt động mới nhất</h2><p>Dữ liệu được sắp xếp theo thời gian gần nhất.</p></div></header>
+            <div id="admin-recent-activity" class="admin-activity-list"><div class="admin-loading-state">Đang tổng hợp hoạt động…</div></div>
+          </section>
+        </div>
+
+        <div class="admin-directory-preview-grid">
+          <section class="card admin-directory-preview">
+            <header class="admin-panel-head"><div><span>TEACHER DIRECTORY</span><h2>Danh sách giáo viên</h2><p>Các tài khoản giáo viên mới và số học phần đang quản lý.</p></div><button type="button" class="admin-text-action" data-admin-jump="teachers">Xem tất cả →</button></header>
+            <div id="admin-teacher-preview" class="admin-person-preview-list"></div>
+          </section>
+          <section class="card admin-directory-preview">
+            <header class="admin-panel-head"><div><span>STUDENT DIRECTORY</span><h2>Danh sách sinh viên</h2><p>Các tài khoản sinh viên và số học phần đã ghi danh.</p></div><button type="button" class="admin-text-action" data-admin-jump="students">Xem tất cả →</button></header>
+            <div id="admin-student-preview" class="admin-person-preview-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <!-- NGƯỜI DÙNG -->
+      <section id="admin-view-users" class="admin-view-panel hidden">
+        <section class="card admin-users-panel admin-full-panel">
+          <header class="admin-panel-head">
+            <div><span>USER DIRECTORY</span><h2>Danh sách người dùng</h2><p>Xem hồ sơ, lọc sinh viên – giáo viên và cập nhật quyền tài khoản.</p></div>
+            <div id="admin-users-status" class="admin-status-pill">Sẵn sàng</div>
+          </header>
+
+          <div class="admin-role-shortcuts" role="group" aria-label="Lọc nhanh người dùng">
+            <button type="button" class="active" data-admin-role-shortcut="all">Tất cả <b id="admin-role-total-shortcut">0</b></button>
+            <button type="button" data-admin-role-shortcut="hocsinh">Sinh viên <b id="admin-role-student-shortcut">0</b></button>
+            <button type="button" data-admin-role-shortcut="giaovien">Giáo viên <b id="admin-role-teacher-shortcut">0</b></button>
+            <button type="button" data-admin-role-shortcut="admin">Quản trị <b id="admin-role-admin-shortcut">0</b></button>
+          </div>
+
+          <div class="admin-user-toolbar">
+            <label class="admin-search-field"><span>⌕</span><input id="admin-user-search" type="search" placeholder="Tìm theo tên, email, UID hoặc mã số..."/></label>
+            <select id="admin-role-filter" aria-label="Lọc theo vai trò">
+              <option value="all">Tất cả vai trò</option><option value="hocsinh">Sinh viên</option><option value="giaovien">Giáo viên</option><option value="admin">Quản trị viên</option>
+            </select>
+            <select id="admin-status-filter" aria-label="Lọc theo trạng thái">
+              <option value="all">Tất cả trạng thái</option><option value="active">Đang hoạt động</option><option value="disabled">Đã tạm khóa</option>
+            </select>
+          </div>
+
+          <div class="table-wrap admin-users-table-wrap">
+            <table class="admin-users-table">
+              <thead><tr><th>Người dùng</th><th>Mã số</th><th>Vai trò</th><th>Tham gia</th><th>Trạng thái</th><th>Ngày tạo</th><th>Thao tác</th></tr></thead>
+              <tbody id="admin-users-body"><tr class="empty-row"><td colspan="7">Đang tải danh sách người dùng...</td></tr></tbody>
+            </table>
+          </div>
+          <div id="admin-users-empty" class="admin-empty-state hidden"><span>⌕</span><strong>Không tìm thấy tài khoản phù hợp</strong><small>Hãy thay đổi từ khóa hoặc bộ lọc.</small></div>
+        </section>
+      </section>
+
+      <!-- HỌC PHẦN -->
+      <section id="admin-view-courses" class="admin-view-panel hidden">
+        <section class="card admin-full-panel">
+          <header class="admin-panel-head"><div><span>COURSE OPERATIONS</span><h2>Danh sách học phần</h2><p>Theo dõi giáo viên phụ trách, số sinh viên, đề thi, bài nộp và điểm trung bình.</p></div><div id="admin-courses-status" class="admin-status-pill">0 học phần</div></header>
+          <div class="admin-data-toolbar">
+            <label class="admin-search-field"><span>⌕</span><input id="admin-course-search" type="search" placeholder="Tìm tên học phần, mã hoặc giáo viên..."/></label>
+            <select id="admin-course-teacher-filter" aria-label="Lọc theo giáo viên"><option value="all">Tất cả giáo viên</option></select>
+          </div>
+          <div class="table-wrap admin-data-table-wrap">
+            <table class="admin-data-table"><thead><tr><th>Học phần</th><th>Giáo viên</th><th>Sinh viên</th><th>Đề đã gửi</th><th>Bài đã nộp</th><th>Điểm TB</th><th>Ngày tạo</th><th></th></tr></thead><tbody id="admin-courses-body"></tbody></table>
+          </div>
+          <div id="admin-courses-empty" class="admin-empty-state hidden"><span>▦</span><strong>Không có học phần phù hợp</strong><small>Hãy thay đổi từ khóa hoặc giáo viên.</small></div>
+        </section>
+      </section>
+
+      <!-- FILE VÀ BÀI NỘP -->
+      <section id="admin-view-files" class="admin-view-panel hidden">
+        <section class="card admin-full-panel">
+          <header class="admin-panel-head"><div><span>FILE OPERATIONS</span><h2>File đã gửi và bài đã nộp</h2><p>Kiểm tra toàn bộ đề giáo viên đã đăng và file sinh viên đã nộp.</p></div><div id="admin-files-status" class="admin-status-pill">Sẵn sàng</div></header>
+          <div class="admin-subtabs">
+            <button type="button" class="active" data-admin-file-view="exams">Đề / file đã gửi <b id="admin-file-exam-count">0</b></button>
+            <button type="button" data-admin-file-view="submissions">Bài đã nộp <b id="admin-file-submission-count">0</b></button>
+          </div>
+          <div class="admin-data-toolbar">
+            <label class="admin-search-field"><span>⌕</span><input id="admin-file-search" type="search" placeholder="Tìm tên file, học phần, giáo viên hoặc sinh viên..."/></label>
+            <select id="admin-file-course-filter" aria-label="Lọc theo học phần"><option value="all">Tất cả học phần</option></select>
+          </div>
+
+          <div id="admin-exams-panel" class="admin-file-panel">
+            <div class="table-wrap admin-data-table-wrap"><table class="admin-data-table"><thead><tr><th>File đề</th><th>Học phần</th><th>Giáo viên</th><th>Dung lượng</th><th>Hạn nộp</th><th>Ngày gửi</th><th>Tải file</th></tr></thead><tbody id="admin-exams-body"></tbody></table></div>
+            <div id="admin-exams-empty" class="admin-empty-state hidden"><span>⇧</span><strong>Chưa có file đề phù hợp</strong><small>Không tìm thấy dữ liệu theo bộ lọc hiện tại.</small></div>
+          </div>
+
+          <div id="admin-submissions-panel" class="admin-file-panel hidden">
+            <div class="table-wrap admin-data-table-wrap"><table class="admin-data-table"><thead><tr><th>Sinh viên</th><th>Học phần / đề thi</th><th>File bài làm</th><th>Trạng thái</th><th>Điểm</th><th>Thời gian nộp</th><th>Tải file</th></tr></thead><tbody id="admin-submissions-body"></tbody></table></div>
+            <div id="admin-submissions-empty" class="admin-empty-state hidden"><span>⇩</span><strong>Chưa có bài nộp phù hợp</strong><small>Không tìm thấy dữ liệu theo bộ lọc hiện tại.</small></div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ĐIỂM SỐ -->
+      <section id="admin-view-scores" class="admin-view-panel hidden">
+        <div class="admin-score-summary-grid">
+          <article><span>Điểm trung bình</span><strong id="admin-score-average">—</strong><small>Tất cả bài đã có điểm</small></article>
+          <article><span>Tỷ lệ đạt ≥ 5</span><strong id="admin-score-pass-rate">0%</strong><small id="admin-score-pass-note">0/0 kết quả</small></article>
+          <article><span>Điểm cao nhất</span><strong id="admin-score-highest">—</strong><small id="admin-score-highest-note">Chưa có dữ liệu</small></article>
+          <article><span>Chờ chấm</span><strong id="admin-score-pending">0</strong><small>Bài tự luận chưa có điểm</small></article>
+        </div>
+        <section class="card admin-full-panel">
+          <header class="admin-panel-head"><div><span>ACADEMIC RESULTS</span><h2>Danh sách điểm toàn hệ thống</h2><p>Kết hợp điểm bài nộp tự luận và kết quả trắc nghiệm.</p></div><div id="admin-scores-status" class="admin-status-pill">Sẵn sàng</div></header>
+          <div class="admin-score-toolbar">
+            <label class="admin-search-field"><span>⌕</span><input id="admin-score-search" type="search" placeholder="Tìm sinh viên, bài đánh giá hoặc học phần..."/></label>
+            <select id="admin-score-course-filter"><option value="all">Tất cả học phần</option></select>
+            <select id="admin-score-type-filter"><option value="all">Tất cả loại điểm</option><option value="assignment">Bài nộp</option><option value="quiz">Trắc nghiệm</option></select>
+            <select id="admin-score-status-filter"><option value="all">Tất cả trạng thái</option><option value="graded">Đã có điểm</option><option value="pending">Chờ chấm</option><option value="high">Từ 8 điểm</option><option value="low">Dưới 5 điểm</option></select>
+          </div>
+          <div class="table-wrap admin-data-table-wrap"><table class="admin-data-table"><thead><tr><th>Sinh viên</th><th>Học phần</th><th>Bài đánh giá</th><th>Loại</th><th>Điểm</th><th>Trạng thái</th><th>Chi tiết</th><th>Thời gian</th></tr></thead><tbody id="admin-scores-body"></tbody></table></div>
+          <div id="admin-scores-empty" class="admin-empty-state hidden"><span>◉</span><strong>Không có kết quả phù hợp</strong><small>Hãy thay đổi bộ lọc điểm số.</small></div>
+        </section>
+      </section>
+
+      <!-- GIAO DIỆN -->
+      <section id="admin-view-theme" class="admin-view-panel hidden">
+        <div class="admin-theme-layout">
+          <aside class="card admin-theme-panel">
+            <header class="admin-panel-head"><div><span>GLOBAL APPEARANCE</span><h2>Ảnh giao diện chung</h2><p>Ảnh do quản trị viên tải lên sẽ được áp dụng cho người dùng toàn hệ thống.</p></div></header>
+            <div id="admin-theme-preview" class="admin-theme-preview">
+              <div id="admin-theme-preview-empty"><span>▧</span><strong>Chưa có ảnh giao diện</strong><small>Chọn ảnh JPG, PNG hoặc WebP tối đa 8 MB.</small></div>
+              <img id="admin-theme-preview-image" class="hidden" alt="Ảnh giao diện do quản trị viên thiết lập"/>
+            </div>
+          </aside>
+          <section class="card admin-theme-settings-card">
+            <header class="admin-panel-head"><div><span>DISPLAY SETTINGS</span><h2>Thiết lập hình nền</h2><p>Chọn ảnh, khu vực áp dụng và độ tối lớp phủ.</p></div></header>
+            <label class="admin-upload-field"><span>Chọn ảnh giao diện</span><input id="admin-theme-file" type="file" accept="image/png,image/jpeg,image/webp"/><small>Ảnh ngang từ 1600 × 900 trở lên sẽ hiển thị tốt hơn.</small></label>
+            <div class="admin-theme-options">
+              <label><span>Vị trí áp dụng</span><select id="admin-theme-target"><option value="both">Trang đăng nhập và ứng dụng</option><option value="login">Chỉ trang đăng nhập</option><option value="app">Chỉ bên trong ứng dụng</option></select></label>
+              <label><span>Độ tối lớp phủ: <b id="admin-overlay-value">48%</b></span><input id="admin-theme-overlay" type="range" min="0" max="80" value="48"/></label>
+            </div>
+            <div id="admin-theme-progress-wrap" class="admin-theme-progress-wrap hidden"><progress id="admin-theme-progress" max="100" value="0"></progress><span id="admin-theme-progress-text">0%</span></div>
+            <div class="admin-theme-actions"><button type="button" id="btn-admin-theme-upload" class="nexus-primary-action"><span>Tải lên và áp dụng</span><b>⇧</b></button><button type="button" id="btn-admin-theme-remove" class="nexus-secondary-action danger">Xóa ảnh hiện tại</button></div>
+            <p id="admin-theme-note" class="admin-theme-note">Thiết lập được lưu tại Firebase và đồng bộ theo thời gian thực.</p>
+          </section>
+        </div>
+
+        <section class="card admin-banner-studio">
+          <header class="admin-panel-head">
+            <div>
+              <span>ALL WEBSITE BANNERS</span>
+              <h2>Trình quản lý toàn bộ banner</h2>
+              <p>Chọn từng khu vực để sửa nhãn, tiêu đề, mô tả, biểu tượng, ảnh nền, vị trí ảnh và độ tối cho toàn hệ thống.</p>
+            </div>
+            <div id="admin-banner-status" class="admin-status-pill">Đồng bộ tự động</div>
+          </header>
+
+          <div class="admin-banner-studio-grid">
+            <div class="admin-banner-preview-column">
+              <label class="admin-dashboard-field">
+                <span>Banner cần chỉnh sửa</span>
+                <select id="admin-banner-select" aria-label="Chọn banner cần chỉnh sửa"></select>
+              </label>
+
+              <div id="admin-banner-preview" class="admin-banner-preview">
+                <div class="admin-banner-preview-icon" id="admin-banner-preview-icon">◆</div>
+                <div class="admin-banner-preview-copy">
+                  <span id="admin-banner-preview-eyebrow">BANNER HỆ THỐNG</span>
+                  <strong id="admin-banner-preview-title">Tiêu đề banner</strong>
+                  <small id="admin-banner-preview-description">Nội dung mô tả banner sẽ hiển thị tại đây.</small>
+                </div>
+              </div>
+              <small class="admin-dashboard-preview-note">Các banner cảnh báo động như quá hạn, lỗi mạng và trạng thái nộp bài vẫn do hệ thống tự tạo để tránh làm sai thông tin nghiệp vụ.</small>
+            </div>
+
+            <div class="admin-banner-editor-form">
+              <label class="admin-upload-field">
+                <span>Ảnh nền banner</span>
+                <input id="admin-banner-file" type="file" accept="image/png,image/jpeg,image/webp"/>
+                <small>JPG, PNG hoặc WebP, tối đa 8 MB. Để trống để giữ ảnh hiện tại.</small>
+              </label>
+
+              <div class="admin-banner-text-grid">
+                <label class="admin-dashboard-field"><span>Nhãn phía trên</span><input id="admin-banner-eyebrow" maxlength="100"/></label>
+                <label class="admin-dashboard-field"><span>Biểu tượng</span><input id="admin-banner-icon" maxlength="12" placeholder="◆"/></label>
+              </div>
+
+              <label class="admin-dashboard-field"><span>Tiêu đề</span><input id="admin-banner-title" maxlength="160"/></label>
+              <label class="admin-dashboard-field"><span>Mô tả</span><textarea id="admin-banner-description" rows="3" maxlength="360"></textarea></label>
+
+              <div class="admin-dashboard-editor-options">
+                <label><span>Vị trí ảnh</span><select id="admin-banner-position"><option value="center">Chính giữa</option><option value="left">Căn trái</option><option value="right">Căn phải</option></select></label>
+                <label><span>Độ tối lớp phủ: <b id="admin-banner-overlay-value">48%</b></span><input id="admin-banner-overlay" type="range" min="0" max="80" value="48"/></label>
+              </div>
+
+              <label class="admin-banner-enabled-toggle"><input id="admin-banner-enabled" type="checkbox" checked/><span><strong>Hiển thị banner</strong><small>Tắt để ẩn banner đã chọn khỏi giao diện người dùng.</small></span></label>
+
+              <div id="admin-banner-progress-wrap" class="admin-theme-progress-wrap hidden"><progress id="admin-banner-progress" max="100" value="0"></progress><span id="admin-banner-progress-text">0%</span></div>
+              <div class="admin-dashboard-editor-actions">
+                <button type="button" id="btn-admin-banner-save" class="nexus-primary-action"><span>Lưu nội dung</span><b>✓</b></button>
+                <button type="button" id="btn-admin-banner-upload" class="nexus-secondary-action"><span>Tải ảnh và áp dụng</span></button>
+                <button type="button" id="btn-admin-banner-reset" class="nexus-secondary-action danger">Khôi phục banner</button>
+              </div>
+              <p id="admin-banner-note" class="admin-theme-note">Thiết lập được lưu trong collection <code>system_banners</code> và đồng bộ theo thời gian thực.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card admin-dashboard-hero-editor">
+          <header class="admin-panel-head">
+            <div>
+              <span>DASHBOARD WELCOME BANNER</span>
+              <h2>Chỉnh khu vực “Chào buổi sáng / chiều / tối”</h2>
+              <p>Quản trị viên có thể thay ảnh nền, nội dung lời chào, mô tả và độ tối của banner Dashboard cho toàn hệ thống.</p>
+            </div>
+            <div id="admin-dashboard-hero-status" class="admin-status-pill">Đồng bộ tự động</div>
+          </header>
+
+          <div class="admin-dashboard-editor-grid">
+            <div class="admin-dashboard-preview-shell">
+              <div id="admin-dashboard-hero-preview" class="admin-dashboard-hero-preview">
+                <div class="admin-dashboard-preview-copy">
+                  <span>KHOA ĐIỆN TỬ · DIGITAL CAMPUS</span>
+                  <strong id="admin-dashboard-preview-title">Chào buổi tối, Nguyễn Văn A</strong>
+                  <small id="admin-dashboard-preview-subtitle">Tiến độ học tập, lịch sắp tới và kết quả mới nhất đã sẵn sàng.</small>
+                </div>
+              </div>
+              <small class="admin-dashboard-preview-note">Bản xem trước chỉ mô phỏng phần đầu Dashboard. Tên người dùng vẫn được tự động chèn theo tài khoản đăng nhập.</small>
+            </div>
+
+            <div class="admin-dashboard-editor-form">
+              <label class="admin-upload-field">
+                <span>Ảnh nền banner Dashboard</span>
+                <input id="admin-dashboard-hero-file" type="file" accept="image/png,image/jpeg,image/webp"/>
+                <small>Để trống để giữ ảnh hiện tại. Ảnh ngang 1600 × 600 trở lên sẽ hiển thị tốt hơn.</small>
+              </label>
+
+              <label class="admin-dashboard-field">
+                <span>Mẫu tiêu đề lời chào</span>
+                <input id="admin-dashboard-title-template" type="text" maxlength="120" placeholder="{greeting}, {name}"/>
+                <small>Dùng <code>{greeting}</code> cho lời chào theo thời gian và <code>{name}</code> cho tên người dùng.</small>
+              </label>
+
+              <label class="admin-dashboard-field">
+                <span>Dòng mô tả chung</span>
+                <textarea id="admin-dashboard-subtitle" rows="3" maxlength="240" placeholder="Để trống để dùng nội dung mặc định theo giáo viên / sinh viên."></textarea>
+              </label>
+
+              <div class="admin-dashboard-editor-options">
+                <label>
+                  <span>Vị trí ảnh</span>
+                  <select id="admin-dashboard-position">
+                    <option value="center">Chính giữa</option>
+                    <option value="left">Căn trái</option>
+                    <option value="right">Căn phải</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Độ tối lớp phủ: <b id="admin-dashboard-overlay-value">48%</b></span>
+                  <input id="admin-dashboard-overlay" type="range" min="0" max="80" value="48"/>
+                </label>
+              </div>
+
+              <div id="admin-dashboard-progress-wrap" class="admin-theme-progress-wrap hidden">
+                <progress id="admin-dashboard-progress" max="100" value="0"></progress>
+                <span id="admin-dashboard-progress-text">0%</span>
+              </div>
+
+              <div class="admin-dashboard-editor-actions">
+                <button type="button" id="btn-admin-dashboard-save" class="nexus-primary-action"><span>Lưu nội dung</span><b>✓</b></button>
+                <button type="button" id="btn-admin-dashboard-upload" class="nexus-secondary-action"><span>Tải ảnh và áp dụng</span></button>
+                <button type="button" id="btn-admin-dashboard-reset" class="nexus-secondary-action danger">Khôi phục mặc định</button>
+              </div>
+              <p id="admin-dashboard-note" class="admin-theme-note">Thiết lập được lưu tại <code>system_config/dashboard_hero</code> và đồng bộ theo thời gian thực.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+    </div>
+
+    <!-- ExamFlow Nexus: Hồ sơ và cài đặt -->
+    <div id="page-settings" class="page nexus-page hidden">
+      <section class="nexus-page-heading">
+        <div><span class="nexus-kicker"><i></i> PERSONAL CONTROL</span><h1>Hồ sơ & cài đặt</h1><p>Kiểm soát thông tin cá nhân, giao diện, chuyển động và dữ liệu cục bộ của hệ thống.</p></div>
+        <div id="settings-save-state" class="nexus-save-state"><i></i><span>Mọi thay đổi đã được lưu</span></div>
+      </section>
+
+      <div class="nexus-settings-layout">
+        <section class="card nexus-profile-settings">
+          <header class="nexus-panel-head"><div><span>THÔNG TIN TÀI KHOẢN</span><h2>Hồ sơ cá nhân</h2></div><div id="settings-profile-avatar" class="nexus-settings-avatar">?</div></header>
+          <div class="nexus-form-grid two">
+            <label><span>Họ và tên</span><input id="settings-full-name" maxlength="120"/></label>
+            <label><span>Mã học sinh / giảng viên</span><input id="settings-user-code" maxlength="60"/></label>
+          </div>
+          <label class="nexus-field"><span>Email đăng nhập</span><input id="settings-email" type="email" disabled/></label>
+          <label class="nexus-field"><span>Vai trò hệ thống</span><input id="settings-role" disabled/></label>
+          <button type="button" id="btn-save-profile-settings" class="nexus-primary-action"><span>Lưu hồ sơ</span><b>✓</b></button>
+        </section>
+
+        <section class="card nexus-experience-settings">
+          <header class="nexus-panel-head"><div><span>TRẢI NGHIỆM ỨNG DỤNG</span><h2>Giao diện & tương tác</h2></div></header>
+          <div class="nexus-setting-row"><div><strong>Chế độ màu</strong><small>Chọn giao diện phù hợp với môi trường học tập.</small></div><div class="nexus-theme-segment"><button type="button" data-theme-choice="light">☀ Sáng</button><button type="button" data-theme-choice="dark">☾ Tối</button><button type="button" data-theme-choice="system">◐ Hệ thống</button></div></div>
+          <div class="nexus-setting-row"><div><strong>Giảm chuyển động</strong><small>Tắt phần lớn hiệu ứng để ứng dụng nhẹ và dễ tập trung hơn.</small></div><label class="form-check form-switch"><input id="settings-reduced-motion" class="form-check-input" type="checkbox"/><span class="form-check-label">Bật</span></label></div>
+          <div class="nexus-setting-row"><div><strong>Âm thanh mini game</strong><small>Bật hoặc tắt hiệu ứng âm thanh trong Quiz Battle Arena.</small></div><label class="form-check form-switch"><input id="settings-game-sound" class="form-check-input" type="checkbox"/><span class="form-check-label">Bật</span></label></div>
+          <div class="nexus-setting-row"><div><strong>Sidebar thu gọn</strong><small>Tối ưu diện tích hiển thị trên màn hình laptop.</small></div><button type="button" id="btn-toggle-sidebar-setting" class="nexus-secondary-action compact">Đổi trạng thái</button></div>
+        </section>
+
+        <section class="card nexus-data-settings">
+          <header class="nexus-panel-head"><div><span>DỮ LIỆU & CHẨN ĐOÁN</span><h2>Công cụ hệ thống</h2></div></header>
+          <div class="nexus-diagnostic-grid">
+            <button type="button" id="btn-test-firebase"><span>⌁</span><div><strong>Kiểm tra Firebase</strong><small>Đo khả năng truy cập hồ sơ hiện tại</small></div><b>→</b></button>
+            <button type="button" id="btn-export-nexus-data"><span>⇩</span><div><strong>Xuất dữ liệu cá nhân</strong><small>Tải tệp JSON chứa kế hoạch và thiết lập</small></div><b>→</b></button>
+            <button type="button" id="btn-clear-nexus-cache"><span>⌫</span><div><strong>Xóa bộ nhớ giao diện</strong><small>Không xóa dữ liệu Firebase hoặc bài đã nộp</small></div><b>→</b></button>
+          </div>
+          <div id="settings-diagnostic-result" class="nexus-diagnostic-result hidden" aria-live="polite"></div>
+        </section>
+      </div>
+    </div>
+
+    </main><!-- /page-stage -->
+  </div><!-- /screen-app -->
+</div><!-- /main-area -->
+
+
+<!-- Quản trị viên: xem và sửa người dùng -->
+<div id="admin-user-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="admin-user-modal-title">
+  <div class="modal-card admin-user-modal-card">
+    <div class="modal-header">
+      <div><h3 id="admin-user-modal-title">Thông tin người dùng</h3><p id="admin-user-modal-subtitle">Xem và cập nhật hồ sơ tài khoản.</p></div>
+      <button type="button" id="btn-close-admin-user-modal" class="modal-close" aria-label="Đóng">✕</button>
+    </div>
+    <div class="admin-user-modal-body">
+      <input id="admin-edit-user-id" type="hidden"/>
+      <div class="admin-user-identity">
+        <div id="admin-edit-avatar">?</div>
+        <div><strong id="admin-edit-display-name">—</strong><small id="admin-edit-uid">UID: —</small></div>
+      </div>
+      <div class="nexus-form-grid two">
+        <label><span>Họ và tên</span><input id="admin-edit-name" maxlength="120"/></label>
+        <label><span>Mã số</span><input id="admin-edit-code" maxlength="60"/></label>
+      </div>
+      <label class="nexus-field"><span>Email đăng nhập</span><input id="admin-edit-email" type="email" disabled/><small>Email đăng nhập của Firebase Authentication không thể đổi trực tiếp từ trình duyệt quản trị.</small></label>
+      <div class="nexus-form-grid two">
+        <label><span>Vai trò</span><select id="admin-edit-role"><option value="hocsinh">Học sinh</option><option value="giaovien">Giáo viên</option><option value="admin">Quản trị viên</option></select></label>
+        <label><span>Ngày tạo</span><input id="admin-edit-created" disabled/></label>
+      </div>
+      <label class="admin-account-toggle"><input id="admin-edit-disabled" type="checkbox"/><span><strong>Tạm khóa tài khoản</strong><small>Người dùng sẽ bị đăng xuất khi hệ thống đồng bộ hồ sơ.</small></span></label>
+      <div id="admin-edit-warning" class="admin-edit-warning hidden"></div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="btn-cancel-admin-user" class="btn-outline">Đóng</button>
+      <button type="button" id="btn-save-admin-user" class="btn-primary">Lưu thay đổi</button>
+    </div>
+  </div>
+</div>
+
+<!-- Gia hạn thời gian nộp -->
+<div id="deadline-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="deadline-modal-title">
+  <div class="modal-card deadline-modal-card">
+    <div class="modal-header">
+      <div>
+        <h3 id="deadline-modal-title">⏰ Gia hạn thời gian nộp</h3>
+        <p id="deadline-modal-exam">—</p>
+      </div>
+      <button type="button" id="btn-close-deadline-modal" class="modal-close" aria-label="Đóng">✕</button>
+    </div>
+
+    <div class="deadline-current-box">
+      <span>Hạn hiện tại</span>
+      <strong id="deadline-current-value">—</strong>
+    </div>
+
+    <div class="field">
+      <label for="deadline-new-value">Hạn nộp mới *</label>
+      <input type="datetime-local" id="deadline-new-value"/>
+      <small class="field-help">Thời hạn mới phải muộn hơn hạn hiện tại. Các bài đã nộp sẽ được tính lại trạng thái.</small>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" id="btn-cancel-deadline" class="btn-outline">Đóng</button>
+      <button type="button" id="btn-save-deadline" class="btn-primary">⏰ Lưu gia hạn</button>
+    </div>
+  </div>
+</div>
+
+<!-- Xem và chấm bài nộp -->
+<div id="submission-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="submission-modal-title">
+  <div class="modal-card submission-modal-card">
+    <div class="modal-header">
+      <div>
+        <h3 id="submission-modal-title">📝 Xem và chấm bài</h3>
+        <p>Tải bài làm xuống, nhập điểm và nhận xét cho học sinh.</p>
+      </div>
+      <button type="button" id="btn-close-submission-modal" class="modal-close" aria-label="Đóng">✕</button>
+    </div>
+
+    <div class="submission-detail-grid">
+      <div class="submission-detail-item">
+        <span>Họ tên</span>
+        <strong id="grade-student-name">—</strong>
+      </div>
+      <div class="submission-detail-item">
+        <span>Mã số</span>
+        <strong id="grade-student-code">—</strong>
+      </div>
+      <div class="submission-detail-item">
+        <span>Lớp</span>
+        <strong id="grade-student-class">—</strong>
+      </div>
+      <div class="submission-detail-item">
+        <span>Học phần</span>
+        <strong id="grade-course-name">—</strong>
+      </div>
+      <div class="submission-detail-item">
+        <span>Đề thi</span>
+        <strong id="grade-exam-name">—</strong>
+      </div>
+      <div class="submission-detail-item">
+        <span>Hạn nộp</span>
+        <strong id="grade-deadline">—</strong>
+      </div>
+      <div class="submission-detail-item">
+        <span>Thời gian nộp</span>
+        <strong id="grade-submitted-at">—</strong>
+      </div>
+      <div class="submission-detail-item">
+        <span>Trạng thái</span>
+        <strong><span id="grade-late-status" class="late-badge ontime">—</span></strong>
+      </div>
+    </div>
+
+    <div class="submission-file-box">
+      <div>
+        <span class="submission-file-icon">📄</span>
+        <div>
+          <small>File bài làm</small>
+          <strong id="grade-file-name">—</strong>
+        </div>
+      </div>
+      <a id="grade-download-link" class="btn-primary submission-download" href="#" target="_blank" rel="noopener">
+        ⬇ Tải file
+      </a>
+    </div>
+
+    <div class="grading-form">
+      <div class="field">
+        <label for="grade-score">Điểm (0–10) *</label>
+        <input type="number" id="grade-score" min="0" max="10" step="0.1" placeholder="VD: 8.5"/>
+      </div>
+      <div class="field">
+        <label for="grade-comment">Nhận xét</label>
+        <textarea id="grade-comment" rows="4" maxlength="1000" placeholder="Nhập nhận xét cho bài làm…"></textarea>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" id="btn-cancel-grade" class="btn-outline">Đóng</button>
+      <button type="button" id="btn-save-grade" class="btn-primary">💾 Lưu điểm</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Giáo viên: Kết quả trắc nghiệm -->
+<div id="tn-results-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="tn-results-modal-title">
+  <div class="modal-card tn-results-modal-card">
+    <div class="modal-header">
+      <div>
+        <h3 id="tn-results-modal-title">📊 Kết quả bài trắc nghiệm</h3>
+        <p id="tn-results-modal-sub">—</p>
+      </div>
+      <button type="button" id="btn-close-tn-results" class="modal-close" aria-label="Đóng">✕</button>
+    </div>
+    <div class="card table-wrap tn-results-table-wrap">
+      <table>
+        <thead><tr><th>Họ tên</th><th>Mã số</th><th>Điểm</th><th>Đúng/Tổng</th><th>Vi phạm</th><th>Thời gian nộp</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody id="tb-tn-ketqua-gv"><tr class="empty-row"><td colspan="8">Đang tải…</td></tr></tbody>
+      </table>
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="btn-close-tn-results-2" class="btn-outline">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Nhật ký vi phạm chống gian lận -->
+<div id="tn-violation-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="tn-violation-modal-title">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>
+        <h3 id="tn-violation-modal-title">🛡️ Nhật ký vi phạm</h3>
+        <p id="tn-violation-modal-sub">—</p>
+      </div>
+      <button type="button" id="btn-close-tn-violation" class="modal-close" aria-label="Đóng">✕</button>
+    </div>
+    <div id="tn-violation-log-list" class="tn-violation-log-list"></div>
+    <div class="modal-actions">
+      <button type="button" id="btn-close-tn-violation-2" class="btn-outline">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Màn hình làm bài trắc nghiệm — EPIC BATTLE ARENA -->
+<div id="quiz-lockdown" class="quiz-lockdown quiz-arena hidden" aria-label="Đấu trường trắc nghiệm">
+  <div class="arena-grid-overlay" aria-hidden="true"></div>
+  <div class="arena-vignette" aria-hidden="true"></div>
+
+  <header class="arena-topbar">
+    <div class="arena-brand-block">
+      <span class="arena-brand-icon">⚔</span>
+      <div>
+        <small>KHOA ĐIỆN TỬ VÀ KĨ THUẬT MÁY TÍNH</small>
+        <strong id="quiz-lockdown-title">Bài trắc nghiệm</strong>
+        <span id="quiz-lockdown-course" class="quiz-lockdown-course">—</span>
+      </div>
+    </div>
+
+    <div class="arena-player-hud">
+      <div class="arena-hud-title"><span>🛡</span><b>FOCUS SHIELD</b><strong id="quiz-focus-label">100%</strong></div>
+      <div class="arena-hud-track"><i id="quiz-focus-bar" style="width:100%"></i></div>
+    </div>
+
+    <div class="arena-timer-core">
+      <small>THỜI GIAN CÒN LẠI</small>
+      <div id="quiz-timer" class="quiz-timer">--:--</div>
+    </div>
+
+    <div class="arena-boss-hud">
+      <div class="arena-hud-title"><span>☠</span><b id="quiz-boss-name">BOSS TRI THỨC</b><strong id="quiz-boss-shield-label">100%</strong></div>
+      <div class="arena-hud-track boss"><i id="quiz-boss-shield" style="width:100%"></i></div>
+    </div>
+
+    <div class="arena-top-actions">
+      <button type="button" id="btn-quiz-sound" class="arena-icon-button" title="Bật/tắt âm thanh" aria-label="Bật hoặc tắt âm thanh">🔊</button>
+      <button type="button" class="arena-submit-button" id="btn-nop-tracnghiem">KẾT LIỄU <span>↗</span></button>
+    </div>
+  </header>
+
+  <div id="quiz-warning-banner" class="quiz-warning-banner arena-warning hidden" aria-live="assertive"></div>
+
+  <main class="arena-main">
+    <aside class="arena-side-panel">
+      <section class="arena-mission-card">
+        <small>NHIỆM VỤ HIỆN TẠI</small>
+        <h3>Phá vỡ phong ấn tri thức</h3>
+        <p>Chọn đáp án để tích lũy năng lượng, duy trì combo và hoàn thành toàn bộ câu hỏi.</p>
+        <div class="arena-progress-copy">
+          <span id="quiz-progress-note">Đã trả lời 0/0 câu</span>
+          <b><span id="quiz-current-number">1</span>/<span id="quiz-total-number">0</span></b>
+        </div>
+        <div class="arena-progress-track"><i id="quiz-mission-progress" style="width:0%"></i></div>
+      </section>
+
+      <section class="arena-stat-grid">
+        <div><span>⚡</span><small>COMBO</small><strong id="quiz-combo">x0</strong></div>
+        <div><span>✦</span><small>XP CHARGE</small><strong id="quiz-xp">0</strong></div>
+        <div><span>🛡</span><small>VI PHẠM</small><strong id="quiz-violation-count">0</strong></div>
+        <div><span>◆</span><small>ĐÃ KHÓA</small><strong id="quiz-answered-count">0</strong></div>
+      </section>
+
+      <section class="arena-map-card">
+        <div class="arena-section-title"><span>BẢN ĐỒ CHIẾN ĐẤU</span><small>Chọn để quay lại câu</small></div>
+        <div id="quiz-question-map" class="arena-question-map"></div>
+      </section>
+
+      <section class="arena-integrity-card">
+        <div><span>🛡️</span><strong>Chế độ giám sát đang bật</strong></div>
+        <p>Không chuyển cửa sổ, thoát toàn màn hình hoặc sao chép. Vi phạm sẽ làm giảm Focus Shield và được gửi cho giáo viên.</p>
+        <span id="quiz-violation-badge" class="quiz-violation-badge hidden">⚠ Vi phạm: 0</span>
+      </section>
+    </aside>
+
+    <section id="quiz-arena-stage" class="arena-stage">
+      <div class="arena-boss-zone" aria-hidden="true">
+        <div class="arena-boss-rings"><i></i><i></i><i></i></div>
+        <div id="quiz-boss-core" class="arena-boss-core">
+          <span class="arena-boss-eye"></span>
+          <b>?</b>
+        </div>
+        <div id="quiz-damage-float" class="arena-damage-float"></div>
+        <div class="arena-boss-caption"><span>LEGENDARY ENCOUNTER</span><strong id="quiz-boss-caption">Hộ vệ tri thức</strong></div>
+      </div>
+
+      <div class="arena-question-shell">
+        <div id="quiz-questions-list" class="quiz-questions-list arena-question-list"></div>
+        <div class="arena-navigation">
+          <button type="button" id="btn-quiz-prev" class="arena-nav-button">← Câu trước</button>
+          <span>Chọn đáp án để tung đòn tấn công</span>
+          <button type="button" id="btn-quiz-next" class="arena-nav-button primary">Câu tiếp →</button>
+        </div>
+      </div>
+
+      <div class="arena-battle-log-wrap">
+        <div class="arena-section-title"><span>NHẬT KÝ TRẬN ĐẤU</span><small>Live</small></div>
+        <div id="quiz-battle-log" class="arena-battle-log" aria-live="polite">
+          <p><time>00:00</time><span>Hệ thống chiến đấu đã sẵn sàng.</span></p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Kết quả Battle Arena -->
+<div id="quiz-result-overlay" class="quiz-result-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="quiz-result-title">
+  <div class="quiz-result-card">
+    <div class="result-energy-ring"><span id="quiz-result-rank">S</span></div>
+    <small id="quiz-result-eyebrow">BOSS DEFEATED</small>
+    <h2 id="quiz-result-title">Chiến thắng!</h2>
+    <p id="quiz-result-message">Bạn đã hoàn thành nhiệm vụ.</p>
+    <div class="quiz-result-metrics">
+      <div><small>ĐIỂM</small><strong id="quiz-result-score">—</strong></div>
+      <div><small>CHÍNH XÁC</small><strong id="quiz-result-accuracy">—</strong></div>
+      <div><small>MAX COMBO</small><strong id="quiz-result-combo">x0</strong></div>
+      <div><small>XP NHẬN</small><strong id="quiz-result-xp">0</strong></div>
+    </div>
+    <div class="quiz-result-bar"><i id="quiz-result-damage" style="width:0%"></i></div>
+    <span id="quiz-result-damage-label">Sát thương Boss: 0%</span>
+    <button type="button" id="btn-close-quiz-result" class="arena-submit-button result">TRỞ VỀ SẢNH CHÍNH <span>→</span></button>
+  </div>
+</div>
+
+<!-- Trung tâm lệnh -->
+<div id="command-center" class="command-center hidden" role="dialog" aria-modal="true" aria-labelledby="command-center-title">
+  <div class="command-center-panel">
+    <div class="command-search-row">
+      <span class="command-search-icon">⌕</span>
+      <input id="command-search" type="search" autocomplete="off" placeholder="Tìm trang hoặc thao tác..." aria-label="Tìm lệnh"/>
+      <kbd>ESC</kbd>
+    </div>
+    <div class="command-center-head">
+      <div><span>TRUNG TÂM LỆNH</span><strong id="command-center-title">Đi đâu tiếp theo?</strong></div>
+      <small>Nhập để tìm • ↑↓ để chọn • Enter để mở</small>
+    </div>
+    <div id="command-results" class="command-results"></div>
+    <div class="command-center-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> Di chuyển</span>
+      <span><kbd>Enter</kbd> Mở</span>
+      <span><kbd>Ctrl</kbd><kbd>K</kbd> Tìm nhanh</span>
+    </div>
+  </div>
+</div>
+
+<!-- Trung tâm thông báo -->
+<div id="notification-drawer" class="notification-drawer" aria-hidden="true">
+  <div class="notification-drawer-head">
+    <div><span>CẬP NHẬT HỆ THỐNG</span><h3>Thông báo</h3></div>
+    <button type="button" id="btn-close-notifications" class="drawer-close" aria-label="Đóng thông báo">✕</button>
+  </div>
+  <div id="notification-list" class="notification-list"></div>
+  <div class="notification-drawer-footer">
+    <span class="status-orb"></span>
+    <div><strong>Khoa Điện Tử & KTMT Cloud</strong><small id="cloud-status-text">Đang kết nối ổn định</small></div>
+  </div>
+</div>
+<div id="notification-backdrop" class="notification-backdrop"></div>
+
+<!-- Menu tài khoản -->
+<div id="profile-popover" class="profile-popover hidden">
+  <div class="profile-popover-head">
+    <span id="profile-popover-avatar">?</span>
+    <div><strong id="profile-popover-name">Người dùng</strong><small id="profile-popover-email">—</small></div>
+  </div>
+  <button type="button" id="profile-theme-action"><span>◐</span><div><strong>Đổi giao diện</strong><small>Sáng / tối</small></div></button>
+  <button type="button" id="profile-command-action"><span>⌕</span><div><strong>Tìm nhanh</strong><small>Trung tâm lệnh</small></div></button>
+  <button type="button" id="profile-social-action"><span>💬</span><div><strong>Bạn bè &amp; tin nhắn</strong><small>Kết nối và trò chuyện</small></div></button>
+  <button type="button" id="profile-settings-action"><span>⚙</span><div><strong>Hồ sơ &amp; cài đặt</strong><small>Tùy chỉnh hệ thống</small></div></button>
+  <button type="button" id="profile-logout-action" class="danger"><span>↪</span><div><strong>Đăng xuất</strong><small>Thoát khỏi tài khoản</small></div></button>
+</div>
+
+<div id="offline-banner" class="offline-banner hidden">Mất kết nối Internet — một số dữ liệu có thể chưa đồng bộ.</div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+<!-- Config warning -->
+<div id="cfg-warn" class="cfg-warn hidden">
+  ⚙️ Chưa cấu hình Firebase — mở <strong>firebase-config.js</strong> và điền config của bạn.
+  <a id="cfg-warn-close">✕</a>
+</div>
+
+<!-- Jitsi được tải khi người dùng thực sự mở phòng học, không chặn đăng nhập. -->
+<script src="boot.js"></script>
+</body>
+</html>

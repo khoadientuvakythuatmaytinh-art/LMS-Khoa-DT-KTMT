@@ -1,0 +1,30 @@
+EXAMFLOW ADMIN CONTROL CENTER V2
+
+Các chức năng mới:
+- Dashboard quản trị tổng quan toàn hệ thống.
+- Danh sách sinh viên, giáo viên và quản trị viên.
+- Xem/sửa hồ sơ, vai trò và trạng thái tài khoản.
+- Danh sách học phần: giáo viên phụ trách, số sinh viên, số đề, số bài nộp, điểm trung bình.
+- Danh sách file đề giáo viên đã gửi, có nút mở/tải file.
+- Danh sách bài sinh viên đã nộp, trạng thái đúng hạn/nộp muộn, điểm và nút tải file.
+- Danh sách điểm tổng hợp bài tự luận và trắc nghiệm.
+- Bộ lọc, tìm kiếm và xuất CSV theo từng khu vực.
+- Giao diện quản trị responsive trên máy tính và điện thoại.
+- Giữ chức năng đổi ảnh giao diện toàn hệ thống.
+
+Cách cập nhật:
+1. Sao lưu thư mục public hiện tại.
+2. Chép thư mục public mới đè vào thư mục gốc dự án.
+3. Firebase Console > Firestore Database > Rules: dán nội dung firestore.rules và Publish.
+4. Firebase Console > Storage > Rules: dán nội dung storage.rules và Publish.
+5. Chạy chay-thu-web.bat.
+6. Đăng xuất, đăng nhập lại admin và nhấn Ctrl + F5.
+
+Tài khoản admin trong Firestore:
+users/{UID_ADMIN}
+- role: "admin"
+- disabled: false
+
+Lưu ý:
+- Firestore Rules mới là bắt buộc để admin đọc toàn bộ ghi danh, bài nộp và kết quả trắc nghiệm.
+- Nếu giao diện báo "Thiếu quyền đọc", kiểm tra lại Rules đã Publish đúng project Firebase.

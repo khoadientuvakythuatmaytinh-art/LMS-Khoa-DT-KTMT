@@ -1,0 +1,17 @@
+HUONG DAN ADMIN SUA TAT CA BANNER
+
+1. Chep thu muc public vao thu muc du an.
+2. Publish lai firestore.rules va storage.rules.
+3. Chay chay-thu-web.bat, dang nhap tai khoan role=admin.
+4. Vao Quan tri he thong > Giao dien.
+5. O Trinh quan ly toan bo banner, chon banner trong danh sach.
+6. Sua nhan, tieu de, mo ta, bieu tuong, anh nen, vi tri va do toi.
+7. Bam Luu noi dung hoac Tai anh va ap dung.
+
+Banner ho tro:
+- Dang nhap va dang ky
+- Trung tam quan tri
+- Toan bo banner dau trang cua hoc phan, de thi, bai nop, diem, trac nghiem, lop truc tuyen va tin nhan
+- Banner chao Dashboard van co trinh sua chuyen biet ngay ben duoi
+
+Luu y: banner canh bao dong (qua han, loi mang, trang thai nop bai) khong cho sua noi dung vi day la thong tin nghiep vu tu dong.

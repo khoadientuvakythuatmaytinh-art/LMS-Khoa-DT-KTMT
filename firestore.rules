@@ -1,0 +1,932 @@
+// EXAMFLOW — FIRESTORE RULES ĐẦY ĐỦ
+// Học phần, đề thi, bài nộp, điểm số, trắc nghiệm, lớp trực tuyến,
+// bạn bè, tin nhắn riêng và nhóm chat tự động theo học phần.
+// Firebase project: sechvn-b7ba6
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // =========================================================
+    // HÀM DÙNG CHUNG
+    // =========================================================
+
+    function authenticated() {
+      return request.auth != null;
+    }
+
+    // Tài khoản đã xác thực và không bị quản trị viên tạm khóa.
+    // Hồ sơ chưa tồn tại vẫn được coi là hợp lệ để hoàn tất đăng ký lần đầu.
+    function signedIn() {
+      return authenticated()
+        && (
+          !exists(/databases/$(database)/documents/users/$(request.auth.uid))
+          || get(
+            /databases/$(database)/documents/users/$(request.auth.uid)
+          ).data.get("disabled", false) == false
+        );
+    }
+
+    function userProfileExists() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function currentUserProfile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isTeacher() {
+      return userProfileExists()
+        && currentUserProfile().data.get("role", "") == "giaovien"
+        && currentUserProfile().data.get("disabled", false) == false;
+    }
+
+    function isExamFlowAdmin() {
+      return userProfileExists()
+        && currentUserProfile().data.get("role", "") == "admin"
+        && currentUserProfile().data.get("disabled", false) == false;
+    }
+
+    function ownsCourse(courseId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/hoc_phan/$(courseId))
+        && get(/databases/$(database)/documents/hoc_phan/$(courseId))
+             .data.giaoVienId == request.auth.uid;
+    }
+
+    function ownsMeeting(meetingId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/phong_hop/$(meetingId))
+        && get(/databases/$(database)/documents/phong_hop/$(meetingId))
+             .data.giaoVienId == request.auth.uid;
+    }
+
+    function ownsQuiz(quizId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/trac_nghiem/$(quizId))
+        && get(/databases/$(database)/documents/trac_nghiem/$(quizId))
+             .data.giaoVienId == request.auth.uid;
+    }
+
+    function quizIsOpen(quizData) {
+      return quizData.get("trangThai", "") in ["mo", "open"]
+        || quizData.get("status", "") in ["mo", "open"];
+    }
+
+    function socialConversationParticipant(conversationId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/tro_chuyen/$(conversationId))
+        && request.auth.uid in get(
+          /databases/$(database)/documents/tro_chuyen/$(conversationId)
+        ).data.participants;
+    }
+
+    function socialFriendshipAccepted(pairId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/ket_ban/$(pairId))
+        && get(/databases/$(database)/documents/ket_ban/$(pairId))
+             .data.status == "accepted"
+        && request.auth.uid in get(
+          /databases/$(database)/documents/ket_ban/$(pairId)
+        ).data.participants;
+    }
+
+    function courseExists(courseId) {
+      return exists(/databases/$(database)/documents/hoc_phan/$(courseId));
+    }
+
+    function enrollmentExists(courseId, uid) {
+      return exists(
+        /databases/$(database)/documents/ghi_danh/$(courseId + "_" + uid)
+      );
+    }
+
+    function classGroupMember(groupId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/nhom_chat_lop/$(groupId))
+        && request.auth.uid in get(
+          /databases/$(database)/documents/nhom_chat_lop/$(groupId)
+        ).data.memberIds;
+    }
+
+    // =========================================================
+    // NGƯỜI DÙNG
+    // =========================================================
+
+    match /users/{userId} {
+      // Người dùng đăng ký công khai chỉ được tạo hồ sơ của chính mình
+      // với vai trò sinh viên hoặc giáo viên. Không cho tự tạo admin.
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.get("uid", userId) == userId
+        && request.resource.data.get("role", "") in ["hocsinh", "giaovien"]
+        && request.resource.data.get("disabled", false) == false
+        && request.resource.data.get("hoTen", "") is string
+        && request.resource.data.get("hoTen", "").size() >= 1
+        && request.resource.data.get("hoTen", "").size() <= 120;
+
+      // Người dùng xem hồ sơ của mình. Admin được xem từng hồ sơ.
+      allow get: if authenticated()
+        && (
+          request.auth.uid == userId
+          || isExamFlowAdmin()
+        );
+
+      // Chỉ admin được truy vấn toàn bộ collection users.
+      allow list: if isExamFlowAdmin();
+
+      // Người dùng thường chỉ được cập nhật thông tin cá nhân.
+      // Không được tự đổi UID, email, vai trò, trạng thái khóa,
+      // ngày tạo hoặc người quản trị cập nhật gần nhất.
+      allow update: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.get("uid", userId)
+             == resource.data.get("uid", userId)
+        && request.resource.data.get("email", "")
+             == resource.data.get("email", "")
+        && request.resource.data.get("role", "hocsinh")
+             == resource.data.get("role", "hocsinh")
+        && request.resource.data.get("disabled", false)
+             == resource.data.get("disabled", false)
+        && request.resource.data.get("createdAt", null)
+             == resource.data.get("createdAt", null)
+        && request.resource.data.get("hoTen", "") is string
+        && request.resource.data.get("hoTen", "").size() >= 1
+        && request.resource.data.get("hoTen", "").size() <= 120
+        && !request.resource.data.diff(resource.data)
+             .affectedKeys()
+             .hasAny([
+               "uid", "email", "role", "disabled",
+               "createdAt", "updatedBy"
+             ]);
+
+      // Admin được sửa hồ sơ, vai trò và trạng thái khóa.
+      // Không cho thay UID, email đăng nhập hoặc ngày tạo.
+      // Admin đang đăng nhập không thể tự hạ quyền hoặc tự khóa.
+      allow update: if isExamFlowAdmin()
+        && request.resource.data.get("uid", userId)
+             == resource.data.get("uid", userId)
+        && request.resource.data.get("email", "")
+             == resource.data.get("email", "")
+        && request.resource.data.get("createdAt", null)
+             == resource.data.get("createdAt", null)
+        && request.resource.data.get("role", "hocsinh")
+             in ["hocsinh", "giaovien", "admin"]
+        && request.resource.data.get("disabled", false) is bool
+        && request.resource.data.get("hoTen", "") is string
+        && request.resource.data.get("hoTen", "").size() >= 1
+        && request.resource.data.get("hoTen", "").size() <= 120
+        && request.resource.data.get("updatedBy", request.auth.uid)
+             == request.auth.uid
+        && (
+          userId != request.auth.uid
+          || (
+            request.resource.data.get("role", "") == "admin"
+            && request.resource.data.get("disabled", false) == false
+          )
+        )
+        && !request.resource.data.diff(resource.data)
+             .affectedKeys()
+             .hasAny(["uid", "email", "createdAt"]);
+
+      // Không cho xóa hồ sơ để tránh mất liên kết với dữ liệu cũ.
+      allow delete: if false;
+    }
+
+    // Hồ sơ tối thiểu dùng để tìm kiếm bạn bè.
+    // Không lưu mật khẩu và không công khai email.
+    match /danh_ba_cong_khai/{uid} {
+      allow read: if signedIn();
+
+      // Người dùng thường chỉ được ghi danh bạ của chính mình
+      // và vai trò phải khớp với users/{uid}.
+      allow create, update: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.hoTen is string
+        && request.resource.data.hoTen.size() >= 1
+        && request.resource.data.hoTen.size() <= 120
+        && request.resource.data.hoTenKey is string
+        && request.resource.data.role in ["hocsinh", "giaovien"]
+        && exists(/databases/$(database)/documents/users/$(uid))
+        && request.resource.data.hoTen == get(
+          /databases/$(database)/documents/users/$(uid)
+        ).data.hoTen
+        && request.resource.data.role == get(
+          /databases/$(database)/documents/users/$(uid)
+        ).data.role
+        && request.resource.data.keys().hasOnly([
+          "uid", "hoTen", "hoTenKey", "role", "updatedAt"
+        ]);
+
+      // Admin được đồng bộ danh bạ của bất kỳ tài khoản nào,
+      // bao gồm cả vai trò admin.
+      allow create, update: if isExamFlowAdmin()
+        && request.resource.data.uid == uid
+        && request.resource.data.hoTen is string
+        && request.resource.data.hoTen.size() >= 1
+        && request.resource.data.hoTen.size() <= 120
+        && request.resource.data.hoTenKey is string
+        && request.resource.data.role in ["hocsinh", "giaovien", "admin"]
+        && exists(/databases/$(database)/documents/users/$(uid))
+        && request.resource.data.hoTen == get(
+          /databases/$(database)/documents/users/$(uid)
+        ).data.hoTen
+        && request.resource.data.role == get(
+          /databases/$(database)/documents/users/$(uid)
+        ).data.role
+        && request.resource.data.keys().hasOnly([
+          "uid", "hoTen", "hoTenKey", "role", "updatedAt"
+        ]);
+
+      allow delete: if signedIn()
+        && (
+          request.auth.uid == uid
+          || isExamFlowAdmin()
+        );
+    }
+
+    // =========================================================
+    // CẤU HÌNH GIAO DIỆN TOÀN HỆ THỐNG
+    // =========================================================
+
+    match /system_config/interface {
+      // Trang đăng nhập cũng phải đọc được ảnh nền trước khi đăng nhập.
+      allow read: if true;
+
+      // Chỉ admin được tạo hoặc cập nhật cấu hình ảnh giao diện.
+      allow create, update: if isExamFlowAdmin()
+        && request.resource.data.get("imageUrl", "") is string
+        && request.resource.data.get("imagePath", "") is string
+        && request.resource.data.get("target", "both")
+             in ["login", "app", "both"]
+        && request.resource.data.get("overlay", 0.48) is number
+        && request.resource.data.get("overlay", 0.48) >= 0
+        && request.resource.data.get("overlay", 0.48) <= 0.8
+        && request.resource.data.get("updatedBy", "")
+             == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          "imageUrl", "imagePath", "target", "overlay",
+          "updatedAt", "updatedBy"
+        ]);
+
+      allow delete: if isExamFlowAdmin();
+    }
+
+    // Banner chào mừng Dashboard có thể đọc công khai để hiển thị ngay sau đăng nhập.
+    match /system_config/dashboard_hero {
+      allow read: if true;
+
+      allow create, update: if isExamFlowAdmin()
+        && request.resource.data.get("imageUrl", "") is string
+        && request.resource.data.get("imagePath", "") is string
+        && request.resource.data.get("titleTemplate", "{greeting}, {name}") is string
+        && request.resource.data.get("subtitle", "") is string
+        && request.resource.data.get("position", "center")
+             in ["left", "center", "right"]
+        && request.resource.data.get("overlay", 0.48) is number
+        && request.resource.data.get("overlay", 0.48) >= 0
+        && request.resource.data.get("overlay", 0.48) <= 0.8
+        && request.resource.data.get("updatedBy", "") == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          "imageUrl", "imagePath", "titleTemplate", "subtitle",
+          "position", "overlay", "updatedAt", "updatedBy"
+        ]);
+
+      allow delete: if isExamFlowAdmin();
+    }
+
+    // Toàn bộ banner tĩnh: đăng nhập, trang chức năng và trung tâm quản trị.
+    match /system_banners/{bannerId} {
+      allow read: if true;
+
+      allow create, update: if isExamFlowAdmin()
+        && request.resource.data.get("bannerId", bannerId) == bannerId
+        && request.resource.data.get("kind", "premium-page")
+             in ["login", "admin-command", "premium-page"]
+        && request.resource.data.get("icon", "") is string
+        && request.resource.data.get("eyebrow", "") is string
+        && request.resource.data.get("title", "") is string
+        && request.resource.data.get("description", "") is string
+        && request.resource.data.get("imageUrl", "") is string
+        && request.resource.data.get("imagePath", "") is string
+        && request.resource.data.get("position", "center")
+             in ["left", "center", "right"]
+        && request.resource.data.get("overlay", 0.48) is number
+        && request.resource.data.get("overlay", 0.48) >= 0
+        && request.resource.data.get("overlay", 0.48) <= 0.8
+        && request.resource.data.get("enabled", true) is bool
+        && request.resource.data.get("updatedBy", "") == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          "bannerId", "kind", "icon", "eyebrow", "title", "description",
+          "imageUrl", "imagePath", "position", "overlay", "enabled",
+          "updatedAt", "updatedBy"
+        ]);
+
+      allow delete: if isExamFlowAdmin();
+    }
+
+    // =========================================================
+    // KẾT BẠN VÀ TRÒ CHUYỆN
+    // =========================================================
+
+    match /ket_ban/{pairId} {
+      allow read: if signedIn()
+        && request.auth.uid in resource.data.participants;
+
+      allow create: if signedIn()
+        && request.resource.data.senderId == request.auth.uid
+        && request.resource.data.receiverId != request.auth.uid
+        && request.resource.data.status == "pending"
+        && request.resource.data.participants is list
+        && request.resource.data.participants.size() == 2
+        && request.resource.data.participants.hasAll([
+          request.resource.data.senderId,
+          request.resource.data.receiverId
+        ])
+        && exists(
+          /databases/$(database)/documents/danh_ba_cong_khai/$(request.resource.data.senderId)
+        )
+        && exists(
+          /databases/$(database)/documents/danh_ba_cong_khai/$(request.resource.data.receiverId)
+        )
+        && request.resource.data.senderName == get(
+          /databases/$(database)/documents/danh_ba_cong_khai/$(request.resource.data.senderId)
+        ).data.hoTen
+        && request.resource.data.senderRole == get(
+          /databases/$(database)/documents/danh_ba_cong_khai/$(request.resource.data.senderId)
+        ).data.role
+        && request.resource.data.receiverName == get(
+          /databases/$(database)/documents/danh_ba_cong_khai/$(request.resource.data.receiverId)
+        ).data.hoTen
+        && request.resource.data.receiverRole == get(
+          /databases/$(database)/documents/danh_ba_cong_khai/$(request.resource.data.receiverId)
+        ).data.role
+        && request.resource.data.keys().hasOnly([
+          "participants",
+          "senderId", "receiverId",
+          "senderName", "senderRole",
+          "receiverName", "receiverRole",
+          "status", "createdAt", "updatedAt"
+        ]);
+
+      // Chỉ người nhận được chấp nhận lời mời đang chờ.
+      allow update: if signedIn()
+        && request.auth.uid == resource.data.receiverId
+        && resource.data.status == "pending"
+        && request.resource.data.status == "accepted"
+        && request.resource.data.senderId == resource.data.senderId
+        && request.resource.data.receiverId == resource.data.receiverId
+        && request.resource.data.participants == resource.data.participants
+        && request.resource.data.diff(resource.data)
+             .affectedKeys()
+             .hasOnly(["status", "acceptedAt", "updatedAt"]);
+
+      // Hai bên đều có thể từ chối, hủy lời mời hoặc hủy kết bạn.
+      allow delete: if signedIn()
+        && request.auth.uid in resource.data.participants;
+    }
+
+    match /tro_chuyen/{conversationId} {
+      // Người từng tham gia vẫn có thể xem lịch sử cũ.
+      allow read: if signedIn()
+        && request.auth.uid in resource.data.participants;
+
+      allow create: if socialFriendshipAccepted(conversationId)
+        && request.resource.data.participants is list
+        && request.resource.data.participants.size() == 2
+        && request.auth.uid in request.resource.data.participants
+        && request.resource.data.participants == get(
+          /databases/$(database)/documents/ket_ban/$(conversationId)
+        ).data.participants
+        && request.resource.data.get("lastMessage", "") is string
+        && request.resource.data.get("lastMessage", "").size() <= 2000
+        && request.resource.data.get("lastSenderId", request.auth.uid)
+             in request.resource.data.participants
+        && request.resource.data.keys().hasOnly([
+          "participants", "createdAt", "updatedAt",
+          "lastMessage", "lastSenderId", "readAt"
+        ]);
+
+      allow update: if socialFriendshipAccepted(conversationId)
+        && request.auth.uid in resource.data.participants
+        && request.resource.data.participants == resource.data.participants
+        && request.resource.data.get("lastMessage", "") is string
+        && request.resource.data.get("lastMessage", "").size() <= 2000
+        && request.resource.data.diff(resource.data)
+             .affectedKeys()
+             .hasOnly([
+               "createdAt", "updatedAt",
+               "lastMessage", "lastSenderId", "readAt"
+             ])
+        && (
+          !request.resource.data.diff(resource.data)
+            .affectedKeys()
+            .hasAny(["lastSenderId"])
+          || request.resource.data.get("lastSenderId", "") == request.auth.uid
+        );
+
+      allow delete: if false;
+
+      match /tin_nhan/{messageId} {
+        allow read: if socialConversationParticipant(conversationId);
+
+        allow create: if socialFriendshipAccepted(conversationId)
+          && socialConversationParticipant(conversationId)
+          && request.resource.data.senderId == request.auth.uid
+          && request.resource.data.receiverId != request.auth.uid
+          && request.resource.data.receiverId in get(
+            /databases/$(database)/documents/tro_chuyen/$(conversationId)
+          ).data.participants
+          && request.resource.data.text is string
+          && request.resource.data.text.size() >= 1
+          && request.resource.data.text.size() <= 2000
+          && request.resource.data.keys().hasOnly([
+            "senderId", "receiverId", "text", "sentAtClient", "createdAt"
+          ]);
+
+        allow update, delete: if false;
+      }
+    }
+
+    // =========================================================
+    // HỌC PHẦN VÀ GHI DANH
+    // =========================================================
+
+    match /hoc_phan/{courseId} {
+      allow read: if signedIn();
+
+      allow create: if isTeacher()
+        && request.resource.data.giaoVienId == request.auth.uid;
+
+      allow update: if ownsCourse(courseId)
+        && request.resource.data.giaoVienId == resource.data.giaoVienId;
+
+      allow delete: if ownsCourse(courseId);
+    }
+
+    match /ghi_danh/{enrollmentId} {
+      // Học sinh xem ghi danh của mình; giáo viên xem lớp mình quản lý.
+      allow read: if signedIn()
+        && (
+          isExamFlowAdmin()
+          || resource.data.uid == request.auth.uid
+          || ownsCourse(resource.data.hocPhanId)
+        );
+
+      // ID cố định hocPhanId_uid giúp Rules xác minh thành viên nhóm lớp.
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.hocPhanId is string
+        && enrollmentId
+             == request.resource.data.hocPhanId + "_" + request.auth.uid
+        && courseExists(request.resource.data.hocPhanId)
+        && request.resource.data.hoTen is string
+        && request.resource.data.keys().hasOnly([
+          "hocPhanId", "maHocPhan", "tenHocPhan",
+          "uid", "hoTen", "createdAt"
+        ]);
+
+      // Dùng khi chuyển ghi danh cũ sang ID cố định.
+      allow update: if signedIn()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.hocPhanId == resource.data.hocPhanId
+        && request.resource.data.diff(resource.data)
+             .affectedKeys()
+             .hasOnly([
+               "maHocPhan", "tenHocPhan", "hoTen", "createdAt"
+             ]);
+
+      // Học sinh tự hủy; giáo viên được xóa khi xóa học phần.
+      allow delete: if signedIn()
+        && (
+          resource.data.uid == request.auth.uid
+          || ownsCourse(resource.data.hocPhanId)
+        );
+    }
+
+    // =========================================================
+    // NHÓM CHAT TỰ ĐỘNG CỦA HỌC PHẦN
+    // ID nhóm chính là hocPhanId.
+    // =========================================================
+
+    match /nhom_chat_lop/{groupId} {
+      // Chỉ thành viên hiện tại mới xem được nhóm.
+      allow read: if signedIn()
+        && request.auth.uid in resource.data.memberIds;
+
+      // Giáo viên tạo nhóm cho lớp; học sinh đã ghi danh có thể tạo nhóm
+      // còn thiếu với đúng hai thành viên ban đầu: giáo viên và chính mình.
+      allow create: if signedIn()
+        && request.resource.data.hocPhanId == groupId
+        && courseExists(groupId)
+        && request.resource.data.giaoVienId == get(
+          /databases/$(database)/documents/hoc_phan/$(groupId)
+        ).data.giaoVienId
+        && request.resource.data.memberIds is list
+        && request.resource.data.giaoVienId
+             in request.resource.data.memberIds
+        && request.auth.uid in request.resource.data.memberIds
+        && (
+          ownsCourse(groupId)
+          || (
+            enrollmentExists(groupId, request.auth.uid)
+            && request.resource.data.memberIds.size() == 2
+            && request.resource.data.memberIds.hasAll([
+              request.resource.data.giaoVienId,
+              request.auth.uid
+            ])
+          )
+        )
+        && request.resource.data.keys().hasOnly([
+          "hocPhanId", "maHocPhan", "tenHocPhan",
+          "giaoVienId", "giaoVienTen", "memberIds",
+          "createdAt", "updatedAt",
+          "lastMessage", "lastSenderId", "lastSenderName",
+          "lastSenderRole", "readAt"
+        ]);
+
+      // Thành viên gửi tin/đánh dấu đã đọc, không được sửa danh sách lớp.
+      allow update: if signedIn()
+        && request.auth.uid in resource.data.memberIds
+        && request.resource.data.memberIds == resource.data.memberIds
+        && request.resource.data.hocPhanId == resource.data.hocPhanId
+        && request.resource.data.giaoVienId == resource.data.giaoVienId
+        && request.resource.data.diff(resource.data)
+             .affectedKeys()
+             .hasOnly([
+               "lastMessage", "lastSenderId", "lastSenderName",
+               "lastSenderRole", "updatedAt", "readAt"
+             ])
+        && request.resource.data.get("lastMessage", "") is string
+        && request.resource.data.get("lastMessage", "").size() <= 160
+        && (
+          !request.resource.data.diff(resource.data)
+            .affectedKeys()
+            .hasAny([
+              "lastMessage", "lastSenderId",
+              "lastSenderName", "lastSenderRole"
+            ])
+          || (
+            request.resource.data.get("lastSenderId", "")
+              == request.auth.uid
+            && request.resource.data.get("lastSenderName", "") == get(
+              /databases/$(database)/documents/users/$(request.auth.uid)
+            ).data.hoTen
+            && request.resource.data.get("lastSenderRole", "") == get(
+              /databases/$(database)/documents/users/$(request.auth.uid)
+            ).data.role
+          )
+        );
+
+      // Giáo viên đồng bộ danh sách thành viên và thông tin học phần.
+      allow update: if ownsCourse(groupId)
+        && request.resource.data.hocPhanId == groupId
+        && request.resource.data.giaoVienId == request.auth.uid
+        && request.resource.data.memberIds is list
+        && request.auth.uid in request.resource.data.memberIds;
+
+      // Học sinh đã ghi danh được tự thêm chính mình vào nhóm.
+      allow update: if signedIn()
+        && enrollmentExists(groupId, request.auth.uid)
+        && !(request.auth.uid in resource.data.memberIds)
+        && request.auth.uid in request.resource.data.memberIds
+        && request.resource.data.memberIds.hasAll(resource.data.memberIds)
+        && request.resource.data.memberIds.size()
+             == resource.data.memberIds.size() + 1
+        && request.resource.data.diff(resource.data)
+             .affectedKeys()
+             .hasOnly(["memberIds", "updatedAt"]);
+
+      // Học sinh gỡ chính mình khỏi nhóm trước khi hủy ghi danh.
+      allow update: if signedIn()
+        && enrollmentExists(groupId, request.auth.uid)
+        && request.auth.uid in resource.data.memberIds
+        && !(request.auth.uid in request.resource.data.memberIds)
+        && resource.data.memberIds.hasAll(request.resource.data.memberIds)
+        && request.resource.data.memberIds.size()
+             == resource.data.memberIds.size() - 1
+        && request.resource.data.diff(resource.data)
+             .affectedKeys()
+             .hasOnly(["memberIds", "updatedAt"]);
+
+      // Chỉ giáo viên sở hữu học phần được xóa nhóm.
+      allow delete: if ownsCourse(groupId);
+
+      match /tin_nhan/{messageId} {
+        allow read: if classGroupMember(groupId);
+
+        // senderRole được đối chiếu với users/{uid}; học sinh không thể
+        // tự nhận là giáo viên để lấy nhãn đỏ trong nhóm chat.
+        allow create: if classGroupMember(groupId)
+          && request.resource.data.senderId == request.auth.uid
+          && request.resource.data.senderName == get(
+            /databases/$(database)/documents/users/$(request.auth.uid)
+          ).data.hoTen
+          && request.resource.data.senderRole == get(
+            /databases/$(database)/documents/users/$(request.auth.uid)
+          ).data.role
+          && request.resource.data.senderRole in ["hocsinh", "giaovien"]
+          && request.resource.data.text is string
+          && request.resource.data.text.size() >= 1
+          && request.resource.data.text.size() <= 2000
+          && request.resource.data.keys().hasOnly([
+            "senderId", "senderName", "senderRole",
+            "text", "sentAtClient", "createdAt"
+          ]);
+
+        allow update: if false;
+        allow delete: if ownsCourse(groupId);
+      }
+    }
+
+    // =========================================================
+    // ĐỀ THI VÀ BÀI NỘP TỆP
+    // =========================================================
+
+    match /de_thi/{examId} {
+      allow read: if signedIn();
+
+      allow create: if isTeacher()
+        && request.resource.data.uploadedBy == request.auth.uid
+        && ownsCourse(request.resource.data.hocPhanId);
+
+      allow update: if signedIn()
+        && resource.data.uploadedBy == request.auth.uid
+        && ownsCourse(resource.data.hocPhanId)
+        && request.resource.data.uploadedBy == resource.data.uploadedBy
+        && request.resource.data.hocPhanId == resource.data.hocPhanId;
+
+      allow delete: if signedIn()
+        && resource.data.uploadedBy == request.auth.uid
+        && ownsCourse(resource.data.hocPhanId);
+    }
+
+    match /bai_nop/{submissionId} {
+      // Học sinh chỉ được nộp bài của chính mình.
+      // Không được tự ghi điểm hoặc thông tin người chấm khi tạo bài nộp.
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.hocPhanId is string
+        && exists(
+          /databases/$(database)/documents/hoc_phan/$(request.resource.data.hocPhanId)
+        )
+        && request.resource.data.get("diem", null) == null
+        && request.resource.data.get("gradedAt", null) == null
+        && request.resource.data.get("gradedBy", null) == null
+        && request.resource.data.get("nhanXet", "") == ""
+        && request.resource.data.get("gradedByName", "") == "";
+
+      allow read: if signedIn()
+        && (
+          isExamFlowAdmin()
+          || resource.data.uid == request.auth.uid
+          || ownsCourse(resource.data.hocPhanId)
+        );
+
+      // Giáo viên chỉ được sửa các trường chấm bài,
+      // không được đổi chủ bài nộp hoặc học phần.
+      allow update: if isTeacher()
+        && ownsCourse(resource.data.hocPhanId)
+        && request.resource.data.hocPhanId == resource.data.hocPhanId
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.diff(resource.data)
+             .affectedKeys()
+             .hasOnly([
+               "diem",
+               "nhanXet",
+               "gradedAt",
+               "gradedBy",
+               "gradedByName",
+               "deadlineAtSnapshot",
+               "isLate",
+               "lateByMs",
+               "lateLabel"
+             ])
+        && (
+          !request.resource.data.diff(resource.data)
+            .affectedKeys()
+            .hasAny(["diem"])
+          || request.resource.data.get("diem", null) == null
+          || request.resource.data.get("diem", null) is number
+        )
+        && request.resource.data.get("gradedBy", request.auth.uid)
+             == request.auth.uid;
+
+      // Không cho học sinh xóa bài đã nộp để bảo toàn lịch sử.
+      allow delete: if ownsCourse(resource.data.hocPhanId);
+    }
+
+    // =========================================================
+    // PHÒNG HỌC TRỰC TUYẾN VÀ ĐIỂM DANH
+    // =========================================================
+
+    match /phong_hop/{meetingId} {
+      allow read: if signedIn();
+
+      allow create: if isTeacher()
+        && request.resource.data.giaoVienId == request.auth.uid
+        && ownsCourse(request.resource.data.hocPhanId);
+
+      allow update: if ownsMeeting(meetingId)
+        && request.resource.data.giaoVienId == resource.data.giaoVienId
+        && request.resource.data.hocPhanId == resource.data.hocPhanId;
+
+      allow delete: if ownsMeeting(meetingId);
+    }
+
+    match /tham_gia_lop_hoc/{attendanceId} {
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.meetingId is string
+        && exists(
+          /databases/$(database)/documents/phong_hop/$(request.resource.data.meetingId)
+        )
+        && request.resource.data.get(
+             "hocPhanId",
+             get(
+               /databases/$(database)/documents/phong_hop/$(request.resource.data.meetingId)
+             ).data.hocPhanId
+           ) == get(
+             /databases/$(database)/documents/phong_hop/$(request.resource.data.meetingId)
+           ).data.hocPhanId;
+
+      allow update: if signedIn()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.meetingId == resource.data.meetingId
+        && request.resource.data.get(
+             "hocPhanId",
+             resource.data.get("hocPhanId", "")
+           ) == resource.data.get("hocPhanId", "");
+
+      allow read: if signedIn()
+        && (
+          resource.data.uid == request.auth.uid
+          || ownsMeeting(resource.data.meetingId)
+        );
+
+      // Chỉ giáo viên sở hữu phòng được xóa dữ liệu điểm danh.
+      allow delete: if ownsMeeting(resource.data.meetingId);
+    }
+
+    // =========================================================
+    // TRẮC NGHIỆM
+    // =========================================================
+
+    match /trac_nghiem/{quizId} {
+      // Cho phép người dùng đã đăng nhập tải danh sách trắc nghiệm.
+      // Việc hiển thị đề mở/đóng được ứng dụng lọc theo hocPhanId và trạng thái.
+      // Cách này tương thích với truy vấn tải toàn bộ collection hiện tại.
+      allow read: if signedIn();
+
+      allow create: if isTeacher()
+        && request.resource.data.giaoVienId == request.auth.uid
+        && ownsCourse(request.resource.data.hocPhanId);
+
+      allow update: if ownsQuiz(quizId)
+        && request.resource.data.giaoVienId == resource.data.giaoVienId
+        && request.resource.data.hocPhanId == resource.data.hocPhanId;
+
+      allow delete: if ownsQuiz(quizId);
+
+      // Subcollection tùy chọn nếu sau này chuyển việc chấm điểm lên máy chủ.
+      // Phiên bản ứng dụng hiện tại vẫn lưu cấu trúc câu hỏi trong tài liệu đề.
+      match /dap_an/{answerId} {
+        allow read, create, update, delete: if ownsQuiz(quizId);
+      }
+    }
+
+    match /bai_lam_trac_nghiem/{attemptId} {
+      // Học sinh chỉ nộp bài của mình và chỉ khi đề đang mở.
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.quizId is string
+        && exists(
+          /databases/$(database)/documents/trac_nghiem/$(request.resource.data.quizId)
+        )
+        && quizIsOpen(get(
+          /databases/$(database)/documents/trac_nghiem/$(request.resource.data.quizId)
+        ).data);
+
+      allow read: if signedIn()
+        && (
+          isExamFlowAdmin()
+          || resource.data.uid == request.auth.uid
+          || ownsQuiz(resource.data.quizId)
+        );
+
+      // Bài làm không được sửa sau khi nộp. Giáo viên sở hữu đề được xóa
+      // bài làm khi thực hiện thao tác xóa đề trắc nghiệm.
+      allow update: if false;
+      allow delete: if ownsQuiz(resource.data.quizId);
+    }
+
+
+    // =========================================================
+    // EXAMFLOW NEXUS: BẢNG TIN HỌC PHẦN
+    // =========================================================
+
+    match /thong_bao_hoc_phan/{announcementId} {
+      // Giáo viên sở hữu học phần hoặc học sinh đã ghi danh được đọc.
+      allow read: if signedIn()
+        && resource.data.hocPhanId is string
+        && (
+          ownsCourse(resource.data.hocPhanId)
+          || exists(
+            /databases/$(database)/documents/ghi_danh/$(resource.data.hocPhanId + "_" + request.auth.uid)
+          )
+        );
+
+      allow create: if isTeacher()
+        && request.resource.data.hocPhanId is string
+        && ownsCourse(request.resource.data.hocPhanId)
+        && request.resource.data.giaoVienId == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 160
+        && request.resource.data.content is string
+        && request.resource.data.content.size() >= 1
+        && request.resource.data.content.size() <= 4000
+        && request.resource.data.priority in ["normal", "important", "urgent"]
+        && request.resource.data.pinned is bool
+        && request.resource.data.keys().hasOnly([
+          "hocPhanId", "maHocPhan", "tenHocPhan",
+          "giaoVienId", "giaoVienTen",
+          "title", "content", "priority", "pinned",
+          "createdAt", "updatedAt"
+        ]);
+
+      allow update: if isTeacher()
+        && resource.data.giaoVienId == request.auth.uid
+        && ownsCourse(resource.data.hocPhanId)
+        && request.resource.data.giaoVienId == resource.data.giaoVienId
+        && request.resource.data.hocPhanId == resource.data.hocPhanId
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 160
+        && request.resource.data.content is string
+        && request.resource.data.content.size() >= 1
+        && request.resource.data.content.size() <= 4000
+        && request.resource.data.priority in ["normal", "important", "urgent"]
+        && request.resource.data.pinned is bool
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          "maHocPhan", "tenHocPhan", "giaoVienTen",
+          "title", "content", "priority", "pinned", "updatedAt"
+        ]);
+
+      allow delete: if isTeacher()
+        && resource.data.giaoVienId == request.auth.uid
+        && ownsCourse(resource.data.hocPhanId);
+    }
+
+    // =========================================================
+    // EXAMFLOW NEXUS: KẾ HOẠCH CÁ NHÂN
+    // =========================================================
+
+    match /ke_hoach_ca_nhan/{taskId} {
+      allow read: if signedIn()
+        && resource.data.uid == request.auth.uid;
+
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 180
+        && request.resource.data.description is string
+        && request.resource.data.description.size() <= 1000
+        && request.resource.data.priority in ["normal", "high", "critical"]
+        && request.resource.data.status == "active"
+        && request.resource.data.dueAt is timestamp
+        && request.resource.data.keys().hasOnly([
+          "uid", "title", "description", "dueAt",
+          "priority", "status", "createdAt", "updatedAt"
+        ]);
+
+      allow update: if signedIn()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 180
+        && request.resource.data.description is string
+        && request.resource.data.description.size() <= 1000
+        && request.resource.data.priority in ["normal", "high", "critical"]
+        && request.resource.data.status in ["active", "done"]
+        && request.resource.data.dueAt is timestamp
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          "title", "description", "dueAt", "priority", "status",
+          "completedAt", "updatedAt"
+        ]);
+
+      allow delete: if signedIn()
+        && resource.data.uid == request.auth.uid;
+    }
+
+    // Mọi collection không được khai báo ở trên đều bị từ chối mặc định.
+    // Không thêm allow read, write: if true ở cuối file.
+  }
+}
