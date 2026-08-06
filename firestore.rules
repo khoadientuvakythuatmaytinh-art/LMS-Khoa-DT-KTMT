@@ -514,9 +514,13 @@ service cloud.firestore {
     // =========================================================
 
     match /nhom_chat_lop/{groupId} {
-      // Chỉ thành viên hiện tại mới xem được nhóm.
+      // Chỉ thành viên hiện tại, giáo viên sở hữu hoặc khi kiểm tra nhóm chưa tồn tại mới đọc được.
       allow read: if signedIn()
-        && request.auth.uid in resource.data.memberIds;
+        && (
+          resource == null
+          || ownsCourse(groupId)
+          || request.auth.uid in resource.data.memberIds
+        );
 
       // Giáo viên tạo nhóm cho lớp; học sinh đã ghi danh có thể tạo nhóm
       // còn thiếu với đúng hai thành viên ban đầu: giáo viên và chính mình.

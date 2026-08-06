@@ -5761,16 +5761,22 @@ async function ensureClassGroupForCourse(courseId, course = {}, extraMemberIds =
   const groupRef = doc(db, "nhom_chat_lop", courseId);
 
   try {
-    const snap = await getDoc(groupRef);
-    if (!snap.exists()) {
+    let snap;
+    try {
+      snap = await getDoc(groupRef);
+    } catch (readErr) {
+      snap = { exists: () => false };
+    }
+
+    if (!snap || !snap.exists()) {
       // Chưa có nhóm chat lớp — khởi tạo lần đầu kèm createdAt & updatedAt
       await setDoc(groupRef, {
         ...data,
         giaoVienId: teacherId,
         giaoVienTen: data.giaoVienTen || (currentRole === "giaovien" ? currentUserName : "Giáo viên"),
         memberIds,
-        createdAt: course.createdAt || serverTimestamp(),
-        updatedAt: course.createdAt || serverTimestamp()
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
       });
     } else {
       // Đã có nhóm chat lớp — chỉ bổ sung memberIds hoặc tên nếu có thay đổi thực sự,
@@ -5778,18 +5784,20 @@ async function ensureClassGroupForCourse(courseId, course = {}, extraMemberIds =
       const current = snap.data();
       const currentMembers = new Set(current.memberIds || []);
       const newMembers = memberIds.filter(id => !currentMembers.has(id));
-      const isNameChanged = data.tenHocPhan && current.tenHocPhan !== data.tenHocPhan;
+      const isTeacher = currentRole === "giaovien" || currentUser.uid === teacherId;
+      const isNameChanged = isTeacher && Boolean(data.tenHocPhan) && current.tenHocPhan !== data.tenHocPhan;
+      const isCodeChanged = isTeacher && Boolean(data.maHocPhan) && current.maHocPhan !== data.maHocPhan;
 
-      if (newMembers.length > 0 || isNameChanged) {
+      if (newMembers.length > 0 || isNameChanged || isCodeChanged) {
         const payload = {};
         if (newMembers.length > 0) payload.memberIds = arrayUnion(...newMembers);
         if (isNameChanged) payload.tenHocPhan = data.tenHocPhan;
-        if (data.maHocPhan) payload.maHocPhan = data.maHocPhan;
+        if (isCodeChanged) payload.maHocPhan = data.maHocPhan;
         await updateDoc(groupRef, payload);
       }
     }
   } catch (err) {
-    console.warn("Lỗi kiểm tra nhóm chat lớp:", err);
+    console.warn("Lỗi kiểm tra/tạo nhóm chat lớp:", err);
   }
 }
 
@@ -5858,6 +5866,54 @@ async function ensureClassGroupsForCurrentUser(force = false) {
   return classGroupsSyncPromise;
 }
 
+function getEffectiveClassGroups() {
+  if (!currentUser) return [];
+
+  const groupMap = new Map();
+  (classGroups || []).forEach(g => {
+    if (g && g.id) groupMap.set(g.id, g);
+  });
+
+  if (currentRole === "giaovien") {
+    (teacherHocPhanList || []).forEach(hp => {
+      if (hp && hp.id && !groupMap.has(hp.id)) {
+        groupMap.set(hp.id, {
+          id: hp.id,
+          hocPhanId: hp.id,
+          maHocPhan: hp.maHocPhan || hp.tenHocPhan || "",
+          tenHocPhan: hp.tenHocPhan || hp.maHocPhan || "Học phần",
+          giaoVienId: hp.giaoVienId || currentUser.uid,
+          giaoVienTen: hp.giaoVienTen || currentUserName || "Giáo viên",
+          memberIds: [currentUser.uid],
+          createdAt: hp.createdAt,
+          updatedAt: hp.createdAt
+        });
+      }
+    });
+  } else {
+    (studentHocPhanList || []).forEach(gd => {
+      const hpId = gd.hocPhanId || gd.id;
+      if (hpId && !groupMap.has(hpId)) {
+        groupMap.set(hpId, {
+          id: hpId,
+          hocPhanId: hpId,
+          maHocPhan: gd.maHocPhan || gd.tenHocPhan || "",
+          tenHocPhan: gd.tenHocPhan || gd.maHocPhan || "Học phần",
+          giaoVienId: "",
+          giaoVienTen: "Giáo viên",
+          memberIds: [currentUser.uid],
+          createdAt: gd.createdAt,
+          updatedAt: gd.createdAt
+        });
+      }
+    });
+  }
+
+  return Array.from(groupMap.values()).sort(
+    (a, b) => timestampMs(b.updatedAt || b.createdAt) - timestampMs(a.updatedAt || a.createdAt)
+  );
+}
+
 function startClassGroupOverviewListener() {
   if (!currentUser) return;
   classGroupUnsubscribe?.();
@@ -5870,7 +5926,8 @@ function startClassGroupOverviewListener() {
       .map(item => ({ id: item.id, ...item.data() }))
       .sort((a, b) => timestampMs(b.updatedAt || b.createdAt) - timestampMs(a.updatedAt || a.createdAt));
 
-    classGroupUnreadCount = classGroups.filter(group => {
+    const effective = getEffectiveClassGroups();
+    classGroupUnreadCount = effective.filter(group => {
       if (!group.lastMessage || group.lastSenderId === currentUser.uid) return false;
       return timestampMs(group.updatedAt) > timestampMs(group.readAt?.[currentUser.uid]);
     }).length;
@@ -5878,15 +5935,14 @@ function startClassGroupOverviewListener() {
     updateSocialBadges();
     renderClassGroupList();
     if (selectedClassGroup) {
-      const fresh = classGroups.find(group => group.id === selectedClassGroup.id);
+      const fresh = effective.find(group => group.id === selectedClassGroup.id);
       if (fresh) selectedClassGroup = fresh;
       else closeClassGroupChat();
     }
     renderPremiumNotifications();
   }, error => {
-    console.error("Class group listener error:", error);
-    const list = $("class-group-list");
-    if (list) list.innerHTML = `<div class="social-empty-state error"><span>🔐</span><strong>Không tải được nhóm lớp</strong><small>${escapeHtml(errMsg(error.code, error.message))}</small></div>`;
+    console.warn("Class group listener warning:", error);
+    renderClassGroupList();
   });
 }
 
@@ -5907,11 +5963,12 @@ function renderClassGroupList() {
   const list = $("class-group-list");
   if (!list || !currentUser) return;
   const search = normalizeCourseName($("class-group-search")?.value || "");
-  const visible = classGroups.filter(group => {
+  const effectiveGroups = getEffectiveClassGroups();
+  const visible = effectiveGroups.filter(group => {
     const haystack = normalizeCourseName(`${group.tenHocPhan || ""} ${group.maHocPhan || ""} ${group.giaoVienTen || ""}`);
     return !search || haystack.includes(search);
   });
-  if ($("class-group-count")) $("class-group-count").textContent = String(classGroups.length);
+  if ($("class-group-count")) $("class-group-count").textContent = String(effectiveGroups.length);
 
   if (!visible.length) {
     list.innerHTML = `<div class="social-empty-state compact"><span>🏫</span><strong>${search ? "Không tìm thấy nhóm phù hợp" : "Chưa có nhóm lớp"}</strong><small>${search ? "Thử từ khóa khác." : "Nhóm sẽ được tạo tự động khi bạn tạo hoặc ghi danh học phần."}</small></div>`;
@@ -5997,20 +6054,22 @@ async function openClassGroupChat(groupId) {
     messageContainer.innerHTML = `<div class="social-message-loading"><span></span><span></span><span></span></div>`;
   }
 
-  let group = classGroups.find(item => item.id === groupId);
+  const effectiveGroups = getEffectiveClassGroups();
+  let group = effectiveGroups.find(item => item.id === groupId);
   if (!group) {
     try {
       const snap = await getDoc(doc(db, "nhom_chat_lop", groupId));
       if (thisSession !== currentClassChatSession || activeClassGroupSwitchId !== groupId) return;
-      if (!snap.exists()) return toast("Nhóm chat lớp chưa sẵn sàng.", false);
-      group = { id: snap.id, ...snap.data() };
+      if (snap.exists()) {
+        group = { id: snap.id, ...snap.data() };
+      }
     } catch {
       if (thisSession !== currentClassChatSession || activeClassGroupSwitchId !== groupId) return;
     }
   }
 
-  if (thisSession !== currentClassChatSession || activeClassGroupSwitchId !== groupId) return;
-  if (!group.memberIds?.includes(currentUser.uid)) return toast("Bạn không còn là thành viên của nhóm lớp này.", false);
+  if (thisSession !== currentClassChatSession || activeClassGroupSwitchId !== groupId || !group) return;
+  if (!group.memberIds) group.memberIds = [currentUser.uid];
 
   selectedClassGroup = group;
   setSocialMode("class");
@@ -6027,6 +6086,8 @@ async function openClassGroupChat(groupId) {
   startClassGroupMessageListener(groupId, thisSession);
   markClassGroupRead(groupId);
   if (window.innerWidth <= 920) $("page-ban-be")?.classList.add("class-chat-mobile-open");
+
+  ensureClassGroupForCourse(groupId, group, [currentUser.uid]).catch(() => {});
 }
 
 function closeClassGroupChat() {
