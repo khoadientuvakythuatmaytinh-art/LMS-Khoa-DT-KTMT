@@ -7,8 +7,8 @@ for /f "tokens=5" %%P in ('netstat -ano ^| findstr ":5500" ^| findstr "LISTENING
     taskkill /F /PID %%P >nul 2>nul
 )
 
-rem Start the web server from the public folder.
-start "ExamFlow Local Server" cmd /k "cd /d ""%~dp0"" && python -m http.server 5500 --bind 127.0.0.1 --directory public"
+rem Start the web server from the current folder.
+start "ExamFlow Local Server" cmd /k "cd /d ""%~dp0"" && python -m http.server 5500 --bind 127.0.0.1"
 
 rem Wait briefly, then open the same origin every time.
 timeout /t 2 /nobreak >nul
