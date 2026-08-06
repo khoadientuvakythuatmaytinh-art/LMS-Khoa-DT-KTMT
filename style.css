@@ -3911,15 +3911,27 @@ h1, h2, h3, .brand-text, .auth-product-brand strong,
 }
 .nav-item.active::before { background: #8f88ff; box-shadow: 0 0 12px rgba(143,136,255,.9); }
 .nav-icon {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  font-size: .98rem;
-  opacity: .85;
-  filter: saturate(.85);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  opacity: .82;
+  transition: opacity .15s ease, transform .15s ease;
 }
-.nav-item.active .nav-icon { opacity: 1; filter: none; }
+.nav-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: block;
+}
+.nav-item.active .nav-icon { opacity: 1; }
+.nav-item.active .nav-icon svg { stroke-width: 2.2; }
 
 .sidebar-footer {
   margin: 0 10px 10px;

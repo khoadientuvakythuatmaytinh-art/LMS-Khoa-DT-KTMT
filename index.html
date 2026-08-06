@@ -91,7 +91,7 @@
         <span class="nav-label" id="sidebar-theme-label">Chế độ tối</span>
       </button>
       <button class="btn-logout" id="btn-logout">
-        <span class="nav-icon">↪</span>
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
         <span class="nav-label">Đăng xuất</span>
       </button>
     </div>
@@ -455,6 +455,66 @@
                 </tr>
               </thead>
               <tbody id="tb-bn"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Giáo viên: Danh sách sinh viên -->
+        <div id="page-ds-sinh-vien" class="page hidden">
+          <div class="page-header">
+            <div>
+              <h2>👥 Danh sách sinh viên</h2>
+              <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 2px;">Quản lý thông tin và kết quả sinh viên theo học phần giảng dạy</p>
+            </div>
+            <div class="header-actions">
+              <select id="gv-sv-hocphan-filter" class="select-box" aria-label="Lọc theo học phần">
+                <option value="all">Tất cả học phần</option>
+              </select>
+              <input type="text" id="gv-sv-search" placeholder="Tìm theo tên, email, mã SV..." class="search-box" />
+              <button type="button" class="btn-outline" id="btn-refresh-gv-sv">↻ Làm mới</button>
+              <button type="button" class="btn-outline" id="btn-export-gv-sv">📥 Xuất danh sách</button>
+              <button type="button" class="btn-primary" id="btn-add-gv-sv">➕ Ghi danh SV</button>
+            </div>
+          </div>
+
+          <div class="stats-row" style="margin-bottom: 16px;">
+            <div class="stat-card">
+              <span class="stat-icon">🎓</span>
+              <div>
+                <span class="stat-label">Tổng sinh viên</span>
+                <strong id="stat-gv-sv-total" class="stat-val">0</strong>
+              </div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon">📚</span>
+              <div>
+                <span class="stat-label">Học phần đang dạy</span>
+                <strong id="stat-gv-sv-hp-count" class="stat-val">0</strong>
+              </div>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon">📑</span>
+              <div>
+                <span class="stat-label">Bài nộp & Trắc nghiệm</span>
+                <strong id="stat-gv-sv-sub-count" class="stat-val">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="card table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 45px; text-align: center;">STT</th>
+                  <th>Sinh viên</th>
+                  <th>Mã sinh viên</th>
+                  <th>Học phần ghi danh</th>
+                  <th>Thời gian ghi danh</th>
+                  <th>Bài nộp / Trắc nghiệm</th>
+                  <th style="width: 200px; text-align: center;">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="tb-gv-sv"></tbody>
             </table>
           </div>
         </div>
@@ -2180,6 +2240,55 @@
       <div class="modal-actions">
         <button type="button" id="btn-cancel-deadline" class="btn-outline">Đóng</button>
         <button type="button" id="btn-save-deadline" class="btn-primary">⏰ Lưu gia hạn</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Giáo viên: Modal Ghi danh Sinh viên -->
+  <div id="gv-sv-add-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="gv-sv-add-modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 id="gv-sv-add-modal-title">➕ Ghi danh sinh viên vào học phần</h3>
+          <p>Thêm sinh viên trực tiếp vào học phần của bạn bằng Email hoặc Mã sinh viên</p>
+        </div>
+        <button type="button" id="btn-close-gv-sv-add-modal" class="modal-close" aria-label="Đóng">✕</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="field">
+          <label for="gv-sv-add-course">Học phần *</label>
+          <select id="gv-sv-add-course" class="select-box full" style="width: 100%;"></select>
+        </div>
+        <div class="field">
+          <label for="gv-sv-add-query">Tìm sinh viên (Email hoặc Mã SV hoặc Tên) *</label>
+          <input type="text" id="gv-sv-add-query" placeholder="Nhập email, mã SV hoặc tên sinh viên..." class="search-box" style="width: 100%;" />
+          <small class="field-help" style="margin-top: 4px; display: block; color: var(--text-muted);">Hệ thống sẽ tìm các sinh viên có tài khoản khớp thông tin.</small>
+        </div>
+        <div id="gv-sv-add-results" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="btn-cancel-gv-sv-add" class="btn-outline">Hủy bỏ</button>
+        <button type="button" id="btn-submit-gv-sv-add" class="btn-primary" disabled>➕ Ghi danh ngay</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Giáo viên: Modal Chi tiết Sinh viên -->
+  <div id="gv-sv-detail-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="gv-sv-detail-modal-title">
+    <div class="modal-card" style="max-width: 650px; width: 90%;">
+      <div class="modal-header">
+        <div>
+          <h3 id="gv-sv-detail-modal-title">📊 Chi tiết sinh viên</h3>
+          <p>Hồ sơ và quá trình nộp bài, trắc nghiệm trong học phần</p>
+        </div>
+        <button type="button" id="btn-close-gv-sv-detail-modal" class="modal-close" aria-label="Đóng">✕</button>
+      </div>
+      <div id="gv-sv-detail-content" class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="text-align: center; padding: 20px; color: var(--text-muted);">Đang tải thông tin...</div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="btn-message-gv-sv-detail" class="btn-primary">💬 Nhắn tin riêng</button>
+        <button type="button" id="btn-close-gv-sv-detail" class="btn-outline">Đóng</button>
       </div>
     </div>
   </div>

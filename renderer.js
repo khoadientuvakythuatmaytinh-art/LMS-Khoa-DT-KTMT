@@ -279,6 +279,28 @@ async function copyText(text) {
 window._copyMaHP = copyText;
 
 /* ── Giao diện ứng dụng ─────────────────────────────────────── */
+const NAV_ICONS = {
+  admin: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  dashboard: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>`,
+  announcements: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
+  planner: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  hocPhan: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+  dangDe: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`,
+  dsDe: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+  baiNop: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+  dsSinhVien: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  tracNghiem: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
+  lopTrucTuyen: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`,
+  ghiDanh: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>`,
+  taiDe: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+  nopBai: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
+  ketQua: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
+  social: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>`,
+  settings: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+  sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+  moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`
+};
+
 const PAGE_META = {
   "page-admin":             ["Quản trị hệ thống", "Quản lý người dùng và giao diện toàn website"],
   "page-dashboard":         ["Tổng quan", "Trung tâm điều hành và tiến độ theo thời gian thực"],
@@ -297,7 +319,8 @@ const PAGE_META = {
   "page-phong-hop":        ["Phòng học trực tuyến", "Bạn đang tham gia một buổi học"],
   "page-trac-nghiem-gv":   ["Trắc nghiệm", "Tạo đề, quản lý lượt làm và xem kết quả"],
   "page-trac-nghiem-hs":   ["Trắc nghiệm", "Làm bài và xem kết quả trắc nghiệm"],
-  "page-ban-be":            ["Tin nhắn & Nhóm lớp", "Trò chuyện riêng tư và trao đổi cùng cả lớp"]
+  "page-ban-be":            ["Tin nhắn & Nhóm lớp", "Trò chuyện riêng tư và trao đổi cùng cả lớp"],
+  "page-ds-sinh-vien":     ["Danh sách sinh viên", "Quản lý và theo dõi thông tin sinh viên theo học phần"]
 };
 
 function normalizeSystemRole(role) {
@@ -327,11 +350,11 @@ function applyTheme(theme) {
   document.documentElement.dataset.theme = nextTheme;
   try { localStorage.setItem("app-theme", nextTheme); } catch {}
 
-  const icon = nextTheme === "dark" ? "☀️" : "🌙";
+  const iconSvg = nextTheme === "dark" ? NAV_ICONS.sun : NAV_ICONS.moon;
   const label = nextTheme === "dark" ? "Chế độ sáng" : "Chế độ tối";
-  if ($("sidebar-theme-icon"))  $("sidebar-theme-icon").textContent = icon;
+  if ($("sidebar-theme-icon"))  $("sidebar-theme-icon").innerHTML = iconSvg;
   if ($("sidebar-theme-label")) $("sidebar-theme-label").textContent = label;
-  if ($("btn-top-theme"))       $("btn-top-theme").textContent = icon;
+  if ($("btn-top-theme"))       $("btn-top-theme").innerHTML = iconSvg;
 }
 
 function toggleTheme() {
@@ -759,48 +782,50 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
+
 function buildNav(role) {
   const nav = $("sidebar-nav");
   if (role === "admin") {
     nav.innerHTML = `
       <div class="nav-section">Quản trị hệ thống</div>
-      <div class="nav-item active" data-page="page-admin" title="Quản trị hệ thống"><span class="nav-icon">▣</span><span class="nav-label">Quản trị hệ thống</span></div>
+      <div class="nav-item active" data-page="page-admin" title="Quản trị hệ thống"><span class="nav-icon">${NAV_ICONS.admin}</span><span class="nav-label">Quản trị hệ thống</span></div>
       <div class="nav-section">Tài khoản quản trị</div>
-      <div class="nav-item" data-page="page-settings" title="Hồ sơ và cài đặt"><span class="nav-icon">⚙</span><span class="nav-label">Hồ sơ & Cài đặt</span></div>`;
+      <div class="nav-item" data-page="page-settings" title="Hồ sơ và cài đặt"><span class="nav-icon">${NAV_ICONS.settings}</span><span class="nav-label">Hồ sơ & Cài đặt</span></div>`;
   } else if (role === "giaovien") {
     nav.innerHTML = `
       <div class="nav-section">Trung tâm điều hành</div>
-      <div class="nav-item active" data-page="page-dashboard" title="Tổng quan"><span class="nav-icon">◫</span><span class="nav-label">Tổng quan</span></div>
-      <div class="nav-item" data-page="page-announcements" title="Bảng tin"><span class="nav-icon">◈</span><span class="nav-label">Bảng tin</span><span id="announcement-nav-badge" class="nav-notification-badge hidden">0</span></div>
-      <div class="nav-item" data-page="page-planner" title="Lịch và công việc"><span class="nav-icon">▦</span><span class="nav-label">Lịch & Công việc</span></div>
+      <div class="nav-item active" data-page="page-dashboard" title="Tổng quan"><span class="nav-icon">${NAV_ICONS.dashboard}</span><span class="nav-label">Tổng quan</span></div>
+      <div class="nav-item" data-page="page-announcements" title="Bảng tin"><span class="nav-icon">${NAV_ICONS.announcements}</span><span class="nav-label">Bảng tin</span><span id="announcement-nav-badge" class="nav-notification-badge hidden">0</span></div>
+      <div class="nav-item" data-page="page-planner" title="Lịch và công việc"><span class="nav-icon">${NAV_ICONS.planner}</span><span class="nav-label">Lịch & Công việc</span></div>
       <div class="nav-section">Quản lý giảng dạy</div>
-      <div class="nav-item" data-page="page-hoc-phan" title="Học phần"><span class="nav-icon">⌂</span><span class="nav-label">Học phần</span></div>
-      <div class="nav-item" data-page="page-dang-de" title="Đăng đề thi"><span class="nav-icon">⇧</span><span class="nav-label">Đăng đề thi</span></div>
-      <div class="nav-item" data-page="page-ds-de" title="Danh sách đề"><span class="nav-icon">▤</span><span class="nav-label">Danh sách đề</span></div>
-      <div class="nav-item" data-page="page-bai-nop" title="Bài nộp"><span class="nav-icon">↓</span><span class="nav-label">Bài nộp</span></div>
+      <div class="nav-item" data-page="page-hoc-phan" title="Học phần"><span class="nav-icon">${NAV_ICONS.hocPhan}</span><span class="nav-label">Học phần</span></div>
+      <div class="nav-item" data-page="page-dang-de" title="Đăng đề thi"><span class="nav-icon">${NAV_ICONS.dangDe}</span><span class="nav-label">Đăng đề thi</span></div>
+      <div class="nav-item" data-page="page-ds-de" title="Danh sách đề"><span class="nav-icon">${NAV_ICONS.dsDe}</span><span class="nav-label">Danh sách đề</span></div>
+      <div class="nav-item" data-page="page-bai-nop" title="Bài nộp"><span class="nav-icon">${NAV_ICONS.baiNop}</span><span class="nav-label">Bài nộp</span></div>
+      <div class="nav-item" data-page="page-ds-sinh-vien" title="Danh sách sinh viên"><span class="nav-icon">${NAV_ICONS.dsSinhVien}</span><span class="nav-label">Danh sách sinh viên</span></div>
       <div class="nav-section">Kiểm tra & tương tác</div>
-      <div class="nav-item" data-page="page-trac-nghiem-gv" title="Trắc nghiệm"><span class="nav-icon">◆</span><span class="nav-label">Trắc nghiệm</span></div>
-      <div class="nav-item" data-page="page-lop-truc-tuyen" title="Lớp học trực tuyến"><span class="nav-icon">◎</span><span class="nav-label">Lớp học trực tuyến</span></div>
+      <div class="nav-item" data-page="page-trac-nghiem-gv" title="Trắc nghiệm"><span class="nav-icon">${NAV_ICONS.tracNghiem}</span><span class="nav-label">Trắc nghiệm</span></div>
+      <div class="nav-item" data-page="page-lop-truc-tuyen" title="Lớp học trực tuyến"><span class="nav-icon">${NAV_ICONS.lopTrucTuyen}</span><span class="nav-label">Lớp học trực tuyến</span></div>
       <div class="nav-section">Cộng đồng & tài khoản</div>
-      <div class="nav-item" data-page="page-ban-be" title="Tin nhắn và nhóm lớp"><span class="nav-icon">✦</span><span class="nav-label">Tin nhắn & Nhóm lớp</span><span id="social-nav-badge" class="nav-notification-badge hidden">0</span></div>
-      <div class="nav-item" data-page="page-settings" title="Hồ sơ và cài đặt"><span class="nav-icon">⚙</span><span class="nav-label">Hồ sơ & Cài đặt</span></div>`;
+      <div class="nav-item" data-page="page-ban-be" title="Tin nhắn và nhóm lớp"><span class="nav-icon">${NAV_ICONS.social}</span><span class="nav-label">Tin nhắn & Nhóm lớp</span><span id="social-nav-badge" class="nav-notification-badge hidden">0</span></div>
+      <div class="nav-item" data-page="page-settings" title="Hồ sơ và cài đặt"><span class="nav-icon">${NAV_ICONS.settings}</span><span class="nav-label">Hồ sơ & Cài đặt</span></div>`;
   } else {
     nav.innerHTML = `
       <div class="nav-section">Không gian cá nhân</div>
-      <div class="nav-item active" data-page="page-dashboard" title="Tổng quan"><span class="nav-icon">◫</span><span class="nav-label">Tổng quan</span></div>
-      <div class="nav-item" data-page="page-announcements" title="Bảng tin"><span class="nav-icon">◈</span><span class="nav-label">Bảng tin</span><span id="announcement-nav-badge" class="nav-notification-badge hidden">0</span></div>
-      <div class="nav-item" data-page="page-planner" title="Lịch và công việc"><span class="nav-icon">▦</span><span class="nav-label">Lịch & Công việc</span></div>
+      <div class="nav-item active" data-page="page-dashboard" title="Tổng quan"><span class="nav-icon">${NAV_ICONS.dashboard}</span><span class="nav-label">Tổng quan</span></div>
+      <div class="nav-item" data-page="page-announcements" title="Bảng tin"><span class="nav-icon">${NAV_ICONS.announcements}</span><span class="nav-label">Bảng tin</span><span id="announcement-nav-badge" class="nav-notification-badge hidden">0</span></div>
+      <div class="nav-item" data-page="page-planner" title="Lịch và công việc"><span class="nav-icon">${NAV_ICONS.planner}</span><span class="nav-label">Lịch & Công việc</span></div>
       <div class="nav-section">Học tập</div>
-      <div class="nav-item" data-page="page-ghi-danh" title="Ghi danh học phần"><span class="nav-icon">◇</span><span class="nav-label">Ghi danh học phần</span></div>
-      <div class="nav-item" data-page="page-tai-de" title="Tải đề thi"><span class="nav-icon">⇩</span><span class="nav-label">Tải đề thi</span></div>
-      <div class="nav-item" data-page="page-nop-bai" title="Nộp bài"><span class="nav-icon">↗</span><span class="nav-label">Nộp bài</span></div>
-      <div class="nav-item" data-page="page-ket-qua" title="Điểm của tôi"><span class="nav-icon">◒</span><span class="nav-label">Điểm của tôi</span></div>
+      <div class="nav-item" data-page="page-ghi-danh" title="Ghi danh học phần"><span class="nav-icon">${NAV_ICONS.ghiDanh}</span><span class="nav-label">Ghi danh học phần</span></div>
+      <div class="nav-item" data-page="page-tai-de" title="Tải đề thi"><span class="nav-icon">${NAV_ICONS.taiDe}</span><span class="nav-label">Tải đề thi</span></div>
+      <div class="nav-item" data-page="page-nop-bai" title="Nộp bài"><span class="nav-icon">${NAV_ICONS.nopBai}</span><span class="nav-label">Nộp bài</span></div>
+      <div class="nav-item" data-page="page-ket-qua" title="Điểm của tôi"><span class="nav-icon">${NAV_ICONS.ketQua}</span><span class="nav-label">Điểm của tôi</span></div>
       <div class="nav-section">Kiểm tra & tương tác</div>
-      <div class="nav-item" data-page="page-trac-nghiem-hs" title="Trắc nghiệm"><span class="nav-icon">◆</span><span class="nav-label">Trắc nghiệm</span></div>
-      <div class="nav-item" data-page="page-lop-truc-tuyen" title="Lớp học trực tuyến"><span class="nav-icon">◎</span><span class="nav-label">Lớp học trực tuyến</span></div>
+      <div class="nav-item" data-page="page-trac-nghiem-hs" title="Trắc nghiệm"><span class="nav-icon">${NAV_ICONS.tracNghiem}</span><span class="nav-label">Trắc nghiệm</span></div>
+      <div class="nav-item" data-page="page-lop-truc-tuyen" title="Lớp học trực tuyến"><span class="nav-icon">${NAV_ICONS.lopTrucTuyen}</span><span class="nav-label">Lớp học trực tuyến</span></div>
       <div class="nav-section">Cộng đồng & tài khoản</div>
-      <div class="nav-item" data-page="page-ban-be" title="Tin nhắn và nhóm lớp"><span class="nav-icon">✦</span><span class="nav-label">Tin nhắn & Nhóm lớp</span><span id="social-nav-badge" class="nav-notification-badge hidden">0</span></div>
-      <div class="nav-item" data-page="page-settings" title="Hồ sơ và cài đặt"><span class="nav-icon">⚙</span><span class="nav-label">Hồ sơ & Cài đặt</span></div>`;
+      <div class="nav-item" data-page="page-ban-be" title="Tin nhắn và nhóm lớp"><span class="nav-icon">${NAV_ICONS.social}</span><span class="nav-label">Tin nhắn & Nhóm lớp</span><span id="social-nav-badge" class="nav-notification-badge hidden">0</span></div>
+      <div class="nav-item" data-page="page-settings" title="Hồ sơ và cài đặt"><span class="nav-icon">${NAV_ICONS.settings}</span><span class="nav-label">Hồ sơ & Cài đặt</span></div>`;
   }
   nav.querySelectorAll(".nav-item").forEach(item => {
     item.onclick = async () => {
@@ -819,6 +844,7 @@ function buildNav(role) {
       if (targetPage === "page-hoc-phan")        loadHocPhan_GV();
       if (targetPage === "page-ds-de")           loadDeThi_GV();
       if (targetPage === "page-bai-nop")         loadBaiNop();
+      if (targetPage === "page-ds-sinh-vien")    loadDanhSachSinhVien_GV();
       if (targetPage === "page-ghi-danh")        loadHocPhan_HS();
       if (targetPage === "page-tai-de")          loadDeThi_HS();
       if (targetPage === "page-nop-bai")         loadSubmissionExams();
@@ -1799,11 +1825,17 @@ $("submission-modal").onclick = event => {
 
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") {
-    if (!$("submission-modal").classList.contains("hidden")) {
+    if (!$("submission-modal")?.classList.contains("hidden")) {
       closeSubmissionModal();
     }
-    if (!$("deadline-modal").classList.contains("hidden")) {
+    if (!$("deadline-modal")?.classList.contains("hidden")) {
       closeDeadlineModal();
+    }
+    if (!$("gv-sv-add-modal")?.classList.contains("hidden")) {
+      closeGvSvAddModal();
+    }
+    if (!$("gv-sv-detail-modal")?.classList.contains("hidden")) {
+      closeGvSvDetailModal();
     }
   }
 });
@@ -1812,6 +1844,585 @@ $("grade-download-link").onclick = event => {
   if (event.currentTarget.classList.contains("disabled")) {
     event.preventDefault();
     toast("Bài nộp chưa có đường dẫn tải file.", false);
+  }
+};
+
+/* ── Giáo viên: Quản lý danh sách sinh viên ──────────────────── */
+
+let gvStudentList = [];
+let gvFilteredStudentList = [];
+let gvTeacherCourses = [];
+let gvSelectedAddStudentUid = null;
+
+async function loadDanhSachSinhVien_GV() {
+  const tb = $("tb-gv-sv");
+  const filterSelect = $("gv-sv-hocphan-filter");
+  if (!tb) return;
+
+  tb.innerHTML = `<tr class="empty-row"><td colspan="7">Đang tải danh sách sinh viên…</td></tr>`;
+
+  try {
+    const loadingForUid = currentUser?.uid;
+    if (!loadingForUid) return;
+
+    // 1. Tải các học phần của giáo viên
+    const courseSnap = await getDocs(query(collection(db, "hoc_phan"), where("giaoVienId", "==", loadingForUid)));
+    if (currentUser?.uid !== loadingForUid) return;
+
+    gvTeacherCourses = newestFirst(courseSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+    if ($("stat-gv-sv-hp-count")) $("stat-gv-sv-hp-count").textContent = gvTeacherCourses.length;
+
+    // Cập nhật dropdown chọn học phần
+    const currentFilter = filterSelect?.value || "all";
+    if (filterSelect) {
+      filterSelect.innerHTML = `<option value="all">Tất cả học phần (${gvTeacherCourses.length})</option>` +
+        gvTeacherCourses.map(hp => `<option value="${hp.id}">${escapeHtml(courseLabel(hp))}</option>`).join("");
+      if (gvTeacherCourses.some(hp => hp.id === currentFilter)) {
+        filterSelect.value = currentFilter;
+      }
+    }
+
+    if (!gvTeacherCourses.length) {
+      tb.innerHTML = `<tr class="empty-row"><td colspan="7">Bạn chưa tạo học phần nào. Hãy tạo học phần trước.</td></tr>`;
+      if ($("stat-gv-sv-total")) $("stat-gv-sv-total").textContent = "0";
+      if ($("stat-gv-sv-sub-count")) $("stat-gv-sv-sub-count").textContent = "0";
+      gvStudentList = [];
+      gvFilteredStudentList = [];
+      return;
+    }
+
+    const courseIds = gvTeacherCourses.map(hp => hp.id);
+    const courseMap = new Map(gvTeacherCourses.map(hp => [hp.id, hp]));
+
+    // 2. Tải toàn bộ ghi danh (ghi_danh) của các học phần này (chunk 30)
+    const chunkedCourseIds = [];
+    for (let i = 0; i < courseIds.length; i += 30) {
+      chunkedCourseIds.push(courseIds.slice(i, i + 30));
+    }
+
+    const enrollmentSnaps = await Promise.all(
+      chunkedCourseIds.map(ids => getDocs(query(collection(db, "ghi_danh"), where("hocPhanId", "in", ids))))
+    );
+    if (currentUser?.uid !== loadingForUid) return;
+
+    const rawEnrollments = [];
+    enrollmentSnaps.forEach(snap => {
+      snap.docs.forEach(d => rawEnrollments.push({ id: d.id, ...d.data() }));
+    });
+
+    // 3. Tải danh sách bài nộp & trắc nghiệm
+    const [baiNopSnaps, tracNghiemSnaps] = await Promise.all([
+      Promise.all(chunkedCourseIds.map(ids => getDocs(query(collection(db, "bai_nop"), where("hocPhanId", "in", ids))))).catch(() => []),
+      Promise.all(chunkedCourseIds.map(ids => getDocs(query(collection(db, "bai_lam_trac_nghiem"), where("hocPhanId", "in", ids))))).catch(() => [])
+    ]);
+
+    const baiNopCounts = new Map();
+    const tracNghiemCounts = new Map();
+    let totalSubmissions = 0;
+
+    baiNopSnaps.forEach(snap => {
+      snap?.docs?.forEach(doc => {
+        totalSubmissions++;
+        const data = doc.data();
+        if (data.uid) baiNopCounts.set(data.uid, (baiNopCounts.get(data.uid) || 0) + 1);
+      });
+    });
+
+    tracNghiemSnaps.forEach(snap => {
+      snap?.docs?.forEach(doc => {
+        totalSubmissions++;
+        const data = doc.data();
+        if (data.uid) tracNghiemCounts.set(data.uid, (tracNghiemCounts.get(data.uid) || 0) + 1);
+      });
+    });
+
+    if ($("stat-gv-sv-sub-count")) $("stat-gv-sv-sub-count").textContent = totalSubmissions;
+
+    // 4. Lấy thông tin tài khoản người dùng từ collection `users`
+    const studentUids = [...new Set(rawEnrollments.map(e => e.uid).filter(Boolean))];
+    const userProfilesMap = new Map();
+
+    if (studentUids.length) {
+      const userChunks = [];
+      for (let i = 0; i < studentUids.length; i += 30) {
+        userChunks.push(studentUids.slice(i, i + 30));
+      }
+      await Promise.all(
+        userChunks.map(async uids => {
+          try {
+            const uSnap = await getDocs(query(collection(db, "users"), where("__name__", "in", uids)));
+            uSnap.docs.forEach(d => userProfilesMap.set(d.id, d.data()));
+          } catch {
+            await Promise.all(uids.map(async uid => {
+              try {
+                const docSnap = await getDoc(doc(db, "users", uid));
+                if (docSnap.exists()) userProfilesMap.set(uid, docSnap.data());
+              } catch {}
+            }));
+          }
+        })
+      );
+    }
+
+    // 5. Tổng hợp sinh viên
+    const studentGroupMap = new Map();
+    rawEnrollments.forEach(en => {
+      const uid = en.uid || en.id;
+      const profile = userProfilesMap.get(uid) || {};
+      const course = courseMap.get(en.hocPhanId);
+
+      if (!studentGroupMap.has(uid)) {
+        studentGroupMap.set(uid, {
+          uid,
+          hoTen: profile.hoTen || en.hoTen || "Sinh viên",
+          email: profile.email || en.email || "—",
+          maSo: profile.maSo || profile.maSV || "—",
+          enrolledCourses: [],
+          submissionCount: baiNopCounts.get(uid) || 0,
+          quizCount: tracNghiemCounts.get(uid) || 0
+        });
+      }
+
+      const st = studentGroupMap.get(uid);
+      st.enrolledCourses.push({
+        ghiDanhId: en.id,
+        hocPhanId: en.hocPhanId,
+        maHocPhan: en.maHocPhan || course?.maHocPhan || "",
+        tenHocPhan: en.tenHocPhan || course?.tenHocPhan || "Học phần",
+        createdAt: en.createdAt
+      });
+    });
+
+    gvStudentList = Array.from(studentGroupMap.values()).sort((a, b) => a.hoTen.localeCompare(b.hoTen, "vi"));
+    renderDanhSachSinhVien_GV();
+    updatePremiumPageMetrics("page-ds-sinh-vien");
+  } catch (e) {
+    console.error("Lỗi loadDanhSachSinhVien_GV:", e);
+    tb.innerHTML = `<tr class="empty-row"><td colspan="7">Không tải được danh sách sinh viên: ${escapeHtml(e.message)}</td></tr>`;
+    toast("Lỗi tải sinh viên: " + e.message, false);
+  }
+}
+
+function renderDanhSachSinhVien_GV() {
+  const tb = $("tb-gv-sv");
+  const selectedCourseId = $("gv-sv-hocphan-filter")?.value || "all";
+  const searchQuery = ($("gv-sv-search")?.value || "").trim().toLowerCase();
+
+  if (!tb) return;
+
+  gvFilteredStudentList = gvStudentList.filter(st => {
+    if (selectedCourseId !== "all") {
+      const isEnrolled = st.enrolledCourses.some(c => c.hocPhanId === selectedCourseId);
+      if (!isEnrolled) return false;
+    }
+    if (searchQuery) {
+      const matchName = st.hoTen.toLowerCase().includes(searchQuery);
+      const matchEmail = st.email.toLowerCase().includes(searchQuery);
+      const matchMaSo = st.maSo.toLowerCase().includes(searchQuery);
+      const matchCourse = st.enrolledCourses.some(c =>
+        (c.maHocPhan && c.maHocPhan.toLowerCase().includes(searchQuery)) ||
+        (c.tenHocPhan && c.tenHocPhan.toLowerCase().includes(searchQuery))
+      );
+      if (!matchName && !matchEmail && !matchMaSo && !matchCourse) return false;
+    }
+    return true;
+  });
+
+  if ($("stat-gv-sv-total")) $("stat-gv-sv-total").textContent = gvFilteredStudentList.length;
+
+  if (!gvFilteredStudentList.length) {
+    tb.innerHTML = `<tr class="empty-row"><td colspan="7">Không tìm thấy sinh viên nào phù hợp.</td></tr>`;
+    return;
+  }
+
+  tb.innerHTML = gvFilteredStudentList.map((st, index) => {
+    const avatarLetter = (st.hoTen || "S").trim().charAt(0).toUpperCase();
+    const coursesForFilter = selectedCourseId !== "all"
+      ? st.enrolledCourses.filter(c => c.hocPhanId === selectedCourseId)
+      : st.enrolledCourses;
+
+    const courseBadges = coursesForFilter.map(c =>
+      `<span class="code-badge" title="${escapeHtml(c.tenHocPhan)}">${escapeHtml(c.maHocPhan || c.tenHocPhan)}</span>`
+    ).join(" ");
+
+    const displayCourse = coursesForFilter[0] || st.enrolledCourses[0];
+    const displayDate = displayCourse?.createdAt ? fmtDate(displayCourse.createdAt) : "—";
+    const primaryGhiDanhId = displayCourse?.ghiDanhId || "";
+
+    return `<tr>
+      <td style="text-align: center;">${index + 1}</td>
+      <td>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary2)); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; flex-shrink: 0;">
+            ${avatarLetter}
+          </div>
+          <div>
+            <strong style="display: block; color: var(--text-color); font-size: 0.93rem;">${escapeHtml(st.hoTen)}</strong>
+            <small style="color: var(--text-muted);">${escapeHtml(st.email)}</small>
+          </div>
+        </div>
+      </td>
+      <td><span class="code-badge" style="background: rgba(255,255,255,0.06);">${escapeHtml(st.maSo !== "—" ? st.maSo : "Chưa cập nhật")}</span></td>
+      <td>${courseBadges}</td>
+      <td>${displayDate}</td>
+      <td>
+        <span style="font-size: 0.88rem;">
+          📥 <strong>${st.submissionCount}</strong> bài nộp | 📝 <strong>${st.quizCount}</strong> trắc nghiệm
+        </span>
+      </td>
+      <td style="text-align: center;">
+        <div style="display: flex; gap: 4px; justify-content: center; flex-wrap: wrap;">
+          <button type="button" class="btn-sm" onclick="window._viewStudentDetail_GV('${st.uid}')" title="Xem chi tiết điểm & bài nộp">📊 Chi tiết</button>
+          <button type="button" class="btn-sm" onclick="window._chatWithStudent('${st.uid}')" title="Nhắn tin riêng">💬 Chat</button>
+          <button type="button" class="btn-sm danger" onclick="window._removeStudentEnrollment_GV('${st.uid}', '${escapeHtml(st.hoTen)}')" title="Hủy ghi danh sinh viên">✕ Hủy</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join("");
+}
+
+// Bắt sự kiện lọc và tìm kiếm danh sách sinh viên
+$("gv-sv-hocphan-filter")?.addEventListener("change", renderDanhSachSinhVien_GV);
+$("gv-sv-search")?.addEventListener("input", renderDanhSachSinhVien_GV);
+$("btn-refresh-gv-sv")?.addEventListener("click", () => {
+  loadDanhSachSinhVien_GV();
+  toast("Đã làm mới danh sách sinh viên.");
+});
+
+// Xuất danh sách sinh viên ra file CSV (UTF-8 BOM)
+$("btn-export-gv-sv")?.addEventListener("click", () => {
+  if (!gvFilteredStudentList.length) {
+    toast("Không có dữ liệu sinh viên để xuất.", false);
+    return;
+  }
+  let csv = "\uFEFFSTT,Họ và tên,Email,Mã sinh viên,Học phần ghi danh,Số bài nộp,Số trắc nghiệm\n";
+  gvFilteredStudentList.forEach((st, i) => {
+    const hpStr = st.enrolledCourses.map(c => c.maHocPhan || c.tenHocPhan).join("; ");
+    csv += `"${i + 1}","${st.hoTen.replace(/"/g, '""')}","${st.email}","${st.maSo}","${hpStr.replace(/"/g, '""')}","${st.submissionCount}","${st.quizCount}"\n`;
+  });
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `danh_sach_sinh_vien_${Date.now()}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  toast("Đã xuất file danh sách sinh viên CSV!");
+});
+
+// Modal Ghi danh sinh viên vào học phần
+$("btn-add-gv-sv")?.addEventListener("click", () => {
+  if (!gvTeacherCourses.length) {
+    toast("Bạn chưa tạo học phần nào.", false);
+    return;
+  }
+  const courseSelect = $("gv-sv-add-course");
+  if (courseSelect) {
+    courseSelect.innerHTML = gvTeacherCourses.map(hp =>
+      `<option value="${hp.id}">${escapeHtml(courseLabel(hp))}</option>`
+    ).join("");
+  }
+  if ($("gv-sv-add-query")) $("gv-sv-add-query").value = "";
+  if ($("gv-sv-add-results")) $("gv-sv-add-results").innerHTML = "";
+  if ($("btn-submit-gv-sv-add")) $("btn-submit-gv-sv-add").disabled = true;
+  gvSelectedAddStudentUid = null;
+  show("gv-sv-add-modal");
+});
+
+function closeGvSvAddModal() {
+  hide("gv-sv-add-modal");
+}
+$("btn-close-gv-sv-add-modal")?.addEventListener("click", closeGvSvAddModal);
+$("btn-cancel-gv-sv-add")?.addEventListener("click", closeGvSvAddModal);
+
+// Tìm kiếm sinh viên để ghi danh
+let gvAddStudentSearchTimer = null;
+$("gv-sv-add-query")?.addEventListener("input", (e) => {
+  clearTimeout(gvAddStudentSearchTimer);
+  const queryText = e.target.value.trim().toLowerCase();
+  const container = $("gv-sv-add-results");
+  if (!container) return;
+
+  if (queryText.length < 2) {
+    container.innerHTML = `<div style="color: var(--text-muted); font-size: 0.88rem;">Nhập từ 2 ký tự để tìm sinh viên…</div>`;
+    return;
+  }
+
+  gvAddStudentSearchTimer = setTimeout(async () => {
+    container.innerHTML = `<div style="color: var(--text-muted); font-size: 0.88rem;">Đang tìm kiếm…</div>`;
+    try {
+      const snap = await getDocs(query(collection(db, "users"), where("role", "==", "hocsinh"), limit(30)));
+      const candidates = snap.docs.map(d => ({ uid: d.id, ...d.data() })).filter(u => {
+        return (u.hoTen || "").toLowerCase().includes(queryText) ||
+          (u.email || "").toLowerCase().includes(queryText) ||
+          (u.maSo || "").toLowerCase().includes(queryText);
+      });
+
+      if (!candidates.length) {
+        container.innerHTML = `<div style="color: var(--text-muted); font-size: 0.88rem;">Không tìm thấy sinh viên phù hợp.</div>`;
+        return;
+      }
+
+      container.innerHTML = candidates.map(u => `
+        <div class="card" style="padding: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0; background: var(--surface2);">
+          <div>
+            <strong style="display: block; font-size: 0.9rem;">${escapeHtml(u.hoTen || "Sinh viên")}</strong>
+            <small style="color: var(--text-muted);">${escapeHtml(u.email || "—")} | Mã SV: ${escapeHtml(u.maSo || u.maSV || "—")}</small>
+          </div>
+          <button type="button" class="btn-sm" onclick="window._selectStudentForAdd('${u.uid}', '${escapeHtml(u.hoTen)}')">Chọn</button>
+        </div>
+      `).join("");
+    } catch (err) {
+      container.innerHTML = `<div style="color: var(--danger); font-size: 0.88rem;">Lỗi tìm kiếm sinh viên.</div>`;
+    }
+  }, 300);
+});
+
+window._selectStudentForAdd = (uid, name) => {
+  gvSelectedAddStudentUid = uid;
+  const submitBtn = $("btn-submit-gv-sv-add");
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = `➕ Ghi danh "${name}"`;
+  }
+  toast(`Đã chọn sinh viên: ${name}`);
+};
+
+$("btn-submit-gv-sv-add")?.addEventListener("click", async () => {
+  const courseId = $("gv-sv-add-course")?.value;
+  if (!courseId || !gvSelectedAddStudentUid) {
+    toast("Vui lòng chọn học phần và sinh viên.", false);
+    return;
+  }
+
+  const course = gvTeacherCourses.find(hp => hp.id === courseId);
+  if (!course) return;
+
+  setLoading("btn-submit-gv-sv-add", true, "Đang ghi danh…");
+  try {
+    const existSnap = await getDocs(query(collection(db, "ghi_danh"), where("hocPhanId", "==", courseId), where("uid", "==", gvSelectedAddStudentUid)));
+    if (!existSnap.empty) {
+      toast("Sinh viên này đã có trong học phần rồi.", false);
+      setLoading("btn-submit-gv-sv-add", false);
+      return;
+    }
+
+    let stName = "Sinh viên";
+    let stEmail = "";
+    try {
+      const uDoc = await getDoc(doc(db, "users", gvSelectedAddStudentUid));
+      if (uDoc.exists()) {
+        stName = uDoc.data().hoTen || stName;
+        stEmail = uDoc.data().email || stEmail;
+      }
+    } catch {}
+
+    const enrollmentId = classEnrollmentId(courseId, gvSelectedAddStudentUid);
+    await setDoc(doc(db, "ghi_danh", enrollmentId), {
+      hocPhanId: courseId,
+      maHocPhan: course.maHocPhan || "",
+      tenHocPhan: course.tenHocPhan || "",
+      uid: gvSelectedAddStudentUid,
+      hoTen: stName,
+      email: stEmail,
+      createdAt: serverTimestamp()
+    });
+
+    await ensureClassGroupForCourse(courseId, course, [gvSelectedAddStudentUid]).catch(() => {});
+    toast(`Ghi danh thành công sinh viên "${stName}" vào học phần! ✓`);
+    closeGvSvAddModal();
+    loadDanhSachSinhVien_GV();
+  } catch (err) {
+    toast("Lỗi ghi danh sinh viên: " + err.message, false);
+  } finally {
+    setLoading("btn-submit-gv-sv-add", false);
+  }
+});
+
+// Hủy ghi danh sinh viên khỏi học phần (1-click xóa sinh viên khỏi học phần hoặc tất cả học phần)
+window._removeStudentEnrollment_GV = async (studentUid, studentName) => {
+  if (!studentUid) return;
+  const selectedCourseId = $("gv-sv-hocphan-filter")?.value || "all";
+  const student = gvStudentList.find(s => s.uid === studentUid);
+  if (!student) return;
+
+  let enrollmentsToDelete = [];
+  let confirmMessage = "";
+
+  if (selectedCourseId !== "all") {
+    enrollmentsToDelete = student.enrolledCourses.filter(c => c.hocPhanId === selectedCourseId);
+    const courseName = enrollmentsToDelete[0]?.tenHocPhan || "học phần này";
+    confirmMessage = `Bạn có chắc chắn muốn hủy ghi danh sinh viên "${studentName}" khỏi học phần "${courseName}"?`;
+  } else {
+    enrollmentsToDelete = student.enrolledCourses;
+    confirmMessage = `Bạn có chắc chắn muốn hủy ghi danh sinh viên "${studentName}" khỏi tất cả ${student.enrolledCourses.length} học phần của bạn?`;
+  }
+
+  if (!enrollmentsToDelete.length) return;
+  const confirmed = confirm(confirmMessage);
+  if (!confirmed) return;
+
+  try {
+    // Xóa tất cả các bản ghi ghi danh phù hợp ngay lập tức (không cần bấm 2 lần)
+    await Promise.all(enrollmentsToDelete.map(en => deleteDoc(doc(db, "ghi_danh", en.ghiDanhId))));
+
+    // Cập nhật dữ liệu tại chỗ để bảng phản hồi tức thì
+    if (selectedCourseId !== "all") {
+      student.enrolledCourses = student.enrolledCourses.filter(c => c.hocPhanId !== selectedCourseId);
+      if (student.enrolledCourses.length === 0) {
+        gvStudentList = gvStudentList.filter(s => s.uid !== studentUid);
+      }
+    } else {
+      gvStudentList = gvStudentList.filter(s => s.uid !== studentUid);
+    }
+
+    renderDanhSachSinhVien_GV();
+    toast(`Đã hủy ghi danh sinh viên "${studentName}". ✓`);
+  } catch (err) {
+    console.error("Lỗi hủy ghi danh:", err);
+    toast("Lỗi hủy ghi danh: " + err.message, false);
+  }
+};
+
+// Xem chi tiết sinh viên
+window._viewStudentDetail_GV = async (studentUid) => {
+  const modal = $("gv-sv-detail-modal");
+  const content = $("gv-sv-detail-content");
+  if (!modal || !content) return;
+
+  const student = gvStudentList.find(s => s.uid === studentUid);
+  show("gv-sv-detail-modal");
+  content.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-muted);">Đang nạp chi tiết bài làm & trắc nghiệm của sinh viên…</div>`;
+
+  try {
+    const courseIds = gvTeacherCourses.map(c => c.id);
+    let essaySubmissions = [];
+    let quizSubmissions = [];
+
+    if (courseIds.length) {
+      const chunked = [];
+      for (let i = 0; i < courseIds.length; i += 30) {
+        chunked.push(courseIds.slice(i, i + 30));
+      }
+      const [essaySnaps, quizSnaps] = await Promise.all([
+        Promise.all(chunked.map(ids => getDocs(query(collection(db, "bai_nop"), where("uid", "==", studentUid), where("hocPhanId", "in", ids))))).catch(() => []),
+        Promise.all(chunked.map(ids => getDocs(query(collection(db, "bai_lam_trac_nghiem"), where("uid", "==", studentUid), where("hocPhanId", "in", ids))))).catch(() => [])
+      ]);
+
+      essaySnaps.forEach(snap => snap?.docs?.forEach(d => essaySubmissions.push({ id: d.id, ...d.data() })));
+      quizSnaps.forEach(snap => snap?.docs?.forEach(d => quizSubmissions.push({ id: d.id, ...d.data() })));
+    }
+
+    const stName = student?.hoTen || "Sinh viên";
+    const stEmail = student?.email || "—";
+    const stMaSo = student?.maSo || "Chưa cập nhật";
+    const avatarLetter = stName.charAt(0).toUpperCase();
+
+    content.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 14px; padding: 12px; background: var(--surface2); border-radius: 12px;">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary2)); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; flex-shrink: 0;">
+          ${avatarLetter}
+        </div>
+        <div>
+          <h4 style="margin: 0; font-size: 1.1rem; color: var(--text-color);">${escapeHtml(stName)}</h4>
+          <p style="margin: 2px 0 0 0; color: var(--text-muted); font-size: 0.88rem;">Email: ${escapeHtml(stEmail)} | Mã SV: <strong style="color: var(--primary);">${escapeHtml(stMaSo)}</strong></p>
+        </div>
+      </div>
+
+      <div style="margin-top: 8px;">
+        <h5 style="margin-bottom: 8px; color: var(--text-color);">📚 Học phần đăng ký (${student?.enrolledCourses?.length || 0})</h5>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          ${(student?.enrolledCourses || []).map(c => `<span class="code-badge" style="padding: 4px 8px;">${escapeHtml(c.maHocPhan || c.tenHocPhan)}</span>`).join("")}
+        </div>
+      </div>
+
+      <div style="margin-top: 12px;">
+        <h5 style="margin-bottom: 8px; color: var(--text-color);">📥 Lịch sử nộp bài tự luận (${essaySubmissions.length})</h5>
+        ${!essaySubmissions.length ? `<p style="color: var(--text-muted); font-size: 0.88rem;">Chưa có bài nộp tự luận nào.</p>` : `
+          <div class="table-wrap" style="max-height: 160px; overflow-y: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Đề thi</th>
+                  <th>Hạn nộp / Ngày nộp</th>
+                  <th>Điểm</th>
+                  <th>Nhận xét</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${essaySubmissions.map(sub => `
+                  <tr>
+                    <td>${escapeHtml(sub.tenDeThi || sub.tenFile || "Bài nộp")}</td>
+                    <td><small>${fmtOptionalDate(sub.submittedAtClient || sub.createdAt)}</small></td>
+                    <td><strong style="color: var(--primary);">${formatScore(sub.diem)}</strong></td>
+                    <td><small>${escapeHtml(sub.nhanXet || "—")}</small></td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        `}
+      </div>
+
+      <div style="margin-top: 12px;">
+        <h5 style="margin-bottom: 8px; color: var(--text-color);">📝 Lịch sử làm bài trắc nghiệm (${quizSubmissions.length})</h5>
+        ${!quizSubmissions.length ? `<p style="color: var(--text-muted); font-size: 0.88rem;">Chưa có lượt làm bài trắc nghiệm nào.</p>` : `
+          <div class="table-wrap" style="max-height: 160px; overflow-y: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tên đề trắc nghiệm</th>
+                  <th>Thời gian làm</th>
+                  <th>Số câu đúng</th>
+                  <th>Điểm số</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${quizSubmissions.map(q => `
+                  <tr>
+                    <td>${escapeHtml(q.tenDe || "Trắc nghiệm")}</td>
+                    <td><small>${fmtOptionalDate(q.createdAt)}</small></td>
+                    <td>${q.soCauDung || 0}/${q.tongSoCau || 0}</td>
+                    <td><strong style="color: var(--success, #22c55e);">${formatScore(q.diem)}</strong></td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        `}
+      </div>
+    `;
+
+    $("btn-message-gv-sv-detail").onclick = () => {
+      hide("gv-sv-detail-modal");
+      window._chatWithStudent(studentUid);
+    };
+  } catch (err) {
+    content.innerHTML = `<div style="color: var(--danger); text-align: center; padding: 20px;">Lỗi tải thông tin sinh viên: ${escapeHtml(err.message)}</div>`;
+  }
+};
+
+function closeGvSvDetailModal() {
+  hide("gv-sv-detail-modal");
+}
+$("btn-close-gv-sv-detail-modal")?.addEventListener("click", closeGvSvDetailModal);
+$("btn-close-gv-sv-detail")?.addEventListener("click", closeGvSvDetailModal);
+
+// Chuyển sang nhắn tin với sinh viên
+window._chatWithStudent = async (studentUid) => {
+  if (!studentUid) return;
+  setPage("page-ban-be");
+  await loadSocialHub();
+  setSocialMode("private");
+  try {
+    openSocialChat(studentUid);
+  } catch {
+    const searchInput = $("social-user-search");
+    if (searchInput) {
+      searchInput.value = studentUid;
+      searchInput.dispatchEvent(new Event("input"));
+    }
   }
 };
 
@@ -5072,6 +5683,38 @@ function renderClassGroupList() {
     return;
   }
 
+  const existingButtons = Array.from(list.querySelectorAll(".class-group-row"));
+  const existingIds = existingButtons.map(btn => btn.dataset.classGroupId);
+  const visibleIds = visible.map(g => g.id);
+
+  // Nếu danh sách các button hiện tại khớp đúng thứ tự với danh sách nhóm, chỉ cập nhật nội dung văn bản tại chỗ mà không xóa DOM
+  if (existingButtons.length === visible.length && existingIds.every((id, idx) => id === visibleIds[idx])) {
+    visible.forEach((group, index) => {
+      const btn = existingButtons[index];
+      const active = selectedClassGroup?.id === group.id;
+      const unread = group.lastMessage && group.lastSenderId !== currentUser.uid && timestampMs(group.updatedAt) > timestampMs(group.readAt?.[currentUser.uid]);
+
+      btn.classList.toggle("active", active);
+
+      const titleEl = btn.querySelector(".class-group-copy strong");
+      if (titleEl) titleEl.textContent = group.tenHocPhan || group.maHocPhan || "Học phần";
+
+      let dotEl = btn.querySelector(".social-unread-dot");
+      if (unread && !dotEl) {
+        btn.querySelector(".class-group-copy > div")?.insertAdjacentHTML("beforeend", '<i class="social-unread-dot"></i>');
+      } else if (!unread && dotEl) {
+        dotEl.remove();
+      }
+
+      const smallEl = btn.querySelector("small");
+      if (smallEl) smallEl.textContent = group.lastMessage || `${group.memberIds?.length || 1} thành viên · Chưa có tin nhắn`;
+
+      const timeEl = btn.querySelector("time");
+      if (timeEl) timeEl.textContent = socialMessageTime(group.updatedAt || group.createdAt);
+    });
+    return;
+  }
+
   list.innerHTML = visible.map(group => {
     const active = selectedClassGroup?.id === group.id;
     const unread = group.lastMessage && group.lastSenderId !== currentUser.uid && timestampMs(group.updatedAt) > timestampMs(group.readAt?.[currentUser.uid]);
@@ -5092,14 +5735,46 @@ function renderClassGroupList() {
   });
 }
 
+let activeClassGroupSwitchId = null;
+let currentClassChatSession = 0;
+
+function updateClassGroupListActiveItem(activeGroupId) {
+  const list = $("class-group-list");
+  if (!list) return;
+  list.querySelectorAll(".class-group-row").forEach(button => {
+    button.classList.toggle("active", button.dataset.classGroupId === activeGroupId);
+  });
+}
+
 async function openClassGroupChat(groupId) {
   if (!currentUser || !groupId) return;
+
+  activeClassGroupSwitchId = groupId;
+  const thisSession = ++currentClassChatSession;
+
+  // Hủy listener tin nhắn cũ ngay lập tức để tránh hiệu ứng chuyển nhóm bị giật/nhấp nháy
+  classGroupMessagesUnsubscribe?.();
+  classGroupMessagesUnsubscribe = null;
+
+  // Clear nội dung khung chat cũ lập tức bằng hiệu ứng loading để không lộ tin nhắn của nhóm trước
+  const messageContainer = $("class-message-list");
+  if (messageContainer) {
+    messageContainer.innerHTML = `<div class="social-message-loading"><span></span><span></span><span></span></div>`;
+  }
+
   let group = classGroups.find(item => item.id === groupId);
   if (!group) {
-    const snap = await getDoc(doc(db, "nhom_chat_lop", groupId));
-    if (!snap.exists()) return toast("Nhóm chat lớp chưa sẵn sàng.", false);
-    group = { id: snap.id, ...snap.data() };
+    try {
+      const snap = await getDoc(doc(db, "nhom_chat_lop", groupId));
+      if (thisSession !== currentClassChatSession || activeClassGroupSwitchId !== groupId) return;
+      if (!snap.exists()) return toast("Nhóm chat lớp chưa sẵn sàng.", false);
+      group = { id: snap.id, ...snap.data() };
+    } catch {
+      if (thisSession !== currentClassChatSession || activeClassGroupSwitchId !== groupId) return;
+    }
   }
+
+  if (thisSession !== currentClassChatSession || activeClassGroupSwitchId !== groupId) return;
   if (!group.memberIds?.includes(currentUser.uid)) return toast("Bạn không còn là thành viên của nhóm lớp này.", false);
 
   selectedClassGroup = group;
@@ -5112,13 +5787,16 @@ async function openClassGroupChat(groupId) {
   $("class-chat-teacher").textContent = group.giaoVienTen || "Giáo viên";
   $("class-message-input").value = "";
   autoResizeClassComposer();
-  renderClassGroupList();
-  startClassGroupMessageListener(group.id);
-  await markClassGroupRead(group.id);
+
+  updateClassGroupListActiveItem(groupId);
+  startClassGroupMessageListener(groupId, thisSession);
+  markClassGroupRead(groupId);
   if (window.innerWidth <= 920) $("page-ban-be")?.classList.add("class-chat-mobile-open");
 }
 
 function closeClassGroupChat() {
+  activeClassGroupSwitchId = null;
+  currentClassChatSession++;
   classGroupMessagesUnsubscribe?.();
   classGroupMessagesUnsubscribe = null;
   selectedClassGroup = null;
@@ -5128,7 +5806,7 @@ function closeClassGroupChat() {
   renderClassGroupList();
 }
 
-function startClassGroupMessageListener(groupId) {
+function startClassGroupMessageListener(groupId, sessionId) {
   classGroupMessagesUnsubscribe?.();
   const messagesQuery = query(
     collection(db, "nhom_chat_lop", groupId, "tin_nhan"),
@@ -5136,18 +5814,23 @@ function startClassGroupMessageListener(groupId) {
     limit(300)
   );
   classGroupMessagesUnsubscribe = onSnapshot(messagesQuery, snapshot => {
+    if (sessionId !== currentClassChatSession || selectedClassGroup?.id !== groupId || activeClassGroupSwitchId !== groupId) return;
     const messages = snapshot.docs.map(item => ({ id: item.id, ...item.data() })).reverse();
-    renderClassGroupMessages(messages);
-    markClassGroupRead(groupId);
+    renderClassGroupMessages(messages, groupId);
   }, error => {
+    if (sessionId !== currentClassChatSession || selectedClassGroup?.id !== groupId) return;
     console.error("Class message listener error:", error);
     $("class-message-list").innerHTML = `<div class="social-empty-state error"><span>!</span><strong>Không tải được tin nhắn lớp</strong><small>${escapeHtml(errMsg(error.code, error.message))}</small></div>`;
   });
 }
 
-function renderClassGroupMessages(messages) {
+function renderClassGroupMessages(messages, groupId) {
   const list = $("class-message-list");
   if (!list || !currentUser || !selectedClassGroup) return;
+  // Khóa bảo vệ nghiêm ngặt: Tuyệt đối không cho phép render tin nhắn thuộc groupId khác vào nhóm đang xem
+  if (groupId && selectedClassGroup.id !== groupId) return;
+  if (activeClassGroupSwitchId && activeClassGroupSwitchId !== selectedClassGroup.id) return;
+
   if (!messages.length) {
     list.innerHTML = `<div class="social-conversation-start"><span>🏫</span><strong>Nhóm lớp đã sẵn sàng</strong><p>Giáo viên và học sinh trong học phần có thể trao đổi tại đây.</p></div>`;
     return;
@@ -5178,6 +5861,13 @@ function renderClassGroupMessages(messages) {
 
 async function markClassGroupRead(groupId) {
   if (!currentUser || !groupId) return;
+  const group = classGroups.find(g => g.id === groupId) || selectedClassGroup;
+  if (!group) return;
+
+  const lastReadTs = timestampMs(group.readAt?.[currentUser.uid]);
+  const groupUpdatedTs = timestampMs(group.updatedAt);
+  if (lastReadTs && lastReadTs >= groupUpdatedTs) return;
+
   try {
     await updateDoc(doc(db, "nhom_chat_lop", groupId), {
       [`readAt.${currentUser.uid}`]: serverTimestamp()
@@ -5289,6 +5979,11 @@ const PREMIUM_PAGE_META = {
     icon: "↓", eyebrow: "TRUNG TÂM CHẤM BÀI", title: "Bài nộp của học sinh",
     description: "Kiểm tra trạng thái nộp, tải bài làm và phản hồi nhanh cho từng học sinh.",
     action: "Lọc bài nộp", target: "bn-hocphan-filter", mode: "focus"
+  },
+  "page-ds-sinh-vien": {
+    icon: "👥", eyebrow: "QUẢN LÝ SINH VIÊN", title: "Danh sách sinh viên",
+    description: "Theo dõi, quản lý thông tin và kết quả học tập của các sinh viên trong các học phần.",
+    action: "Ghi danh SV", target: "btn-add-gv-sv", mode: "click"
   },
   "page-ghi-danh": {
     icon: "◇", eyebrow: "BẮT ĐẦU HỌC TẬP", title: "Ghi danh học phần",
