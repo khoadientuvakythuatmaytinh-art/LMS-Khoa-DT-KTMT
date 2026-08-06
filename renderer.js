@@ -21,8 +21,8 @@ document.getElementById("cfg-warn-close").onclick = () =>
   document.getElementById("cfg-warn").classList.add("hidden");
 
 const $    = id => document.getElementById(id);
-const show = id => $(id).classList.remove("hidden");
-const hide = id => $(id).classList.add("hidden");
+const show = id => $(id)?.classList.remove("hidden");
+const hide = id => $(id)?.classList.add("hidden");
 
 function toast(msg, ok = true) {
   const t = $("toast");
@@ -4302,10 +4302,227 @@ function renderTNBuilder() {
   });
 }
 
-$("btn-them-cauhoi").onclick = () => {
+$("btn-them-cauhoi")?.addEventListener("click", () => {
   quizDraftQuestions.push({ noiDung: "", luaChon: ["", "", "", ""], dapAn: 0 });
   renderTNBuilder();
+});
+
+/* ── Nhập nhanh danh sách câu hỏi trắc nghiệm từ văn bản (Word / TXT / PDF) ── */
+
+function parseQuizImportText(rawText) {
+  if (!rawText || !rawText.trim()) return [];
+
+  const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const questions = [];
+  let currentQ = null;
+
+  const isQuestionHeader = (line) => {
+    return /^(?:Câu\s*\d+[:.]?|\d+[\/\.)\:]\s+)/i.test(line);
+  };
+
+  for (let line of lines) {
+    // 1. Kiểm tra dòng chỉ định "Đáp án: B"
+    const ansMatch = line.match(/^Đáp\s*án\s*(?:đúng)?\s*[:\s]*([A-D])/i);
+    if (ansMatch && currentQ) {
+      const char = ansMatch[1].toUpperCase();
+      currentQ.dapAn = char.charCodeAt(0) - 65;
+      continue;
+    }
+
+    // 2. Kiểm tra nếu là câu hỏi mới
+    if (isQuestionHeader(line)) {
+      if (currentQ && currentQ.noiDung) {
+        questions.push(currentQ);
+      }
+      const cleanText = line.replace(/^(?:Câu\s*\d+[:.]?|\d+[\/\.)\:]\s*)/i, "").trim();
+      currentQ = { noiDung: cleanText, luaChon: ["", "", "", ""], dapAn: 0 };
+      continue;
+    }
+
+    // 3. Kiểm tra đáp án (A. B. C. D. hoặc A) B) C) D))
+    const choiceMatch = line.match(/^([*]?)\s*([A-D])[.\:\)\s-]\s*(.*?)([*]?|\s*\(đáp án đúng\)|\s*\[x\])?$/i);
+    if (choiceMatch && currentQ) {
+      const prefixStar = choiceMatch[1];
+      const letter = choiceMatch[2].toUpperCase();
+      let text = choiceMatch[3].trim();
+      const suffixStar = choiceMatch[4];
+
+      const isCorrect = Boolean(prefixStar || (suffixStar && (suffixStar.includes("*") || suffixStar.toLowerCase().includes("đáp án") || suffixStar.includes("[x]"))));
+      const optIdx = letter.charCodeAt(0) - 65;
+
+      text = text.replace(/\*$/, "").trim();
+      currentQ.luaChon[optIdx] = text;
+      if (isCorrect) {
+        currentQ.dapAn = optIdx;
+      }
+      continue;
+    }
+
+    // 4. Nếu chưa có câu hỏi nào -> Khởi tạo câu hỏi đầu tiên
+    if (!currentQ) {
+      currentQ = { noiDung: line, luaChon: ["", "", "", ""], dapAn: 0 };
+    } else {
+      // Nếu chưa nhập đáp án nào -> Dòng nối tiếp của câu hỏi
+      if (currentQ.luaChon.every(opt => !opt)) {
+        currentQ.noiDung += "\n" + line;
+      }
+    }
+  }
+
+  if (currentQ && currentQ.noiDung) {
+    questions.push(currentQ);
+  }
+
+  // Tách đáp án nằm chung 1 dòng nếu có (A. ... B. ... C. ... D. ...)
+  return questions.map(q => {
+    const opts = [...q.luaChon];
+    if (opts.filter(Boolean).length < 2 && q.noiDung.includes("A.") && q.noiDung.includes("B.")) {
+      const inlineMatch = q.noiDung.match(/(.*?)(A[\.\:\)].*)/s);
+      if (inlineMatch) {
+        q.noiDung = inlineMatch[1].trim();
+        const choicesText = inlineMatch[2];
+        const parts = choicesText.split(/(?=[A-D][\.\:\)])/i);
+        parts.forEach(part => {
+          const m = part.match(/^([A-D])[\.\:\)]\s*(.*?)([*]?)$/i);
+          if (m) {
+            const letter = m[1].toUpperCase();
+            const optIdx = letter.charCodeAt(0) - 65;
+            let txt = m[2].trim();
+            if (m[3] || txt.endsWith("*")) {
+              q.dapAn = optIdx;
+              txt = txt.replace(/\*$/, "").trim();
+            }
+            opts[optIdx] = txt;
+          }
+        });
+      }
+    }
+
+    return {
+      noiDung: q.noiDung.trim(),
+      luaChon: opts.map(o => o.trim()),
+      dapAn: Math.min(Math.max(q.dapAn || 0, 0), 3)
+    };
+  });
+}
+
+function parseAndRenderImportPreview() {
+  const text = $("import-tn-textarea")?.value || "";
+  const previewBox = $("import-tn-preview");
+  const summaryEl = $("import-tn-summary");
+  const cardsEl = $("import-tn-cards");
+
+  if (!previewBox || !summaryEl || !cardsEl) return [];
+
+  const parsed = parseQuizImportText(text);
+  if (!parsed.length) {
+    summaryEl.textContent = "⚠️ Chưa nhận diện được câu hỏi nào. Vui lòng kiểm tra lại định dạng văn bản.";
+    summaryEl.style.color = "var(--danger)";
+    cardsEl.innerHTML = "";
+    previewBox.classList.remove("hidden");
+    return parsed;
+  }
+
+  const validCount = parsed.filter(q => q.noiDung && q.luaChon.every(o => o.trim())).length;
+  summaryEl.textContent = `✅ Phân tích thành công ${parsed.length} câu hỏi (${validCount}/${parsed.length} câu đã có đủ 4 đáp án).`;
+  summaryEl.style.color = "#10b981";
+
+  cardsEl.innerHTML = parsed.map((q, idx) => {
+    const letters = ["A", "B", "C", "D"];
+    const isComplete = q.noiDung && q.luaChon.every(o => o.trim());
+    return `<div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 14px; font-size: 0.85rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <strong style="color: var(--text-color);">Câu ${idx + 1}: ${escapeHtml(q.noiDung.slice(0, 80))}${q.noiDung.length > 80 ? "…" : ""}</strong>
+        <span style="font-size: 0.75rem; padding: 2px 8px; border-radius: 6px; background: ${isComplete ? "rgba(16,185,129,0.15)" : "rgba(239,68,68,0.15)"}; color: ${isComplete ? "#10b981" : "#ef4444"}; font-weight: bold;">
+          ${isComplete ? "✓ Đủ 4 đáp án" : "⚠️ Cần kiểm tra"}
+        </span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; color: var(--text-muted); font-size: 0.82rem;">
+        ${q.luaChon.map((opt, optIdx) => `
+          <div style="${optIdx === q.dapAn ? "color: #10b981; font-weight: bold;" : ""}">
+            ${letters[optIdx]}. ${escapeHtml(opt || "—")} ${optIdx === q.dapAn ? "✓ (Đáp án đúng)" : ""}
+          </div>`).join("")}
+      </div>
+    </div>`;
+  }).join("");
+
+  previewBox.classList.remove("hidden");
+  return parsed;
+}
+
+// Mở modal import
+$("btn-open-import-tn")?.addEventListener("click", () => {
+  $("modal-import-tracnghiem")?.classList.remove("hidden");
+});
+
+// Đóng modal import
+const closeImportModal = () => {
+  $("modal-import-tracnghiem")?.classList.add("hidden");
 };
+$("btn-close-import-tn")?.addEventListener("click", closeImportModal);
+$("btn-cancel-import-tn")?.addEventListener("click", closeImportModal);
+
+// Dán đoạn mẫu thử nghiệm
+$("btn-paste-sample-tn")?.addEventListener("click", () => {
+  const sampleText = `Câu 1: Thủ đô của nước Việt Nam là thành phố nào?
+A. Thành phố Hồ Chí Minh
+*B. Hà Nội
+C. Đà Nẵng
+D. Hải Phòng
+
+Câu 2: Đơn vị đo cường độ dòng điện trong hệ SI là gì?
+A. Volt (V)
+B. Watt (W)
+C. Ampere (A)*
+D. Ohm (Ω)
+
+Câu 3: Chất nào sau đây dẫn điện tốt nhất ở điều kiện thường?
+A. Đồng
+B. Nhôm
+C. Bạc
+D. Sắt
+Đáp án: C
+
+Câu 4: Trình duyệt web nào do Google phát triển?
+A. Firefox
+B. Safari
+C. Edge
+D. Chrome*`;
+
+  if ($("import-tn-textarea")) {
+    $("import-tn-textarea").value = sampleText;
+    parseAndRenderImportPreview();
+  }
+});
+
+// Xem trước kết quả
+$("btn-parse-tn-preview")?.addEventListener("click", parseAndRenderImportPreview);
+
+// Áp dụng nhập câu hỏi vào danh sách soạn thảo
+$("btn-apply-import-tn")?.addEventListener("click", () => {
+  const text = $("import-tn-textarea")?.value || "";
+  const parsed = parseQuizImportText(text);
+
+  if (!parsed.length) {
+    toast("Không phân tích được câu hỏi nào từ văn bản. Vui lòng kiểm tra lại.", false);
+    return;
+  }
+
+  if (quizDraftQuestions.length > 0) {
+    const confirmAppend = confirm(`Bạn đã có sẵn ${quizDraftQuestions.length} câu hỏi trong trình soạn thảo.\n\nBấm OK để NỐI TIẾP ${parsed.length} câu hỏi mới vào danh sách.\nBấm CANCEL để THAY THẾ toàn bộ câu hỏi cũ.`);
+    if (confirmAppend) {
+      quizDraftQuestions.push(...parsed);
+    } else {
+      quizDraftQuestions = parsed;
+    }
+  } else {
+    quizDraftQuestions = parsed;
+  }
+
+  renderTNBuilder();
+  toast(`Đã nhập thành công ${parsed.length} câu hỏi trắc nghiệm! ✓`);
+  closeImportModal();
+});
 
 renderTNBuilder();
 
@@ -4420,14 +4637,29 @@ window._toggleTN = async (id, current) => {
 };
 
 window._xoaTN = async (id) => {
-  if (!confirm("Xóa đề trắc nghiệm này? Toàn bộ bài làm liên quan cũng sẽ bị xóa.")) return;
+  if (!id) return;
+  const quiz = teacherQuizList.find(q => q.id === id);
+  const quizTitle = quiz?.tieuDe || "đề trắc nghiệm này";
+  if (!confirm(`Xóa đề trắc nghiệm "${quizTitle}"? Toàn bộ bài làm liên quan cũng sẽ bị xóa.`)) return;
+
   try {
-    const s = await getDocs(query(collection(db, "bai_lam_trac_nghiem"), where("quizId", "==", id)));
-    await Promise.all(s.docs.map(d => deleteDoc(d.ref)));
+    // 1. Xóa tài liệu đề trắc nghiệm chính trong collection "trac_nghiem"
     await deleteDoc(doc(db, "trac_nghiem", id));
-    toast("Đã xóa đề trắc nghiệm.");
-    loadTracNghiem_GV();
-  } catch (e) { toast("Lỗi xóa đề trắc nghiệm: " + e.message, false); }
+
+    // 2. Thử dọn dẹp các bài làm của sinh viên liên quan (nếu có)
+    try {
+      const s = await getDocs(query(collection(db, "bai_lam_trac_nghiem"), where("quizId", "==", id)));
+      await Promise.all(s.docs.map(d => deleteDoc(d.ref).catch(() => {})));
+    } catch { /* Bỏ qua nếu không có bài nộp hoặc không đủ quyền xóa bài làm cũ */ }
+
+    // 3. Cập nhật dữ liệu local & giao diện tức thì
+    teacherQuizList = teacherQuizList.filter(q => q.id !== id);
+    renderTN_GV();
+    toast(`Đã xóa đề trắc nghiệm "${quizTitle}". ✓`);
+  } catch (e) {
+    console.error("Lỗi xóa đề trắc nghiệm:", e);
+    toast("Lỗi xóa đề trắc nghiệm: " + (e.message || e), false);
+  }
 };
 
 function tnStatusLabel(s) {
@@ -6671,7 +6903,7 @@ async function startQuizAttempt(quiz) {
   if ($("quiz-boss-name")) $("quiz-boss-name").textContent = bossTitle.toUpperCase();
   if ($("quiz-boss-caption")) $("quiz-boss-caption").textContent = bossTitle;
   hide("quiz-warning-banner");
-  $("quiz-warning-banner").textContent = "";
+  if ($("quiz-warning-banner")) $("quiz-warning-banner").textContent = "";
   updateViolationBadge();
   renderQuizQuestions();
   updateQuizProgress();
@@ -6682,7 +6914,7 @@ async function startQuizAttempt(quiz) {
   document.body.classList.add("quiz-locked", "quiz-arena-active");
   quizArenaLog(`Boss ${bossTitle} đã xuất hiện. ${quizAttemptQuestions.length} phong ấn cần được phá vỡ.`, "boss");
 
-  await requestQuizFullscreen();
+  await requestQuizFullscreen().catch(() => {});
   attachAntiCheatListeners();
 
   quizTimerInterval = setInterval(() => {
