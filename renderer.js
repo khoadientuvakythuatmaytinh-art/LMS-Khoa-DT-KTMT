@@ -4915,14 +4915,41 @@ async function ensureClassGroupForCourse(courseId, course = {}, extraMemberIds =
   const memberIds = [...new Set([teacherId, ...extraMemberIds].filter(Boolean))];
   if (!teacherId || !memberIds.length) return;
 
-  await setDoc(doc(db, "nhom_chat_lop", courseId), {
-    ...data,
-    giaoVienId: teacherId,
-    giaoVienTen: data.giaoVienTen || (teacherId === currentUser.uid ? currentUserName : "Giáo viên"),
-    memberIds: arrayUnion(...memberIds),
-    createdAt: course.createdAt || serverTimestamp(),
-    updatedAt: serverTimestamp()
-  }, { merge: true });
+  const groupRef = doc(db, "nhom_chat_lop", courseId);
+
+  if (currentRole === "giaovien" && currentUser.uid === teacherId) {
+    // Giáo viên sở hữu — có toàn quyền cập nhật/tạo nhóm.
+    await setDoc(groupRef, {
+      ...data,
+      giaoVienId: teacherId,
+      giaoVienTen: data.giaoVienTen || currentUserName,
+      memberIds: arrayUnion(...memberIds),
+      createdAt: course.createdAt || serverTimestamp(),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  } else {
+    // Học sinh: không có quyền đọc nhóm (chưa phải thành viên),
+    // nên thử updateDoc trước. Nếu document chưa tồn tại → tạo mới.
+    try {
+      await updateDoc(groupRef, {
+        memberIds: arrayUnion(...memberIds),
+        updatedAt: serverTimestamp()
+      });
+    } catch (err) {
+      if (err.code === "not-found") {
+        // Nhóm chưa tồn tại — tạo mới (Rules cho phép nếu đã ghi danh).
+        await setDoc(groupRef, {
+          ...data,
+          giaoVienId: teacherId,
+          giaoVienTen: data.giaoVienTen || "Giáo viên",
+          memberIds,
+          createdAt: course.createdAt || serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+      // Bỏ qua lỗi permission (vd: đã là thành viên rồi).
+    }
+  }
 }
 
 async function migrateEnrollmentToCanonical(enrollmentDoc) {
