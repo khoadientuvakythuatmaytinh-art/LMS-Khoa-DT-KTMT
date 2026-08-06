@@ -5528,38 +5528,36 @@ async function ensureClassGroupForCourse(courseId, course = {}, extraMemberIds =
 
   const groupRef = doc(db, "nhom_chat_lop", courseId);
 
-  if (currentRole === "giaovien" && currentUser.uid === teacherId) {
-    // Giáo viên sở hữu — có toàn quyền cập nhật/tạo nhóm.
-    await setDoc(groupRef, {
-      ...data,
-      giaoVienId: teacherId,
-      giaoVienTen: data.giaoVienTen || currentUserName,
-      memberIds: arrayUnion(...memberIds),
-      createdAt: course.createdAt || serverTimestamp(),
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-  } else {
-    // Học sinh: không có quyền đọc nhóm (chưa phải thành viên),
-    // nên thử updateDoc trước. Nếu document chưa tồn tại → tạo mới.
-    try {
-      await updateDoc(groupRef, {
-        memberIds: arrayUnion(...memberIds),
-        updatedAt: serverTimestamp()
+  try {
+    const snap = await getDoc(groupRef);
+    if (!snap.exists()) {
+      // Chưa có nhóm chat lớp — khởi tạo lần đầu kèm createdAt & updatedAt
+      await setDoc(groupRef, {
+        ...data,
+        giaoVienId: teacherId,
+        giaoVienTen: data.giaoVienTen || (currentRole === "giaovien" ? currentUserName : "Giáo viên"),
+        memberIds,
+        createdAt: course.createdAt || serverTimestamp(),
+        updatedAt: course.createdAt || serverTimestamp()
       });
-    } catch (err) {
-      if (err.code === "not-found") {
-        // Nhóm chưa tồn tại — tạo mới (Rules cho phép nếu đã ghi danh).
-        await setDoc(groupRef, {
-          ...data,
-          giaoVienId: teacherId,
-          giaoVienTen: data.giaoVienTen || "Giáo viên",
-          memberIds,
-          createdAt: course.createdAt || serverTimestamp(),
-          updatedAt: serverTimestamp()
-        });
+    } else {
+      // Đã có nhóm chat lớp — chỉ bổ sung memberIds hoặc tên nếu có thay đổi thực sự,
+      // tuyệt đối KHÔNG cập nhật updatedAt để tránh văng snapshot liên tục làm nhấp nháy giao diện Giảng viên!
+      const current = snap.data();
+      const currentMembers = new Set(current.memberIds || []);
+      const newMembers = memberIds.filter(id => !currentMembers.has(id));
+      const isNameChanged = data.tenHocPhan && current.tenHocPhan !== data.tenHocPhan;
+
+      if (newMembers.length > 0 || isNameChanged) {
+        const payload = {};
+        if (newMembers.length > 0) payload.memberIds = arrayUnion(...newMembers);
+        if (isNameChanged) payload.tenHocPhan = data.tenHocPhan;
+        if (data.maHocPhan) payload.maHocPhan = data.maHocPhan;
+        await updateDoc(groupRef, payload);
       }
-      // Bỏ qua lỗi permission (vd: đã là thành viên rồi).
     }
+  } catch (err) {
+    console.warn("Lỗi kiểm tra nhóm chat lớp:", err);
   }
 }
 
@@ -5584,8 +5582,11 @@ async function migrateEnrollmentToCanonical(enrollmentDoc) {
   return { id: canonicalId, ...data };
 }
 
+let classGroupsSyncedUid = null;
+
 async function ensureClassGroupsForCurrentUser(force = false) {
   if (!currentUser) return;
+  if (classGroupsSyncedUid === currentUser.uid && !force) return;
   if (classGroupsSyncPromise && !force) return classGroupsSyncPromise;
 
   classGroupsSyncPromise = (async () => {
@@ -5603,6 +5604,7 @@ async function ensureClassGroupsForCurrentUser(force = false) {
         const members = [currentUser.uid, ...enrollmentSnap.docs.map(item => item.data().uid).filter(Boolean)];
         await ensureClassGroupForCourse(courseDoc.id, course, members);
       }));
+      classGroupsSyncedUid = currentUser.uid;
       return;
     }
 
@@ -5616,6 +5618,7 @@ async function ensureClassGroupsForCurrentUser(force = false) {
       if (!courseSnap.exists()) return;
       await ensureClassGroupForCourse(courseSnap.id, courseSnap.data(), [currentUser.uid]);
     }));
+    classGroupsSyncedUid = currentUser.uid;
   })().finally(() => {
     classGroupsSyncPromise = null;
   });
