@@ -1,0 +1,32 @@
+HUONG DAN DUA WEBSITE LEN GOOGLE
+
+Website: https://lmskhoadientu.vercel.app/
+
+Da them vao source:
+- Tieu de va mo ta SEO trong public/index.html
+- The robots index/follow
+- Canonical URL
+- Open Graph va Twitter Card
+- Du lieu co cau truc JSON-LD
+- public/robots.txt
+- public/sitemap.xml
+- public/og-image.jpg
+
+CAC BUOC BAN PHAI TU LAM SAU KHI DEPLOY
+
+1. Deploy lai thu muc source nay len Vercel.
+2. Kiem tra 3 dia chi sau mo duoc:
+   https://lmskhoadientu.vercel.app/
+   https://lmskhoadientu.vercel.app/robots.txt
+   https://lmskhoadientu.vercel.app/sitemap.xml
+3. Mo Google Search Console va them property dang URL prefix:
+   https://lmskhoadientu.vercel.app/
+4. Chon xac minh bang HTML tag. Google se cap mot the dang:
+   <meta name="google-site-verification" content="MA_XAC_MINH" />
+5. Dan the do vao trong <head> cua public/index.html, deploy lai, sau do bam Verify.
+6. Trong Search Console, mo URL Inspection, nhap URL trang chu va bam Request Indexing.
+7. Vao muc Sitemaps, nhap sitemap.xml va bam Submit.
+8. Sau mot thoi gian, kiem tra tren Google bang:
+   site:lmskhoadientu.vercel.app
+
+Luu y: Khong the dien san ma google-site-verification vi ma nay chi duoc Google cap cho tai khoan cua ban.
