@@ -5135,8 +5135,8 @@ $("btn-nop-tracnghiem").onclick = () => {
   const answered = Object.keys(quizAnswers).length;
   const total = quizAttemptQuestions.length;
   const msg = answered < total
-    ? `Bạn mới trả lời ${answered}/${total} câu. Vẫn nộp bài?`
-    : "Nộp bài làm ngay bây giờ?";
+    ? `Bạn mới hoàn thành ${answered}/${total} câu hỏi. Bạn có chắc chắn muốn nộp bài không?`
+    : "Bạn đã hoàn thành bài làm! Bạn có muốn nộp bài ngay bây giờ không?";
   if (confirm(msg)) submitQuizAttempt("binh_thuong");
 };
 
@@ -6723,12 +6723,14 @@ function errMsg(code, fallback = "") {
 
 
 /* ══════════════════════════════════════════════════════════════
-   EXAMFLOW QUIZ BATTLE ARENA — EPIC MINI GAME LAYER
+   EXAMFLOW — BÀI KIỂM TRA TRẮC NGHIỆM
    Giữ nguyên cơ chế chấm điểm, giới hạn lượt làm và chống gian lận.
    ══════════════════════════════════════════════════════════════ */
 const quizArenaState = {
   currentIndex: 0,
   answered: new Set(),
+  flagged: new Set(),
+  encouragedMilestones: new Set(),
   combo: 0,
   maxCombo: 0,
   xp: 0,
@@ -6740,9 +6742,7 @@ const quizArenaState = {
 };
 
 function quizArenaBossTitle(quiz) {
-  const titles = ["Hộ Vệ Tri Thức", "Sentinel Tối Thượng", "Lõi Hắc Ám", "Kẻ Canh Giữ Đáp Án", "Titan Học Thuật"];
-  const seed = [...String(quiz?.tieuDe || "Boss")].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
-  return titles[seed % titles.length];
+  return quiz?.tieuDe || "Bài kiểm tra";
 }
 
 function quizArenaTimeLabel() {
@@ -6796,23 +6796,65 @@ function updateQuizArenaHud() {
   const total = quizAttemptQuestions.length || 0;
   const answered = quizArenaState.answered.size;
   const progress = total ? Math.round((answered / total) * 100) : 0;
-  const barrier = Math.max(0, 100 - progress);
   const focus = quizArenaFocusPercent();
 
   if ($("quiz-current-number")) $("quiz-current-number").textContent = String(Math.min(total, quizArenaState.currentIndex + 1));
   if ($("quiz-total-number")) $("quiz-total-number").textContent = String(total);
   if ($("quiz-answered-count")) $("quiz-answered-count").textContent = String(answered);
-  if ($("quiz-combo")) $("quiz-combo").textContent = `x${quizArenaState.combo}`;
-  if ($("quiz-xp")) $("quiz-xp").textContent = String(quizArenaState.xp);
+  if ($("quiz-combo")) $("quiz-combo").textContent = String(answered);
+  if ($("quiz-xp")) $("quiz-xp").textContent = `${progress}%`;
   if ($("quiz-violation-count")) $("quiz-violation-count").textContent = String(quizTotalViolations);
   if ($("quiz-mission-progress")) $("quiz-mission-progress").style.width = `${progress}%`;
-  if ($("quiz-boss-shield")) $("quiz-boss-shield").style.width = `${barrier}%`;
-  if ($("quiz-boss-shield-label")) $("quiz-boss-shield-label").textContent = `${barrier}%`;
+  if ($("quiz-boss-shield")) $("quiz-boss-shield").style.width = `${progress}%`;
+  if ($("quiz-boss-shield-label")) $("quiz-boss-shield-label").textContent = `${progress}%`;
   if ($("quiz-focus-bar")) $("quiz-focus-bar").style.width = `${focus}%`;
   if ($("quiz-focus-label")) $("quiz-focus-label").textContent = `${focus}%`;
   $("quiz-lockdown")?.classList.toggle("arena-focus-danger", focus <= 34);
 
+  checkStudentEncouragement(progress);
   renderQuizArenaMap();
+}
+
+function checkStudentEncouragement(progress) {
+  const milestones = [
+    { pct: 100, icon: "🎉", badge: "HOÀN THÀNH XUẤT SẮC", msg: "Xuất sắc! Bạn đã hoàn thành tất cả câu hỏi. Hãy kiểm tra kĩ và sẵn sàng nộp bài!" },
+    { pct: 75, icon: "🚀", badge: "TĂNG TỐC VỀ ĐÍCH", msg: "Quá đỉnh! Chỉ còn vài câu hỏi nữa thôi, quyết tâm bứt phá về đích thành công!" },
+    { pct: 50, icon: "🔥", badge: "NỬA CHẶNG ĐƯỜNG", msg: "Bạn đã xuất sắc đi được một nửa chặng đường! Cố lên, điểm số cao đang ở rất gần!" },
+    { pct: 25, icon: "🌟", badge: "KHỞI ĐẦU MƯỢT MÀ", msg: "Tuyệt vời! Bạn đang làm rất tốt, tiếp tục duy trì sự tập trung nhé!" }
+  ];
+
+  for (const m of milestones) {
+    if (progress >= m.pct && !quizArenaState.encouragedMilestones.has(m.pct)) {
+      quizArenaState.encouragedMilestones.add(m.pct);
+
+      // Update side panel box
+      const boxText = $("quiz-encouragement-text");
+      const box = $("quiz-encouragement-box");
+      if (boxText) boxText.textContent = m.msg;
+      if (box) {
+        box.querySelector(".encourage-icon").textContent = m.icon;
+        box.classList.remove("pulse");
+        requestAnimationFrame(() => box.classList.add("pulse"));
+      }
+
+      // Update central stage card
+      const stageText = $("stage-encouragement-text");
+      const stageBadge = $("stage-encourage-badge");
+      const stageIcon = $("stage-encourage-icon");
+      const stageCard = $("stage-encouragement-card");
+
+      if (stageText) stageText.textContent = m.msg;
+      if (stageBadge) stageBadge.textContent = m.badge;
+      if (stageIcon) stageIcon.textContent = m.icon;
+      if (stageCard) {
+        stageCard.classList.remove("pulse");
+        requestAnimationFrame(() => stageCard.classList.add("pulse"));
+      }
+
+      quizArenaLog(`${m.icon} [${m.badge}] ${m.msg}`, "encouragement");
+      break;
+    }
+  }
 }
 
 function renderQuizArenaMap() {
@@ -6821,7 +6863,8 @@ function renderQuizArenaMap() {
   map.innerHTML = quizAttemptQuestions.map((q, index) => {
     const active = index === quizArenaState.currentIndex;
     const answered = quizArenaState.answered.has(q.id);
-    return `<button type="button" class="arena-map-node ${active ? "active" : ""} ${answered ? "answered" : ""}" data-arena-index="${index}" aria-label="Mở câu ${index + 1}">${index + 1}</button>`;
+    const flagged = quizArenaState.flagged.has(q.id);
+    return `<button type="button" class="arena-map-node ${active ? "active" : ""} ${answered ? "answered" : ""} ${flagged ? "flagged" : ""}" data-arena-index="${index}" aria-label="Mở câu ${index + 1}">${index + 1}${flagged ? '<span class="map-flag-icon">🚩</span>' : ''}</button>`;
   }).join("");
   map.querySelectorAll("[data-arena-index]").forEach(button => {
     button.addEventListener("click", () => showQuizArenaQuestion(Number(button.dataset.arenaIndex)));
@@ -6841,30 +6884,11 @@ function quizArenaAttack(questionId) {
   quizArenaState.combo = now - quizArenaState.lastAnswerAt <= 30000 ? quizArenaState.combo + 1 : 1;
   quizArenaState.lastAnswerAt = now;
   quizArenaState.maxCombo = Math.max(quizArenaState.maxCombo, quizArenaState.combo);
-  const damage = 100 + Math.min(150, (quizArenaState.combo - 1) * 15);
   const xpGain = 10 + Math.min(20, quizArenaState.combo * 2);
   quizArenaState.xp += xpGain;
 
-  const core = $("quiz-boss-core");
-  const stage = $("quiz-arena-stage");
-  core?.classList.remove("hit");
-  stage?.classList.remove("arena-attack-flash");
-  requestAnimationFrame(() => {
-    core?.classList.add("hit");
-    stage?.classList.add("arena-attack-flash");
-  });
-  setTimeout(() => { core?.classList.remove("hit"); stage?.classList.remove("arena-attack-flash"); }, 480);
-
-  const float = $("quiz-damage-float");
-  if (float) {
-    float.textContent = `-${damage}`;
-    float.classList.remove("show");
-    requestAnimationFrame(() => float.classList.add("show"));
-    setTimeout(() => float.classList.remove("show"), 700);
-  }
-
   quizArenaPlayTone("attack");
-  quizArenaLog(`Đã khóa câu ${quizAttemptQuestions.findIndex(q => q.id === questionId) + 1}. Combo x${quizArenaState.combo}, nhận ${xpGain} XP.`, "attack");
+  quizArenaLog(`Đã chọn đáp án câu ${quizAttemptQuestions.findIndex(q => q.id === questionId) + 1}.`, "attack");
   updateQuizArenaHud();
 }
 
@@ -6878,11 +6902,18 @@ function renderQuizQuestions() {
   }
 
   const chosen = quizAnswers[q.id];
+  const isFlagged = quizArenaState.flagged.has(q.id);
+
   wrap.innerHTML = `
-    <article class="arena-question-card" data-question-id="${escapeHtml(q.id)}">
+    <article class="arena-question-card ${isFlagged ? "is-flagged" : ""}" data-question-id="${escapeHtml(q.id)}">
       <div class="arena-question-head">
-        <span class="arena-round-label">ROUND ${String(quizArenaState.currentIndex + 1).padStart(2, "0")}</span>
-        <span class="arena-question-state ${chosen !== undefined ? "locked" : ""}">${chosen !== undefined ? "ĐÃ CHỌN ĐÁP ÁN" : "CHỜ LỆNH TẤN CÔNG"}</span>
+        <div class="arena-head-left">
+          <span class="arena-round-label">CÂU ${String(quizArenaState.currentIndex + 1).padStart(2, "0")}</span>
+          <button type="button" class="btn-flag-question ${isFlagged ? "active" : ""}" data-qid="${escapeHtml(q.id)}" title="${isFlagged ? "Bỏ gắn cờ phân vân" : "Gắn cờ phân vân"}">
+            🚩 <span>${isFlagged ? "Đã gắn cờ" : "Gắn cờ phân vân"}</span>
+          </button>
+        </div>
+        <span class="arena-question-state ${chosen !== undefined ? "locked" : ""}">${chosen !== undefined ? "ĐÃ TRẢ LỜI" : "CHƯA TRẢ LỜI"}</span>
       </div>
       <h3>${escapeHtml(q.noiDung)}</h3>
       <div class="arena-answer-grid">
@@ -6895,6 +6926,20 @@ function renderQuizQuestions() {
       </div>
     </article>`;
 
+  wrap.querySelector(".btn-flag-question")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const qid = e.currentTarget.dataset.qid;
+    if (quizArenaState.flagged.has(qid)) {
+      quizArenaState.flagged.delete(qid);
+      quizArenaLog(`Đã bỏ gắn cờ câu ${quizArenaState.currentIndex + 1}.`, "normal");
+    } else {
+      quizArenaState.flagged.add(qid);
+      quizArenaLog(`Đã gắn cờ phân vân câu ${quizArenaState.currentIndex + 1}.`, "warning");
+    }
+    renderQuizQuestions();
+    renderQuizArenaMap();
+  });
+
   wrap.querySelectorAll(".arena-answer").forEach(button => {
     button.addEventListener("click", () => {
       const qid = button.dataset.qid;
@@ -6906,8 +6951,11 @@ function renderQuizQuestions() {
       updateQuizProgress();
       if (firstAnswer) {
         quizArenaAttack(qid);
-        if (quizArenaState.currentIndex < quizAttemptQuestions.length - 1) {
-          setTimeout(() => showQuizArenaQuestion(quizArenaState.currentIndex + 1, false), 520);
+        const allAnswered = quizArenaState.answered.size >= quizAttemptQuestions.length;
+        if (!allAnswered && quizArenaState.currentIndex < quizAttemptQuestions.length - 1) {
+          setTimeout(() => showQuizArenaQuestion(quizArenaState.currentIndex + 1, false), 350);
+        } else if (allAnswered) {
+          quizArenaLog("Bạn đã trả lời tất cả câu hỏi! Hãy nhấn NỘP BÀI để kết thúc.", "system");
         }
       } else {
         quizArenaLog(`Đã thay đổi lựa chọn ở câu ${quizArenaState.currentIndex + 1}.`, "normal");
@@ -6916,7 +6964,11 @@ function renderQuizQuestions() {
   });
 
   if ($("btn-quiz-prev")) $("btn-quiz-prev").disabled = quizArenaState.currentIndex === 0;
-  if ($("btn-quiz-next")) $("btn-quiz-next").disabled = quizArenaState.currentIndex >= quizAttemptQuestions.length - 1;
+  if ($("btn-quiz-next")) {
+    $("btn-quiz-next").disabled = false;
+    const isLast = quizArenaState.currentIndex >= quizAttemptQuestions.length - 1;
+    $("btn-quiz-next").textContent = isLast ? "Nộp bài →" : "Câu tiếp →";
+  }
 }
 
 function updateQuizProgress() {
@@ -6937,7 +6989,7 @@ function updateQuizTimerDisplay() {
   }
   if (s === 60) {
     quizArenaPlayTone("warning");
-    quizArenaLog("Cảnh báo: chỉ còn 60 giây. Hãy chuẩn bị kết liễu Boss!", "warning");
+    quizArenaLog("Cảnh báo: chỉ còn 60 giây. Hãy kiểm tra lại bài trước khi hết giờ!", "warning");
   }
 }
 
@@ -6961,9 +7013,7 @@ function logQuizViolation(type, message) {
   updateViolationBadge();
   showQuizWarning(message);
   quizArenaPlayTone("warning");
-  quizArenaLog(`Focus Shield bị tấn công: ${violationLabel(type)}.`, "warning");
-  $("quiz-lockdown")?.classList.add("arena-damaged");
-  setTimeout(() => $("quiz-lockdown")?.classList.remove("arena-damaged"), 420);
+  quizArenaLog(`Cảnh báo vi phạm: ${violationLabel(type)}.`, "warning");
 
   const limit = activeQuiz?.gioiHanViPham || 3;
   if (quizTotalViolations >= limit) submitQuizAttempt("tu_dong_vi_pham");
@@ -6972,6 +7022,8 @@ function logQuizViolation(type, message) {
 function resetQuizArenaState() {
   quizArenaState.currentIndex = 0;
   quizArenaState.answered = new Set();
+  quizArenaState.flagged = new Set();
+  quizArenaState.encouragedMilestones = new Set();
   quizArenaState.combo = 0;
   quizArenaState.maxCombo = 0;
   quizArenaState.xp = 0;
@@ -6980,7 +7032,12 @@ function resetQuizArenaState() {
   quizArenaState.logStartMs = Date.now();
   quizArenaState.finalizing = false;
   const log = $("quiz-battle-log");
-  if (log) log.innerHTML = `<p class="system"><time>00:00</time><span>Battle Arena đã khởi động. Hãy phá vỡ phong ấn của Boss!</span></p>`;
+  if (log) log.innerHTML = `<p class="system"><time>00:00</time><span>Bài kiểm tra đã bắt đầu. Hãy hoàn thành tất cả câu hỏi!</span></p>`;
+  if ($("quiz-encouragement-text")) $("quiz-encouragement-text").textContent = "Chúc bạn làm bài thật tốt! Hãy tự tin suy nghĩ nhé!";
+  if ($("quiz-encouragement-box")?.querySelector(".encourage-icon")) $("quiz-encouragement-box").querySelector(".encourage-icon").textContent = "💪";
+  if ($("stage-encouragement-text")) $("stage-encouragement-text").textContent = "Chúc bạn làm bài thật tốt! Hãy suy nghĩ thật kĩ và tự tin nhé!";
+  if ($("stage-encourage-badge")) $("stage-encourage-badge").textContent = "KHỞI ĐỘNG";
+  if ($("stage-encourage-icon")) $("stage-encourage-icon").textContent = "💪";
 }
 
 async function startQuizAttempt(quiz) {
@@ -6997,8 +7054,8 @@ async function startQuizAttempt(quiz) {
   const bossTitle = quizArenaBossTitle(quiz);
   if ($("quiz-lockdown-course")) $("quiz-lockdown-course").textContent = courseLabel({ maHocPhan: quiz.maHocPhan, tenHocPhan: quiz.tenHocPhan });
   if ($("quiz-lockdown-title")) $("quiz-lockdown-title").textContent = quiz.tieuDe;
-  if ($("quiz-boss-name")) $("quiz-boss-name").textContent = bossTitle.toUpperCase();
-  if ($("quiz-boss-caption")) $("quiz-boss-caption").textContent = bossTitle;
+  if ($("quiz-boss-name")) $("quiz-boss-name").textContent = "TIẾN ĐỘ BÀI LÀM";
+  if ($("quiz-boss-caption")) $("quiz-boss-caption").textContent = quiz.tieuDe;
   hide("quiz-warning-banner");
   if ($("quiz-warning-banner")) $("quiz-warning-banner").textContent = "";
   updateViolationBadge();
@@ -7009,7 +7066,7 @@ async function startQuizAttempt(quiz) {
   show("quiz-lockdown");
   hide("quiz-result-overlay");
   document.body.classList.add("quiz-locked", "quiz-arena-active");
-  quizArenaLog(`Boss ${bossTitle} đã xuất hiện. ${quizAttemptQuestions.length} phong ấn cần được phá vỡ.`, "boss");
+  quizArenaLog(`Bài kiểm tra bắt đầu. Có ${quizAttemptQuestions.length} câu hỏi cần hoàn thành.`, "system");
 
   await requestQuizFullscreen().catch(() => {});
   attachAntiCheatListeners();
@@ -7039,18 +7096,17 @@ function showQuizArenaResult({ score, correct, total, rank, xp, maxCombo, hidden
   const accuracy = total ? Math.round((correct / total) * 100) : 0;
   const damage = hiddenScore ? 100 : accuracy;
   const victory = hiddenScore || score >= 5;
-  const autoReason = reason === "tu_dong_vi_pham" ? "Nhiệm vụ kết thúc do vượt giới hạn vi phạm." : reason === "het_gio" ? "Hết thời gian chiến đấu." : "Bạn đã hoàn thành toàn bộ nhiệm vụ.";
+  const autoReason = reason === "tu_dong_vi_pham" ? "Bài kiểm tra kết thúc do vượt giới hạn vi phạm." : reason === "het_gio" ? "Đã hết thời gian làm bài." : "Bạn đã hoàn thành bài kiểm tra.";
 
-  if ($("quiz-result-rank")) $("quiz-result-rank").textContent = hiddenScore ? "✓" : rank;
-  if ($("quiz-result-eyebrow")) $("quiz-result-eyebrow").textContent = hiddenScore ? "MISSION COMPLETE" : victory ? "BOSS DEFEATED" : "BATTLE COMPLETE";
-  if ($("quiz-result-title")) $("quiz-result-title").textContent = hiddenScore ? "Đã nộp bài!" : victory ? "Chiến thắng!" : "Trận đấu kết thúc";
-  if ($("quiz-result-message")) $("quiz-result-message").textContent = hiddenScore ? "Điểm số đang được phong ấn và sẽ hiển thị khi giáo viên công bố." : autoReason;
+  if ($("quiz-result-rank")) $("quiz-result-rank").textContent = "🏁";
+  if ($("quiz-result-eyebrow")) $("quiz-result-eyebrow").textContent = hiddenScore ? "ĐÃ NỘP BÀI" : victory ? "BÀI LÀM XUẤT SẮC" : "ĐÃ HOÀN THÀNH";
+  if ($("quiz-result-title")) $("quiz-result-title").textContent = hiddenScore ? "Đã nộp bài!" : victory ? "Làm tốt lắm!" : "Kết quả bài kiểm tra";
+  if ($("quiz-result-message")) $("quiz-result-message").textContent = hiddenScore ? "Điểm số sẽ được hiển thị khi giáo viên công bố." : autoReason;
   if ($("quiz-result-score")) $("quiz-result-score").textContent = hiddenScore ? "ẨN" : `${formatScore(score)}/10`;
   if ($("quiz-result-accuracy")) $("quiz-result-accuracy").textContent = hiddenScore ? "—" : `${accuracy}%`;
-  if ($("quiz-result-combo")) $("quiz-result-combo").textContent = `x${maxCombo}`;
-  if ($("quiz-result-xp")) $("quiz-result-xp").textContent = `+${xp}`;
+  if ($("quiz-result-combo")) $("quiz-result-combo").textContent = `${quizArenaState.answered.size}/${total}`;
   if ($("quiz-result-damage")) $("quiz-result-damage").style.width = `${damage}%`;
-  if ($("quiz-result-damage-label")) $("quiz-result-damage-label").textContent = hiddenScore ? "Nhiệm vụ đã được gửi an toàn" : `Sát thương Boss: ${damage}%`;
+  if ($("quiz-result-damage-label")) $("quiz-result-damage-label").textContent = hiddenScore ? "Bài làm đã được gửi thành công" : `Tỷ lệ hoàn thành: ${damage}%`;
   $("quiz-result-overlay")?.classList.toggle("result-defeat", !victory);
   show("quiz-result-overlay");
   quizArenaPlayTone("victory");
@@ -7138,7 +7194,7 @@ async function submitQuizAttempt(reason) {
     quizArenaState.finalizing = false;
     quizFullscreenExpected = true;
     toast("Lỗi khi nộp bài: " + error.message, false);
-    quizArenaLog("Không gửi được kết quả. Hệ thống đã khôi phục trận đấu để bạn thử lại.", "warning");
+    quizArenaLog("Không gửi được kết quả. Hệ thống đã khôi phục để bạn thử lại.", "warning");
     await requestQuizFullscreen().catch(() => {});
     attachAntiCheatListeners();
     quizTimerInterval = setInterval(() => {
@@ -7150,7 +7206,18 @@ async function submitQuizAttempt(reason) {
 }
 
 $("btn-quiz-prev")?.addEventListener("click", () => showQuizArenaQuestion(quizArenaState.currentIndex - 1));
-$("btn-quiz-next")?.addEventListener("click", () => showQuizArenaQuestion(quizArenaState.currentIndex + 1));
+$("btn-quiz-next")?.addEventListener("click", () => {
+  if (quizArenaState.currentIndex < quizAttemptQuestions.length - 1) {
+    showQuizArenaQuestion(quizArenaState.currentIndex + 1);
+  } else {
+    const answered = Object.keys(quizAnswers).length;
+    const total = quizAttemptQuestions.length;
+    const msg = answered >= total
+      ? "Bạn đã trả lời tất cả các câu hỏi. Bạn có muốn nộp bài làm ngay bây giờ không?"
+      : `Bạn đang ở câu hỏi cuối cùng (đã làm ${answered}/${total} câu). Bạn có muốn nộp bài không?`;
+    if (confirm(msg)) submitQuizAttempt("binh_thuong");
+  }
+});
 $("btn-quiz-sound")?.addEventListener("click", () => {
   quizArenaState.sound = !quizArenaState.sound;
   try { localStorage.setItem("examflow-game-sound", quizArenaState.sound ? "1" : "0"); } catch {}

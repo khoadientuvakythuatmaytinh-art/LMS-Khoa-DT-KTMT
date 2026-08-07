@@ -2195,8 +2195,8 @@
                     class="form-check-input" type="checkbox" /><span class="form-check-label">Bật</span></label>
               </div>
               <div class="nexus-setting-row">
-                <div><strong>Âm thanh mini game</strong><small>Bật hoặc tắt hiệu ứng âm thanh trong Quiz Battle
-                    Arena.</small></div><label class="form-check form-switch"><input id="settings-game-sound"
+                <div><strong>Âm thanh bài kiểm tra</strong><small>Bật hoặc tắt hiệu ứng âm thanh trong phần thi trắc
+                    nghiệm.</small></div><label class="form-check form-switch"><input id="settings-game-sound"
                     class="form-check-input" type="checkbox" /><span class="form-check-label">Bật</span></label>
               </div>
               <div class="nexus-setting-row">
@@ -2499,14 +2499,14 @@
     </div>
   </div>
 
-  <!-- Màn hình làm bài trắc nghiệm — EPIC BATTLE ARENA -->
-  <div id="quiz-lockdown" class="quiz-lockdown quiz-arena hidden" aria-label="Đấu trường trắc nghiệm">
+  <!-- Màn hình làm bài trắc nghiệm -->
+  <div id="quiz-lockdown" class="quiz-lockdown quiz-arena hidden" aria-label="Bài kiểm tra trắc nghiệm">
     <div class="arena-grid-overlay" aria-hidden="true"></div>
     <div class="arena-vignette" aria-hidden="true"></div>
 
     <header class="arena-topbar">
       <div class="arena-brand-block">
-        <span class="arena-brand-icon">⚔</span>
+        <div class="arena-brand-icon"><img src="logo-khoa.jpg" alt="Logo Khoa" class="brand-logo-img" /></div>
         <div>
           <small>KHOA ĐIỆN TỬ VÀ KĨ THUẬT MÁY TÍNH</small>
           <strong id="quiz-lockdown-title">Bài trắc nghiệm</strong>
@@ -2515,7 +2515,7 @@
       </div>
 
       <div class="arena-player-hud">
-        <div class="arena-hud-title"><span>🛡</span><b>FOCUS SHIELD</b><strong id="quiz-focus-label">100%</strong></div>
+        <div class="arena-hud-title"><span>🔒</span><b>MỨC ĐỘ TẬP TRUNG</b><strong id="quiz-focus-label">100%</strong></div>
         <div class="arena-hud-track"><i id="quiz-focus-bar" style="width:100%"></i></div>
       </div>
 
@@ -2524,16 +2524,10 @@
         <div id="quiz-timer" class="quiz-timer">--:--</div>
       </div>
 
-      <div class="arena-boss-hud">
-        <div class="arena-hud-title"><span>☠</span><b id="quiz-boss-name">BOSS TRI THỨC</b><strong
-            id="quiz-boss-shield-label">100%</strong></div>
-        <div class="arena-hud-track boss"><i id="quiz-boss-shield" style="width:100%"></i></div>
-      </div>
-
       <div class="arena-top-actions">
         <button type="button" id="btn-quiz-sound" class="arena-icon-button" title="Bật/tắt âm thanh"
           aria-label="Bật hoặc tắt âm thanh">🔊</button>
-        <button type="button" class="arena-submit-button" id="btn-nop-tracnghiem">KẾT LIỄU <span>↗</span></button>
+        <button type="button" class="arena-submit-button" id="btn-nop-tracnghiem">NỘP BÀI <span>↗</span></button>
       </div>
     </header>
 
@@ -2542,84 +2536,93 @@
     <main class="arena-main">
       <aside class="arena-side-panel">
         <section class="arena-mission-card">
-          <small>NHIỆM VỤ HIỆN TẠI</small>
-          <h3>Phá vỡ phong ấn tri thức</h3>
-          <p>Chọn đáp án để tích lũy năng lượng, duy trì combo và hoàn thành toàn bộ câu hỏi.</p>
+          <small>TIẾN ĐỘ LÀM BÀI</small>
+          <h3>Hoàn thành bài kiểm tra</h3>
+          <p>Chọn đáp án cho từng câu hỏi. Bạn có thể thay đổi đáp án trước khi nộp bài.</p>
           <div class="arena-progress-copy">
             <span id="quiz-progress-note">Đã trả lời 0/0 câu</span>
             <b><span id="quiz-current-number">1</span>/<span id="quiz-total-number">0</span></b>
           </div>
           <div class="arena-progress-track"><i id="quiz-mission-progress" style="width:0%"></i></div>
+          <div id="quiz-encouragement-box" class="quiz-encouragement-box">
+            <span class="encourage-icon">💪</span>
+            <span id="quiz-encouragement-text">Chúc bạn làm bài thật tốt! Hãy tự tin suy nghĩ nhé!</span>
+          </div>
         </section>
 
         <section class="arena-stat-grid">
-          <div><span>⚡</span><small>COMBO</small><strong id="quiz-combo">x0</strong></div>
-          <div><span>✦</span><small>XP CHARGE</small><strong id="quiz-xp">0</strong></div>
-          <div><span>🛡</span><small>VI PHẠM</small><strong id="quiz-violation-count">0</strong></div>
-          <div><span>◆</span><small>ĐÃ KHÓA</small><strong id="quiz-answered-count">0</strong></div>
+          <div><span>✏️</span><small>CÂU ĐÃ LÀM</small><strong id="quiz-combo">0</strong></div>
+          <div><span>📈</span><small>TIẾN ĐỘ</small><strong id="quiz-xp">0%</strong></div>
+          <div><span>⚠️</span><small>VI PHẠM</small><strong id="quiz-violation-count">0</strong></div>
+          <div><span>✅</span><small>ĐÃ CHỌN</small><strong id="quiz-answered-count">0</strong></div>
         </section>
 
         <section class="arena-map-card">
-          <div class="arena-section-title"><span>BẢN ĐỒ CHIẾN ĐẤU</span><small>Chọn để quay lại câu</small></div>
+          <div class="arena-section-title"><span>DANH SÁCH CÂU HỎI</span><small>Chọn để quay lại câu</small></div>
           <div id="quiz-question-map" class="arena-question-map"></div>
         </section>
 
         <section class="arena-integrity-card">
-          <div><span>🛡️</span><strong>Chế độ giám sát đang bật</strong></div>
-          <p>Không chuyển cửa sổ, thoát toàn màn hình hoặc sao chép. Vi phạm sẽ làm giảm Focus Shield và được gửi cho
+          <div><span>🔒</span><strong>Chế độ giám sát đang bật</strong></div>
+          <p>Không chuyển cửa sổ, thoát toàn màn hình hoặc sao chép. Vi phạm sẽ được ghi nhận và gửi cho
             giáo viên.</p>
           <span id="quiz-violation-badge" class="quiz-violation-badge hidden">⚠ Vi phạm: 0</span>
         </section>
       </aside>
 
       <section id="quiz-arena-stage" class="arena-stage">
-        <div class="arena-boss-zone" aria-hidden="true">
-          <div class="arena-boss-rings"><i></i><i></i><i></i></div>
-          <div id="quiz-boss-core" class="arena-boss-core">
-            <span class="arena-boss-eye"></span>
-            <b>?</b>
+        <div class="arena-boss-zone">
+          <div class="arena-quiz-icon-zone">
+            <div class="arena-quiz-icon">
+              <img src="logo-khoa.jpg" alt="Logo Khoa" class="stage-logo-img" />
+            </div>
+            <div class="stage-encouragement-card" id="stage-encouragement-card">
+              <div class="stage-encourage-head">
+                <span class="stage-encourage-icon" id="stage-encourage-icon">💪</span>
+                <span class="stage-encourage-badge" id="stage-encourage-badge">KHỞI ĐỘNG</span>
+              </div>
+              <h4 id="stage-encouragement-text">Chúc bạn làm bài thật tốt! Hãy suy nghĩ thật kĩ và tự tin nhé!</h4>
+            </div>
           </div>
           <div id="quiz-damage-float" class="arena-damage-float"></div>
-          <div class="arena-boss-caption"><span>LEGENDARY ENCOUNTER</span><strong id="quiz-boss-caption">Hộ vệ tri
-              thức</strong></div>
+          <div class="arena-boss-caption"><span>BÀI KIỂM TRA</span><strong id="quiz-boss-caption">Trắc nghiệm</strong></div>
         </div>
 
         <div class="arena-question-shell">
           <div id="quiz-questions-list" class="quiz-questions-list arena-question-list"></div>
           <div class="arena-navigation">
             <button type="button" id="btn-quiz-prev" class="arena-nav-button">← Câu trước</button>
-            <span>Chọn đáp án để tung đòn tấn công</span>
+            <span>Chọn đáp án phù hợp</span>
             <button type="button" id="btn-quiz-next" class="arena-nav-button primary">Câu tiếp →</button>
           </div>
         </div>
 
         <div class="arena-battle-log-wrap">
-          <div class="arena-section-title"><span>NHẬT KÝ TRẬN ĐẤU</span><small>Live</small></div>
+          <div class="arena-section-title"><span>NHẬT KÝ LÀM BÀI</span><small>Trực tiếp</small></div>
           <div id="quiz-battle-log" class="arena-battle-log" aria-live="polite">
-            <p><time>00:00</time><span>Hệ thống chiến đấu đã sẵn sàng.</span></p>
+            <p><time>00:00</time><span>Hệ thống đã sẵn sàng.</span></p>
           </div>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- Kết quả Battle Arena -->
+  <!-- Kết quả bài kiểm tra -->
   <div id="quiz-result-overlay" class="quiz-result-overlay hidden" role="dialog" aria-modal="true"
     aria-labelledby="quiz-result-title">
     <div class="quiz-result-card">
-      <div class="result-energy-ring"><span id="quiz-result-rank">S</span></div>
-      <small id="quiz-result-eyebrow">BOSS DEFEATED</small>
-      <h2 id="quiz-result-title">Chiến thắng!</h2>
-      <p id="quiz-result-message">Bạn đã hoàn thành nhiệm vụ.</p>
+      <div class="result-energy-ring"><img src="logo-khoa.jpg" alt="Logo Khoa" class="result-logo-img" /></div>
+      <small id="quiz-result-eyebrow">ĐÃ HOÀN THÀNH</small>
+      <h2 id="quiz-result-title">Kết quả bài kiểm tra</h2>
+      <p id="quiz-result-message">Bạn đã hoàn thành bài kiểm tra.</p>
       <div class="quiz-result-metrics">
         <div><small>ĐIỂM</small><strong id="quiz-result-score">—</strong></div>
         <div><small>CHÍNH XÁC</small><strong id="quiz-result-accuracy">—</strong></div>
-        <div><small>MAX COMBO</small><strong id="quiz-result-combo">x0</strong></div>
-        <div><small>XP NHẬN</small><strong id="quiz-result-xp">0</strong></div>
+        <div><small>SỐ CÂU ĐÃ LÀM</small><strong id="quiz-result-combo">0</strong></div>
       </div>
       <div class="quiz-result-bar"><i id="quiz-result-damage" style="width:0%"></i></div>
-      <span id="quiz-result-damage-label">Sát thương Boss: 0%</span>
-      <button type="button" id="btn-close-quiz-result" class="arena-submit-button result">TRỞ VỀ SẢNH CHÍNH
+      <span id="quiz-result-damage-label">Tỷ lệ hoàn thành: 0%</span>
+      <button type="button" id="btn-close-quiz-result" class="arena-submit-button result">QUAY VỀ TRANG CHÍNH
         <span>→</span></button>
     </div>
   </div>

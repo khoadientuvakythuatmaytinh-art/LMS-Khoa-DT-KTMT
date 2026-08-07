@@ -457,12 +457,12 @@ function renderQuickActions() {
   const actions = state.role === "giaovien" ? [
     { icon: "＋", title: "Tạo học phần", text: "Mở không gian lớp mới", page: "page-hoc-phan" },
     { icon: "⇧", title: "Đăng đề thi", text: "Phân phối tài liệu và hạn nộp", page: "page-dang-de" },
-    { icon: "◆", title: "Tạo Battle Quiz", text: "Thiết kế mini game trắc nghiệm", page: "page-trac-nghiem-gv" },
+    { icon: "◆", title: "Tạo bài trắc nghiệm", text: "Thiết kế bài kiểm tra trắc nghiệm", page: "page-trac-nghiem-gv" },
     { icon: "◈", title: "Phát thông báo", text: "Cập nhật tới toàn bộ lớp", page: "page-announcements" }
   ] : [
     { icon: "◇", title: "Ghi danh học phần", text: "Tham gia lớp bằng mật khẩu", page: "page-ghi-danh" },
     { icon: "↗", title: "Nộp bài", text: "Gửi bài làm an toàn", page: "page-nop-bai" },
-    { icon: "◆", title: "Vào Battle Arena", text: "Làm bài trắc nghiệm dạng game", page: "page-trac-nghiem-hs" },
+    { icon: "◆", title: "Làm bài trắc nghiệm", text: "Bắt đầu làm bài kiểm tra", page: "page-trac-nghiem-hs" },
     { icon: "◒", title: "Xem phân tích điểm", text: "Theo dõi tiến độ học tập", page: "page-ket-qua" }
   ];
   root.innerHTML = actions.map(item => `<button type="button" data-nexus-route="${item.page}"><span>${item.icon}</span><div><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.text)}</small></div><b>→</b></button>`).join("");
