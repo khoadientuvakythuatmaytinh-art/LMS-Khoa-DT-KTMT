@@ -16,8 +16,8 @@
   <link rel="canonical" href="https://lmskhoadientu.vercel.app/" />
   <link rel="alternate" hreflang="vi-VN" href="https://lmskhoadientu.vercel.app/" />
   <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
-  <link rel="icon" href="/logo-khoa.png" type="image/png" />
-  <link rel="apple-touch-icon" href="/logo-khoa.png" />
+  <link rel="icon" type="image/png" href="/favicon.png?v=2" />
+  <link rel="apple-touch-icon" href="/favicon.png?v=2" />
 
   <meta property="og:locale" content="vi_VN" />
   <meta property="og:type" content="website" />
@@ -91,7 +91,12 @@
         <span class="nav-label" id="sidebar-theme-label">Chế độ tối</span>
       </button>
       <button class="btn-logout" id="btn-logout">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg></span>
         <span class="nav-label">Đăng xuất</span>
       </button>
     </div>
@@ -464,7 +469,8 @@
           <div class="page-header">
             <div>
               <h2>👥 Danh sách sinh viên</h2>
-              <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 2px;">Quản lý thông tin và kết quả sinh viên theo học phần giảng dạy</p>
+              <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 2px;">Quản lý thông tin và kết quả
+                sinh viên theo học phần giảng dạy</p>
             </div>
             <div class="header-actions">
               <select id="gv-sv-hocphan-filter" class="select-box" aria-label="Lọc theo học phần">
@@ -1014,7 +1020,9 @@
               <span>Danh sách câu hỏi</span>
               <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button type="button" class="btn-outline" id="btn-them-cauhoi">➕ Thêm câu hỏi thủ công</button>
-                <button type="button" class="btn-primary" id="btn-open-import-tn" style="background: linear-gradient(135deg, #10b981, #059669); border: none;">⚡ Import nhanh từ văn bản</button>
+                <button type="button" class="btn-primary" id="btn-open-import-tn"
+                  style="background: linear-gradient(135deg, #10b981, #059669); border: none;">⚡ Import nhanh từ văn
+                  bản</button>
               </div>
             </div>
             <div id="tn-builder-list" class="tn-builder-list"></div>
@@ -2248,7 +2256,8 @@
   </div>
 
   <!-- Giáo viên: Modal Ghi danh Sinh viên -->
-  <div id="gv-sv-add-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="gv-sv-add-modal-title">
+  <div id="gv-sv-add-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true"
+    aria-labelledby="gv-sv-add-modal-title">
     <div class="modal-card">
       <div class="modal-header">
         <div>
@@ -2264,10 +2273,13 @@
         </div>
         <div class="field">
           <label for="gv-sv-add-query">Tìm sinh viên (Email hoặc Mã SV hoặc Tên) *</label>
-          <input type="text" id="gv-sv-add-query" placeholder="Nhập email, mã SV hoặc tên sinh viên..." class="search-box" style="width: 100%;" />
-          <small class="field-help" style="margin-top: 4px; display: block; color: var(--text-muted);">Hệ thống sẽ tìm các sinh viên có tài khoản khớp thông tin.</small>
+          <input type="text" id="gv-sv-add-query" placeholder="Nhập email, mã SV hoặc tên sinh viên..."
+            class="search-box" style="width: 100%;" />
+          <small class="field-help" style="margin-top: 4px; display: block; color: var(--text-muted);">Hệ thống sẽ tìm
+            các sinh viên có tài khoản khớp thông tin.</small>
         </div>
-        <div id="gv-sv-add-results" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
+        <div id="gv-sv-add-results"
+          style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
       <div class="modal-actions">
         <button type="button" id="btn-cancel-gv-sv-add" class="btn-outline">Hủy bỏ</button>
@@ -2277,7 +2289,8 @@
   </div>
 
   <!-- Giáo viên: Modal Chi tiết Sinh viên -->
-  <div id="gv-sv-detail-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="gv-sv-detail-modal-title">
+  <div id="gv-sv-detail-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true"
+    aria-labelledby="gv-sv-detail-modal-title">
     <div class="modal-card" style="max-width: 650px; width: 90%;">
       <div class="modal-header">
         <div>
@@ -2626,33 +2639,47 @@
     <div class="modal-card" style="width: min(840px, 94vw); max-height: 90vh; display: flex; flex-direction: column;">
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">⚡</div>
+          <div
+            style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">
+            ⚡</div>
           <div>
-            <h3 style="margin: 0; font-size: 1.15rem; color: var(--text-color);">Nhập nhanh câu hỏi trắc nghiệm hàng loạt</h3>
-            <p style="margin: 2px 0 0 0; color: var(--text-muted); font-size: 0.83rem;">Copy &amp; Dán đoạn văn bản chứa danh sách câu hỏi để tự động phân tách</p>
+            <h3 style="margin: 0; font-size: 1.15rem; color: var(--text-color);">Nhập nhanh câu hỏi trắc nghiệm hàng
+              loạt</h3>
+            <p style="margin: 2px 0 0 0; color: var(--text-muted); font-size: 0.83rem;">Copy &amp; Dán đoạn văn bản chứa
+              danh sách câu hỏi để tự động phân tách</p>
           </div>
         </div>
         <button type="button" class="modal-close" id="btn-close-import-tn" aria-label="Đóng">✕</button>
       </div>
 
       <div style="padding: 16px 0; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; flex: 1;">
-        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 12px 16px; font-size: 0.85rem; color: var(--text-color);">
-          <div style="font-weight: 700; margin-bottom: 4px; color: #10b981; display: flex; align-items: center; gap: 6px;">
+        <div
+          style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 12px 16px; font-size: 0.85rem; color: var(--text-color);">
+          <div
+            style="font-weight: 700; margin-bottom: 4px; color: #10b981; display: flex; align-items: center; gap: 6px;">
             <span>💡</span> Định dạng hỗ trợ tự động:
           </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 6px; color: var(--text-muted);">
+          <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 6px; color: var(--text-muted);">
             <div>• <b>Đầu câu:</b> <code>Câu 1:</code>, <code>Câu 1.</code>, <code>1.</code> hoặc <code>1/</code></div>
-            <div>• <b>Đáp án:</b> <code>A.</code>, <code>B.</code>, <code>C.</code>, <code>D.</code> hoặc <code>A)</code>, <code>B)</code></div>
-            <div>• <b>Đáp án đúng:</b> Thêm <code>*</code> ở đáp án (VD: <code>*B. Hà Nội</code> hoặc <code>B. Hà Nội*</code>), hoặc dòng <code>Đáp án: B</code> cuối câu.</div>
+            <div>• <b>Đáp án:</b> <code>A.</code>, <code>B.</code>, <code>C.</code>, <code>D.</code> hoặc
+              <code>A)</code>, <code>B)</code>
+            </div>
+            <div>• <b>Đáp án đúng:</b> Thêm <code>*</code> ở đáp án (VD: <code>*B. Hà Nội</code> hoặc
+              <code>B. Hà Nội*</code>), hoặc dòng <code>Đáp án: B</code> cuối câu.
+            </div>
           </div>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-color);">Nội dung văn bản (Ctrl+V để dán):</label>
+          <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-color);">Nội dung văn bản (Ctrl+V để
+            dán):</label>
           <button type="button" class="btn-outline btn-sm" id="btn-paste-sample-tn">📋 Dán đoạn mẫu thử nghiệm</button>
         </div>
 
-        <textarea id="import-tn-textarea" rows="9" style="width: 100%; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 0.88rem; padding: 12px; border-radius: 12px; background: rgba(0,0,0,0.12); color: var(--text-color); border: 1px solid var(--border-color); resize: vertical; line-height: 1.5;" placeholder="Câu 1: Thủ đô của Việt Nam là gì?
+        <textarea id="import-tn-textarea" rows="9"
+          style="width: 100%; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 0.88rem; padding: 12px; border-radius: 12px; background: rgba(0,0,0,0.12); color: var(--text-color); border: 1px solid var(--border-color); resize: vertical; line-height: 1.5;"
+          placeholder="Câu 1: Thủ đô của Việt Nam là gì?
 A. Thành phố Hồ Chí Minh
 *B. Hà Nội
 C. Đà Nẵng
@@ -2665,17 +2692,24 @@ C) 3
 D) 4
 Đáp án: B"></textarea>
 
-        <div id="import-tn-preview" class="hidden" style="border-top: 1px solid var(--border-color); padding-top: 14px;">
-          <div id="import-tn-summary" style="font-weight: 700; margin-bottom: 10px; color: #10b981; font-size: 0.92rem;"></div>
-          <div id="import-tn-cards" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;"></div>
+        <div id="import-tn-preview" class="hidden"
+          style="border-top: 1px solid var(--border-color); padding-top: 14px;">
+          <div id="import-tn-summary"
+            style="font-weight: 700; margin-bottom: 10px; color: #10b981; font-size: 0.92rem;"></div>
+          <div id="import-tn-cards"
+            style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
+          </div>
         </div>
       </div>
 
-      <div class="modal-actions" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 16px;">
+      <div class="modal-actions"
+        style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 16px;">
         <button type="button" class="btn-outline" id="btn-parse-tn-preview">🔍 Xem trước kết quả</button>
         <div style="display: flex; gap: 10px;">
           <button type="button" class="btn-outline" id="btn-cancel-import-tn">Hủy</button>
-          <button type="button" class="btn-primary" id="btn-apply-import-tn" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none;">➕ Thêm vào danh sách câu hỏi</button>
+          <button type="button" class="btn-primary" id="btn-apply-import-tn"
+            style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none;">➕ Thêm vào danh
+            sách câu hỏi</button>
         </div>
       </div>
     </div>
