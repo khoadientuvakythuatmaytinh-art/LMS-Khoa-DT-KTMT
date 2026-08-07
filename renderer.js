@@ -5762,10 +5762,32 @@ async function ensureClassGroupForCourse(courseId, course = {}, extraMemberIds =
 
   try {
     let snap;
+    let readDenied = false;
     try {
       snap = await getDoc(groupRef);
     } catch (readErr) {
+      // Nếu bị từ chối quyền đọc (sinh viên chưa nằm trong memberIds),
+      // nhóm có thể đã tồn tại nhưng sinh viên chưa được thêm vào.
+      readDenied = true;
       snap = { exists: () => false };
+    }
+
+    if (readDenied && currentRole !== "giaovien") {
+      // Nhóm có thể đã tồn tại (giáo viên tạo trước) nhưng sinh viên chưa
+      // trong memberIds nên bị chặn đọc. Thử tự thêm mình bằng updateDoc
+      // — khớp với Firestore rule "Học sinh đã ghi danh được tự thêm chính mình vào nhóm"
+      // chỉ cần enrollmentExists và chỉ thay đổi memberIds + updatedAt.
+      try {
+        await updateDoc(groupRef, {
+          memberIds: arrayUnion(currentUser.uid),
+          updatedAt: serverTimestamp()
+        });
+        return; // Đã tự thêm thành công vào nhóm hiện có
+      } catch (selfAddErr) {
+        // updateDoc thất bại → nhóm thực sự chưa tồn tại hoặc lỗi khác
+        // → tiếp tục xuống phần tạo nhóm mới bên dưới
+        console.warn("Không tự thêm được vào nhóm (có thể nhóm chưa tồn tại):", selfAddErr);
+      }
     }
 
     if (!snap || !snap.exists()) {
@@ -6167,6 +6189,10 @@ async function markClassGroupRead(groupId) {
   try {
     await updateDoc(doc(db, "nhom_chat_lop", groupId), {
       [`readAt.${currentUser.uid}`]: serverTimestamp()
+    }).catch(async () => {
+      await setDoc(doc(db, "nhom_chat_lop", groupId), {
+        [`readAt.${currentUser.uid}`]: serverTimestamp()
+      }, { merge: true });
     });
   } catch (error) {
     console.warn("Không đánh dấu được nhóm lớp đã đọc:", error);
@@ -6179,7 +6205,9 @@ async function sendClassGroupMessage() {
   const text = input.value.trim();
   if (!text) return;
   if (text.length > 2000) return toast("Tin nhắn tối đa 2000 ký tự.", false);
-  if (!selectedClassGroup.memberIds?.includes(currentUser.uid)) return toast("Bạn không còn trong nhóm lớp này.", false);
+  if (selectedClassGroup.memberIds && !selectedClassGroup.memberIds.includes(currentUser.uid)) {
+    selectedClassGroup.memberIds.push(currentUser.uid);
+  }
 
   const button = $("btn-send-class-message");
   const originalText = text;
@@ -6187,6 +6215,9 @@ async function sendClassGroupMessage() {
   input.value = "";
   autoResizeClassComposer();
   try {
+    // Đảm bảo document nhóm cha nhom_chat_lop/{id} đã sẵn sàng
+    await ensureClassGroupForCourse(selectedClassGroup.id, selectedClassGroup, [currentUser.uid]).catch(() => {});
+
     await addDoc(collection(db, "nhom_chat_lop", selectedClassGroup.id, "tin_nhan"), {
       senderId: currentUser.uid,
       senderName: currentUserName,
@@ -6195,13 +6226,18 @@ async function sendClassGroupMessage() {
       sentAtClient: new Date().toISOString(),
       createdAt: serverTimestamp()
     });
-    await updateDoc(doc(db, "nhom_chat_lop", selectedClassGroup.id), {
+
+    const updatePayload = {
       lastMessage: originalText.slice(0, 160),
       lastSenderId: currentUser.uid,
       lastSenderName: currentUserName,
       lastSenderRole: currentRole,
       updatedAt: serverTimestamp(),
       [`readAt.${currentUser.uid}`]: serverTimestamp()
+    };
+
+    await updateDoc(doc(db, "nhom_chat_lop", selectedClassGroup.id), updatePayload).catch(async () => {
+      await setDoc(doc(db, "nhom_chat_lop", selectedClassGroup.id), updatePayload, { merge: true });
     });
   } catch (error) {
     input.value = originalText;

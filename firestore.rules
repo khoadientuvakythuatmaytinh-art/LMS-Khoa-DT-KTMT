@@ -105,10 +105,16 @@ service cloud.firestore {
 
     function classGroupMember(groupId) {
       return signedIn()
-        && exists(/databases/$(database)/documents/nhom_chat_lop/$(groupId))
-        && request.auth.uid in get(
-          /databases/$(database)/documents/nhom_chat_lop/$(groupId)
-        ).data.memberIds;
+        && (
+          ownsCourse(groupId)
+          || enrollmentExists(groupId, request.auth.uid)
+          || (
+            exists(/databases/$(database)/documents/nhom_chat_lop/$(groupId))
+            && request.auth.uid in get(
+              /databases/$(database)/documents/nhom_chat_lop/$(groupId)
+            ).data.memberIds
+          )
+        );
     }
 
     // =========================================================
