@@ -586,41 +586,61 @@
             <h2>🔑 Ghi danh học phần</h2>
           </div>
 
-          <div class="stats-row">
-            <div class="stat-card">
-              <span class="stat-icon">🏫</span>
+          <section class="card enrollment-open-card" aria-labelledby="open-course-title">
+            <div class="enrollment-section-toolbar">
               <div>
-                <div id="stat-so-hp" class="stat-value">0</div>
-                <div class="stat-label">Học phần đã ghi danh</div>
+                <span class="enrollment-section-kicker">DANH SÁCH KHẢ DỤNG</span>
+                <h3 id="open-course-title">Học phần đang mở</h3>
+                <p>Chọn một học phần, sau đó nhập mật khẩu giáo viên đã cung cấp để ghi danh.</p>
+              </div>
+              <div class="search-wrap enrollment-search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-hp-open" placeholder="Tìm học phần đang mở…" class="search-box" autocomplete="off" />
               </div>
             </div>
-            <div class="stat-card">
-              <span class="stat-icon">👋</span>
-              <div>
-                <div id="stat-hello" class="stat-value">—</div>
-                <div class="stat-label">Xin chào</div>
-              </div>
-            </div>
-          </div>
 
-          <div class="card">
-            <div class="field-row">
-              <div class="field">
-                <label>Tên/Mã học phần *</label>
-                <input type="text" id="gd-mahp" placeholder="VD: Toán 10 – Lớp 10A1" />
-                <small class="field-help">Nhập đúng tên học phần giáo viên đã tạo.</small>
+            <div class="enrollment-open-layout">
+              <div class="enrollment-course-browser">
+                <div id="hp-open-list" class="enrollment-course-list" aria-live="polite">
+                  <div class="enrollment-course-empty">Đang tải học phần…</div>
+                </div>
               </div>
-              <div class="field">
-                <label>Mật khẩu ghi danh *</label>
-                <input type="password" id="gd-matkhau" placeholder="Mật khẩu do giáo viên cung cấp" />
-              </div>
-            </div>
-            <button class="btn-primary student" id="btn-ghi-danh">✅ Ghi danh</button>
-          </div>
 
-          <div class="card table-wrap">
+              <aside id="enrollment-selected-panel" class="enrollment-selected-panel" aria-live="polite">
+                <div id="gd-selected-empty" class="enrollment-selected-empty">
+                  <span class="enrollment-selected-empty-icon">◇</span>
+                  <strong>Chưa chọn học phần</strong>
+                  <p>Nhấn vào một học phần ở danh sách bên trái để bắt đầu ghi danh.</p>
+                </div>
+
+                <div id="gd-selected-content" class="enrollment-selected-content hidden">
+                  <div class="enrollment-selected-heading">
+                    <span class="enrollment-selected-icon">📚</span>
+                    <div>
+                      <small>HỌC PHẦN ĐÃ CHỌN</small>
+                      <h4 id="gd-selected-name">—</h4>
+                      <p id="gd-selected-meta">—</p>
+                    </div>
+                  </div>
+
+                  <div class="field enrollment-password-field">
+                    <label for="gd-matkhau">Mật khẩu ghi danh *</label>
+                    <input type="password" id="gd-matkhau" placeholder="Mật khẩu do giáo viên cung cấp" autocomplete="current-password" />
+                    <small class="field-help">Mật khẩu chỉ được dùng để xác nhận quyền tham gia học phần đã chọn.</small>
+                  </div>
+
+                  <button class="btn-primary student enrollment-submit-btn" id="btn-ghi-danh">✅ Ghi danh học phần</button>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <div class="card table-wrap enrollment-my-courses-card">
             <div class="table-toolbar">
-              <span class="table-toolbar-title">Học phần của tôi</span>
+              <div>
+                <span class="enrollment-section-kicker">ĐÃ THAM GIA</span>
+                <span class="table-toolbar-title">Học phần của tôi</span>
+              </div>
               <div class="search-wrap">
                 <span class="search-icon">🔍</span>
                 <input type="text" id="search-hp-hs" placeholder="Tìm học phần đã ghi danh…" class="search-box" />

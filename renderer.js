@@ -311,7 +311,7 @@ const PAGE_META = {
   "page-dang-de":          ["Đăng đề thi", "Tải đề lên và thiết lập hạn nộp"],
   "page-ds-de":            ["Danh sách đề", "Theo dõi và quản lý các đề đã đăng"],
   "page-bai-nop":          ["Bài nộp", "Xem, tải xuống và chấm bài của học sinh"],
-  "page-ghi-danh":         ["Ghi danh học phần", "Tham gia học phần bằng tên và mật khẩu"],
+  "page-ghi-danh":         ["Ghi danh học phần", "Chọn học phần đang mở và nhập mật khẩu để tham gia"],
   "page-tai-de":           ["Tải đề thi", "Xem các đề đang có trong học phần"],
   "page-nop-bai":          ["Nộp bài", "Gửi bài làm và theo dõi trạng thái hạn nộp"],
   "page-ket-qua":          ["Điểm của tôi", "Xem điểm số và nhận xét từ giáo viên"],
@@ -510,6 +510,8 @@ let currentRole = null;
 let currentUserName = null;
 let teacherHocPhanList = [];   // học phần do giáo viên hiện tại tạo
 let studentHocPhanList = [];   // học phần học sinh hiện tại đã ghi danh
+let studentOpenCourseList = []; // học phần còn khả dụng để học sinh ghi danh
+let selectedEnrollmentCourse = null;
 let allStudentExams = [];
 let allTeacherExams = [];
 let submissionExamList = [];
@@ -671,7 +673,7 @@ function openAuthenticatedWorkspace(user, data = {}) {
   if (currentRole === "giaovien") {
     loadHocPhan_GV();
   } else if (currentRole === "hocsinh") {
-    $("stat-hello").textContent = currentUserName.split(" ").slice(-2).join(" ");
+    if ($("stat-hello")) $("stat-hello").textContent = currentUserName.split(" ").slice(-2).join(" ");
     loadHocPhan_HS();
     prefillHocSinh(data);
   }
@@ -732,7 +734,7 @@ onAuthStateChanged(auth, async user => {
       } else {
         applyAuthenticatedProfile(user, data);
         if (currentRole === "hocsinh") {
-          $("stat-hello").textContent = currentUserName.split(" ").slice(-2).join(" ");
+          if ($("stat-hello")) $("stat-hello").textContent = currentUserName.split(" ").slice(-2).join(" ");
           prefillHocSinh(data);
         }
       }
@@ -1027,56 +1029,191 @@ $("bn-hocphan-filter").onchange   = loadBaiNop;
 
 /* ── Học phần: Học sinh ──────────────────────────────────── */
 
+function resetEnrollmentSelection({ keepPassword = false } = {}) {
+  selectedEnrollmentCourse = null;
+  $("gd-selected-empty")?.classList.remove("hidden");
+  $("gd-selected-content")?.classList.add("hidden");
+  $("enrollment-selected-panel")?.classList.remove("has-selection");
+  if ($("gd-selected-name")) $("gd-selected-name").textContent = "—";
+  if ($("gd-selected-meta")) $("gd-selected-meta").textContent = "—";
+  if (!keepPassword && $("gd-matkhau")) $("gd-matkhau").value = "";
+  $("hp-open-list")?.querySelectorAll(".enrollment-course-item.active").forEach(item => item.classList.remove("active"));
+}
+
+function selectEnrollmentCourse(courseId) {
+  const course = studentOpenCourseList.find(item => item.id === courseId);
+  if (!course) {
+    resetEnrollmentSelection();
+    return;
+  }
+
+  selectedEnrollmentCourse = course;
+  $("gd-selected-empty")?.classList.add("hidden");
+  $("gd-selected-content")?.classList.remove("hidden");
+  $("enrollment-selected-panel")?.classList.add("has-selection");
+
+  if ($("gd-selected-name")) $("gd-selected-name").textContent = courseLabel(course);
+  if ($("gd-selected-meta")) {
+    const teacher = course.giaoVienTen || "Giáo viên phụ trách";
+    $("gd-selected-meta").textContent = `Giáo viên: ${teacher}`;
+  }
+  if ($("gd-matkhau")) {
+    $("gd-matkhau").value = "";
+    $("gd-matkhau").focus();
+  }
+
+  $("hp-open-list")?.querySelectorAll(".enrollment-course-item").forEach(item => {
+    item.classList.toggle("active", item.dataset.courseId === courseId);
+  });
+}
+
+function renderOpenCourses(list, searchQ = "") {
+  const container = $("hp-open-list");
+  if (!container) return;
+
+  if (!list.length) {
+    const message = searchQ
+      ? "Không tìm thấy học phần đang mở phù hợp."
+      : "Hiện không có học phần nào để ghi danh.";
+    container.innerHTML = `<div class="enrollment-course-empty"><span>⌕</span><strong>${message}</strong><small>${searchQ ? "Thử từ khóa khác." : "Các học phần mới sẽ xuất hiện tại đây khi giáo viên tạo."}</small></div>`;
+    return;
+  }
+
+  container.innerHTML = list.map(course => {
+    const teacher = course.giaoVienTen || "Giáo viên phụ trách";
+    const active = selectedEnrollmentCourse?.id === course.id ? " active" : "";
+    return `
+      <button type="button" class="enrollment-course-item${active}" data-course-id="${escapeHtml(course.id)}">
+        <span class="enrollment-course-icon" aria-hidden="true">📚</span>
+        <span class="enrollment-course-copy">
+          <strong>${escapeHtml(courseLabel(course))}</strong>
+          <small>${escapeHtml(teacher)}</small>
+        </span>
+        <span class="enrollment-course-status">Đang mở</span>
+        <span class="enrollment-course-arrow" aria-hidden="true">→</span>
+      </button>`;
+  }).join("");
+
+  container.querySelectorAll(".enrollment-course-item").forEach(item => {
+    item.addEventListener("click", () => selectEnrollmentCourse(item.dataset.courseId));
+  });
+}
+
 $("btn-ghi-danh").onclick = async () => {
-  const ma = $("gd-mahp").value.trim();
+  const selectedId = selectedEnrollmentCourse?.id;
   const mk = $("gd-matkhau").value;
-  if (!ma || !mk) { toast("Vui lòng nhập mã học phần và mật khẩu.", false); return; }
+  if (!selectedId) { toast("Vui lòng chọn một học phần đang mở.", false); return; }
+  if (!mk) { toast("Vui lòng nhập mật khẩu ghi danh.", false); return; }
+
   setLoading("btn-ghi-danh", true, "Đang ghi danh…");
   try {
-    const hpDoc = await findCourseByNameOrOldCode(ma);
-    if (!hpDoc) {
-      toast("Không tìm thấy học phần với tên/mã này.", false);
-      setLoading("btn-ghi-danh", false);
+    // Đọc lại học phần theo ID đã chọn để tránh ghi danh nhầm khi dữ liệu thay đổi.
+    const hpDoc = await getDoc(doc(db, "hoc_phan", selectedId));
+    if (!hpDoc.exists()) {
+      toast("Học phần này không còn tồn tại hoặc không còn khả dụng.", false);
+      resetEnrollmentSelection();
+      await loadHocPhan_HS();
       return;
     }
     const hp = hpDoc.data();
 
     const mkHash = await hashPw(mk);
-    if (mkHash !== hp.matKhauHash) { toast("Sai mật khẩu ghi danh.", false); setLoading("btn-ghi-danh", false); return; }
+    if (mkHash !== hp.matKhauHash) {
+      toast("Sai mật khẩu ghi danh.", false);
+      return;
+    }
 
-    const existSnap = await getDocs(query(collection(db, "ghi_danh"), where("hocPhanId", "==", hpDoc.id), where("uid", "==", currentUser.uid)));
-    if (!existSnap.empty) { toast("Bạn đã ghi danh học phần này rồi.", false); setLoading("btn-ghi-danh", false); return; }
+    const existSnap = await getDocs(query(
+      collection(db, "ghi_danh"),
+      where("hocPhanId", "==", hpDoc.id),
+      where("uid", "==", currentUser.uid)
+    ));
+    if (!existSnap.empty) {
+      toast("Bạn đã ghi danh học phần này rồi.", false);
+      await loadHocPhan_HS();
+      return;
+    }
 
     const enrollmentId = classEnrollmentId(hpDoc.id, currentUser.uid);
     await setDoc(doc(db, "ghi_danh", enrollmentId), {
-      hocPhanId: hpDoc.id, maHocPhan: hp.maHocPhan, tenHocPhan: hp.tenHocPhan,
-      uid: currentUser.uid, hoTen: currentUserName, createdAt: serverTimestamp()
+      hocPhanId: hpDoc.id,
+      maHocPhan: hp.maHocPhan,
+      tenHocPhan: hp.tenHocPhan,
+      uid: currentUser.uid,
+      hoTen: currentUserName,
+      createdAt: serverTimestamp()
     });
     await ensureClassGroupForCourse(hpDoc.id, hp, [currentUser.uid]);
-    $("gd-mahp").value = ""; $("gd-matkhau").value = "";
+
+    resetEnrollmentSelection();
     toast(`Ghi danh thành công! Nhóm chat lớp "${hp.tenHocPhan}" đã được thêm tự động. ✓`);
-    loadHocPhan_HS();
-  } catch (e) { toast("Lỗi ghi danh: " + e.message, false); }
-  setLoading("btn-ghi-danh", false);
+    await loadHocPhan_HS();
+  } catch (e) {
+    toast("Lỗi ghi danh: " + e.message, false);
+  } finally {
+    setLoading("btn-ghi-danh", false);
+  }
 };
 
 async function loadHocPhan_HS() {
   const tb = $("tb-hp-hs");
-  tb.innerHTML = `<tr class="empty-row"><td colspan="4">Đang tải…</td></tr>`;
+  const openList = $("hp-open-list");
+  if (tb) tb.innerHTML = `<tr class="empty-row"><td colspan="3">Đang tải…</td></tr>`;
+  if (openList) openList.innerHTML = `<div class="enrollment-course-empty">Đang tải học phần…</div>`;
+
+  const loadingForUid = currentUser?.uid;
   try {
-    const snap = await getDocs(query(collection(db, "ghi_danh"), where("uid", "==", currentUser.uid)));
-    studentHocPhanList = newestFirst(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    $("stat-so-hp").textContent = studentHocPhanList.length;
-    renderStudentCourses(studentHocPhanList);
+    const [enrollmentSnap, courseSnap] = await Promise.all([
+      getDocs(query(collection(db, "ghi_danh"), where("uid", "==", loadingForUid))),
+      getDocs(collection(db, "hoc_phan"))
+    ]);
+    if (!currentUser || currentUser.uid !== loadingForUid) return;
+
+    studentHocPhanList = newestFirst(enrollmentSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+    const enrolledCourseIds = new Set(studentHocPhanList.map(item => item.hocPhanId));
+    studentOpenCourseList = newestFirst(
+      courseSnap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(course => !enrolledCourseIds.has(course.id))
+    );
+
+    if ($("stat-so-hp")) $("stat-so-hp").textContent = studentHocPhanList.length;
+
+    if (selectedEnrollmentCourse) {
+      const freshSelection = studentOpenCourseList.find(course => course.id === selectedEnrollmentCourse.id);
+      if (freshSelection) selectedEnrollmentCourse = freshSelection;
+      else resetEnrollmentSelection();
+    }
+
+    const openSearch = $("search-hp-open")?.value.trim() || "";
+    const openSearchKey = normalizeCourseName(openSearch);
+    const filteredOpenCourses = openSearchKey
+      ? studentOpenCourseList.filter(course => normalizeCourseName(
+          `${courseLabel(course)} ${course.giaoVienTen || ""}`
+        ).includes(openSearchKey))
+      : studentOpenCourseList;
+
+    const enrolledSearch = $("search-hp-hs")?.value.trim() || "";
+    const enrolledSearchKey = normalizeCourseName(enrolledSearch);
+    const filteredEnrolled = enrolledSearchKey
+      ? studentHocPhanList.filter(gd => normalizeCourseName(courseLabel(gd)).includes(enrolledSearchKey))
+      : studentHocPhanList;
+
+    renderOpenCourses(filteredOpenCourses, openSearch);
+    renderStudentCourses(filteredEnrolled, enrolledSearch);
     populateHocPhanSelects_HS();
+    updatePremiumPageMetrics("page-ghi-danh");
   } catch (e) {
-    tb.innerHTML = `<tr class="empty-row"><td colspan="3">Không tải được danh sách học phần.</td></tr>`;
+    studentOpenCourseList = [];
+    if (tb) tb.innerHTML = `<tr class="empty-row"><td colspan="3">Không tải được danh sách học phần.</td></tr>`;
+    if (openList) openList.innerHTML = `<div class="enrollment-course-empty"><strong>Không tải được học phần đang mở.</strong><small>Vui lòng thử tải lại trang.</small></div>`;
     toast("Lỗi tải học phần: " + e.message, false);
   }
 }
 
 function renderStudentCourses(list, searchQ = "") {
   const tb = $("tb-hp-hs");
+  if (!tb) return;
   if (!list.length) {
     if (searchQ) {
       tb.innerHTML = "";
@@ -1090,9 +1227,9 @@ function renderStudentCourses(list, searchQ = "") {
   hide("hp-hs-noresult");
   tb.innerHTML = list.map(gd => `
     <tr>
-      <td><span class="code-badge">${courseLabel(gd)}</span></td>
+      <td><span class="code-badge">${escapeHtml(courseLabel(gd))}</span></td>
       <td>${fmtDate(gd.createdAt)}</td>
-      <td>
+      <td class="enrollment-actions-cell">
         <button class="btn-sm" onclick="window._openCourseExams('${gd.hocPhanId}')">📄 Xem đề</button>
         <button class="btn-sm" onclick="window._openClassChat('${gd.hocPhanId}')">💬 Nhóm lớp</button>
         <button class="btn-sm danger" onclick="window._huyGD('${gd.id}', '${gd.hocPhanId}')">Hủy</button>
@@ -1100,12 +1237,22 @@ function renderStudentCourses(list, searchQ = "") {
     </tr>`).join("");
 }
 
+$("search-hp-open").oninput = e => {
+  const q = e.target.value.trim();
+  const key = normalizeCourseName(q);
+  const filtered = key
+    ? studentOpenCourseList.filter(course => normalizeCourseName(
+        `${courseLabel(course)} ${course.giaoVienTen || ""}`
+      ).includes(key))
+    : studentOpenCourseList;
+  renderOpenCourses(filtered, q);
+};
+
 $("search-hp-hs").oninput = e => {
-  const q = e.target.value.trim().toLowerCase();
-  const filtered = q
-    ? studentHocPhanList.filter(gd =>
-        (gd.tenHocPhan || "").toLowerCase().includes(q) ||
-        (gd.maHocPhan || "").toLowerCase().includes(q))
+  const q = e.target.value.trim();
+  const key = normalizeCourseName(q);
+  const filtered = key
+    ? studentHocPhanList.filter(gd => normalizeCourseName(courseLabel(gd)).includes(key))
     : studentHocPhanList;
   renderStudentCourses(filtered, q);
 };
@@ -6319,8 +6466,8 @@ const PREMIUM_PAGE_META = {
   },
   "page-ghi-danh": {
     icon: "◇", eyebrow: "BẮT ĐẦU HỌC TẬP", title: "Ghi danh học phần",
-    description: "Tham gia lớp học bằng tên học phần và mật khẩu giáo viên đã cung cấp.",
-    action: "Nhập mã học phần", target: "gd-mahp", mode: "focus"
+    description: "Chọn học phần đang mở và nhập mật khẩu giáo viên đã cung cấp để tham gia.",
+    action: "Tìm học phần", target: "search-hp-open", mode: "focus"
   },
   "page-tai-de": {
     icon: "⇩", eyebrow: "TÀI NGUYÊN HỌC TẬP", title: "Đề thi của bạn",

@@ -36,6 +36,7 @@ const NEXUS_PAGES = new Set([
 
 const state = {
   user: null,
+  userReady: false,
   role: null,
   profile: {},
   courses: [],
@@ -572,11 +573,19 @@ function drawPerformanceChart() {
 }
 
 async function loadDashboard(force = false) {
-  if (!state.user) return;
+  // Không chạy dashboard trước khi role/profile tối thiểu đã sẵn sàng.
+  // Nếu chạy sớm, query có thể dùng nhầm nhánh học sinh/giáo viên và lần route
+  // thật sau đó có thể bị debounce, khiến màn hình đứng ở skeleton.
+  if (!state.user || !state.userReady) return;
+  // Hai tín hiệu khởi tạo (Auth + workspace-opened) có thể đến gần nhau.
+  // Không phát hai cụm query dashboard song song cho cùng một lần mở trang.
+  if (!force && state.loading.has("dashboard")) return;
   setLoading("dashboard", true);
   const sequence = ++state.routeSequence;
   try {
-    await Promise.all([loadLearningData(force), loadTasks(false), loadAnnouncements(false)]);
+    // Dữ liệu cốt lõi của Tổng quan phải render độc lập với bảng tin. Nếu truy vấn
+    // thông báo chậm hoặc bị Firestore từ chối, dashboard vẫn thoát skeleton bình thường.
+    await Promise.all([loadLearningData(force), loadTasks(false)]);
     if (sequence !== state.routeSequence && currentRoute() !== "page-dashboard") return;
     applyDashboardWelcomeContent();
     $("nexus-primary-action").dataset.nexusRoute = state.role === "giaovien" ? "page-bai-nop" : "page-nop-bai";
@@ -589,6 +598,14 @@ async function loadDashboard(force = false) {
     renderQuickActions();
     bindRouteButtons($("page-dashboard"));
     requestAnimationFrame(drawPerformanceChart);
+
+    // Bảng tin được nạp sau để không chặn giao diện. Khi xong chỉ cập nhật các phần
+    // phụ thuộc vào thông báo nếu người dùng vẫn đang ở trang Tổng quan.
+    loadAnnouncements(false)
+      .then(() => {
+        if (currentRoute() === "page-dashboard") renderActivityFeed();
+      })
+      .catch(error => console.warn("Announcement preload failed:", error));
   } catch (error) {
     console.error("Dashboard error:", error);
     toast("Không tải được toàn bộ dữ liệu tổng quan: " + (error.message || error), false);
@@ -639,12 +656,22 @@ window.addEventListener("examflow:dashboard-hero-config", () => {
 async function loadAnnouncements(force = false) {
   if (!state.user) return [];
   if (!force && state.announcements.length) return state.announcements;
+
+  // Phải biết chính xác các học phần mà tài khoản hiện tại được phép đọc trước
+  // khi truy vấn bảng tin. Truy vấn từng hocPhanId bằng phép == bám sát Firestore
+  // Rules hơn truy vấn `in`, đồng thời tránh làm toàn bộ dashboard chờ bảng tin.
   await loadBaseCourses(force);
-  if (state.role === "giaovien") {
-    state.announcements = newestFirst(await safeDocs("thong_bao_hoc_phan", [where("giaoVienId", "==", state.user.uid)]), "updatedAt");
-  } else {
-    state.announcements = newestFirst(await docsByIn("thong_bao_hoc_phan", "hocPhanId", currentCourseIds()), "updatedAt");
+  const courseIds = currentCourseIds();
+  if (!courseIds.length) {
+    state.announcements = [];
+    updateAnnouncementBadge();
+    return state.announcements;
   }
+
+  const groups = await Promise.all(
+    courseIds.map(courseId => safeDocs("thong_bao_hoc_phan", [where("hocPhanId", "==", courseId)]))
+  );
+  state.announcements = newestFirst(uniqueBy(groups.flat(), item => item.id), "updatedAt");
   updateAnnouncementBadge();
   return state.announcements;
 }
@@ -816,7 +843,9 @@ async function loadAnnouncementsPage(force = false) {
   if (!state.user) return;
   setLoading("announcements", true);
   try {
-    await Promise.all([loadBaseCourses(force), loadAnnouncements(force)]);
+    // loadAnnouncements() tự tải danh sách học phần. Không chạy loadBaseCourses()
+    // song song lần thứ hai để tránh ghi đè state.courses/state.enrollments khi đổi trang.
+    await loadAnnouncements(force);
     $("announcement-composer").classList.toggle("hidden", state.role !== "giaovien");
     fillCourseSelects();
     renderAnnouncements();
@@ -1132,6 +1161,13 @@ async function loadSettingsPage() {
 
 function route(pageId) {
   if (!NEXUS_PAGES.has(pageId)) return;
+
+  // page-change/workspace-opened có thể được renderer phát ra trước khi callback
+  // Auth của module Nexus đọc xong role. Không được ghi nhận route ở thời điểm đó:
+  // nếu ghi lastRoutePage quá sớm, lần route hợp lệ ngay sau khi Auth sẵn sàng sẽ
+  // bị debounce 250 ms và dashboard không bao giờ thoát skeleton cho tới khi đổi trang.
+  if (!state.user || !state.userReady) return;
+
   const now = performance.now();
   if (state.lastRoutePage === pageId && now - state.lastRouteAt < 250) return;
   state.lastRoutePage = pageId;
@@ -1213,7 +1249,22 @@ function attachStaticEvents() {
   $("btn-clear-nexus-cache")?.addEventListener("click", clearNexusCache);
 
   document.addEventListener("examflow:page-change", event => route(event.detail?.pageId));
-  document.addEventListener("examflow:workspace-opened", () => {
+  document.addEventListener("examflow:workspace-opened", event => {
+    // Đây là tín hiệu renderer đã mở workspace và đã biết role chính xác. Đồng bộ
+    // context ngay để không phải chờ lần đọc users/{uid} thứ hai của Nexus.
+    const user = auth.currentUser;
+    const detail = event.detail || {};
+    if (!user || (detail.uid && detail.uid !== user.uid)) return;
+
+    state.user = user;
+    const workspaceRole = detail.role || core()?.currentRole;
+    if (workspaceRole === "giaovien" || workspaceRole === "hocsinh") {
+      state.role = workspaceRole;
+      state.userReady = true;
+    }
+    if (detail.name) state.profile = { ...state.profile, hoTen: detail.name };
+
+    // Route trước Auth-ready đã bị bỏ qua nên lần này luôn là lần route hợp lệ.
     setTimeout(() => route(currentRoute() || "page-dashboard"), 0);
   });
 
@@ -1232,6 +1283,7 @@ function debounce(fn, delay) {
 
 function resetStateForLogout() {
   state.user = null;
+  state.userReady = false;
   state.role = null;
   state.profile = {};
   state.courses = [];
@@ -1245,20 +1297,46 @@ function resetStateForLogout() {
   state.tasks = [];
   state.dashboardLoadedAt = 0;
   state.announcementEditingId = null;
+  state.lastRoutePage = "";
+  state.lastRouteAt = 0;
+  state.routeSequence += 1;
+  state.loading.clear();
+  document.body.classList.remove("nexus-busy");
 }
 
 async function initializeUser(user) {
   const sequence = ++state.authSequence;
   state.user = user;
+  state.userReady = false;
+
+  // renderer.js cũng theo dõi Firebase Auth và thường đã xác định role trước Nexus.
+  // Nếu role đó đã có, cho dashboard khởi động ngay thay vì chờ một getDoc(users)
+  // trùng lặp. loadProfile vẫn chạy bên dưới để lấy hồ sơ mới nhất nhưng không còn
+  // là điều kiện chặn màn hình đầu tiên.
+  const coreRole = core()?.currentRole;
+  let routedFromCore = false;
+  if (coreRole === "giaovien" || coreRole === "hocsinh") {
+    state.role = coreRole;
+    state.profile = { ...state.profile, hoTen: core()?.currentUserName || user.displayName || user.email || "Người dùng" };
+    state.userReady = true;
+    routedFromCore = true;
+    setTimeout(() => route(currentRoute() || "page-dashboard"), 0);
+  }
+
   await loadProfile();
   if (sequence !== state.authSequence || auth.currentUser?.uid !== user.uid) return;
+
+  state.userReady = true;
   const themePreference = localStorage.getItem("app-theme-preference");
   if (themePreference === "system") chooseTheme("system");
   else if (themePreference === "light" || themePreference === "dark") chooseTheme(themePreference);
   const reduced = localStorage.getItem("examflow-reduced-motion") === "1";
   applyReducedMotion(reduced);
   applyGameSound(localStorage.getItem("examflow-game-sound") !== "0");
-  setTimeout(() => route(currentRoute() || "page-dashboard"), 0);
+
+  // Khi renderer chưa kịp cung cấp role, đây là route đầu tiên sau khi hồ sơ Nexus
+  // sẵn sàng. Nếu đã route từ core thì không khởi tạo dashboard lần thứ hai.
+  if (!routedFromCore) setTimeout(() => route(currentRoute() || "page-dashboard"), 0);
 }
 
 attachStaticEvents();
