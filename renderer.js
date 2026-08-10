@@ -368,7 +368,8 @@ function closeMobileSidebar() {
 (function initApplicationShell() {
   let savedTheme = "";
   try { savedTheme = localStorage.getItem("app-theme") || ""; } catch {}
-  const preferredTheme = savedTheme || "dark";
+  const preferredTheme = savedTheme ||
+    (window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light");
   applyTheme(preferredTheme);
 
   let sidebarCollapsed = false;
